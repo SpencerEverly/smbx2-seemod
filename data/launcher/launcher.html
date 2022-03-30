@@ -22,7 +22,7 @@
 			<div id="loadingText" data-l10n-id="Loading">Loading...</div>
 		</div>
 		<div id="internetBar" style="display:none;"><span data-l10n-id="NoInernetBar">No internet access.</span></div>
-		<div id="updateBar" style="display:none;"><span data-l10n-id="AnUpdateAvailableBar">An update is available.</span></div>
+		<div id="updateBar" style="display:none;"><span data-l10n-id="AnUpdateAvailableBar">An update is available.</span></div>	
 		<div id="columnedContent">
 			<div id="leftColumn">
 				<div id="filterContainer">
@@ -74,7 +74,7 @@
 						</div>
 						<br>
 						<div style="height:60px">
-							<div id="controlsSaved" data-l10n-id="ControlsSaved" style="font-weight:bold; font-size: 1.5em; display:none;">Controls Saved</div>
+							<div id="controlsSaved" data-l10n-id="ControlsSaved" style="font-weight:bold; font-size: 1.5em; display:none;">Controls are now saved.</div>
 						</div>
 
 					</div>
@@ -162,21 +162,21 @@
 						<tr style="height:40px;">
 							<td><span class="flexBoxes" style="width:100%;"><input data-l10n-id="PlayButton" class="playButton" type="button" value="Play" id="playButton" style="font-weight: bold;" /></span></td>
 						</tr>
-						<tr style="height:40px;">
+						<!--<tr style="height:40px;">
 							<td><span class="flexBoxes" style="width:100%"><input data-l10n-id="CreateButton" class="createButton" type="button" value="Create" id="newEditorButton" style="font-weight: bold;" /></span></td>
-						</tr>
+						</tr>-->
 					</table>
 				</div>
 				<div class="rightIcons">
 					<div class="rightAligner">
 						<table style="border-spacing:2px; text-align:right">
-							<tr>
+							<!--<tr>
 								<td>
 									<div id="rightIcon" class="expandIcon">
 										<div><div class="iconTooltip" data-l10n-id="SMBX2News">SMBX2 News</div></div>
 										<img src="rss.svg" />
 									</div>
-								</td>
+								</td>-->
 							<tr>
 								<td style="-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;">
 									<input name="open" type="file" id="openFile" style="display: none;" />
@@ -203,5 +203,9 @@
 			<input type="hidden" value="0" id="currentEpisode" />
 			<input type="hidden" value="1" id="currentSave" />
 		</div>
+		<iframe src="silence.mp3" allow="autoplay" id="audio" style="display:none"></iframe>
+			<audio id="player" autoplay loop>
+			<source src="launchermusic.ogg" type="audio/ogg">
+		</audio>
 	</body>
 </html>
