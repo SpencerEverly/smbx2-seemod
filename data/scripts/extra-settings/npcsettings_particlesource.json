@@ -1,0 +1,58 @@
+{
+	"style" : "groupbox",
+	"title" : "Particle Source Settings",
+	"layout": [
+		{
+			"control": "lineEdit",
+			"name": "particle",
+			"title": "Particle Effect",
+			"tooltip": "The path to the particle effect to spawn.",
+			"value-default": "p_smoke_small.ini"
+		},
+		{
+			"control": "spinBox",
+			"name": "priority",
+			"title": "Priority",
+			"tooltip": "The render priority of this particle effect.",
+			"type": "int",
+			"value-min": -100,
+			"value-max": 10,
+			"value-default": -60
+		},
+		{
+			"control": "spinBox",
+			"name": "prewarm",
+			"title": "Prewarm",
+			"tooltip": "Pre-simulate this many seconds of the effect, so that particles can start already spawned.",
+			"type": "double",
+			"value-min": 0,
+			"value-max": 20,
+			"value-default": 0
+		},
+		{
+			"control": "color",
+			"name": "tint",
+			"title": "Tint",
+			"tooltip": "A color to tint the particle effect.",
+			"value-default": "#FFFFFF"
+		},
+		{
+			"control": "spinBox",
+			"name": "timescale",
+			"title": "Time Scale",
+			"tooltip": "A multiplier for the speed at which the particle effect simulates.",
+			"type": "double",
+			"value-min": 0,
+			"value-max": 20,
+			"value-default": 1
+		},
+		{
+		"control": "checkbox",
+		"name": "nocull",
+		"title": "Don't Cull",
+		"tooltip": "When checked, the particle effect will never be despawned.",
+		"text-visible": false,
+		"value-default": false
+		}
+	]
+}

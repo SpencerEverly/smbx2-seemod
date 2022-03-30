@@ -1,0 +1,16 @@
+{
+	"style" : "groupbox",
+	"title" : "Boohemoth Settings",
+	"layout": [
+		{
+			"control": "comboBox",
+			"name": "state",
+			"title": "State",
+			"type": "int",
+			"tooltip": "What will the Boohemoth's next action be?",
+			"value-default": 0,
+			"elements": ["Despawn", "Move Right", "Move Down", "Move Left", "Move Up"]
+		}
+	]
+}
+

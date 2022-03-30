@@ -1,0 +1,14 @@
+{
+	"style" : "groupbox",
+	"title" : "Sea Mine Settings",
+	"layout": [
+		{
+			"control": "checkbox",
+			"name": "fast",
+			"title": "Fast",
+			"tooltip": "Whether the sea mine should move at a faster speed than normal.",
+			"text-visible": false,
+			"value-default": false
+		}
+	]
+}

@@ -1,0 +1,4 @@
+[1]
+xAlign=MID
+yAlign=MID
+import=AI_CRASHSWITCH

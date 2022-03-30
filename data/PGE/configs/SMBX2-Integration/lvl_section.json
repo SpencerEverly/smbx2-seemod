@@ -1,0 +1,170 @@
+{
+	"style" : "frame",
+	"title" : "Section Settings",
+	"layout": [{
+			"control": "group",
+			"name": "darkness",
+			"title": "Darkness",
+			"children": [{
+						"control": "checkbox",
+						"name": "enableDarkness",
+						"title": "Dark",
+						"tooltip": "Enable this to turn this section into a dark section.",
+						"text-visible": false,
+						"value-default": false
+						},
+						{
+						"control": "color",
+						"name": "ambient",
+						"title": "Ambient Light",
+						"tooltip": "The color of the darkness, when no light is present.",
+						"value-default": "#0D0D19"
+						},
+						{
+						"control": "comboBox",
+						"name": "shadows",
+						"title": "Shadow Type",
+						"tooltip": "Which type of shadow casting to use (please note that shadows are very resource intensive, and may cause lag).",
+						"elements": ["None", "Raymarch Soft", "Raymarch Hard"],
+						"value-default": 0
+						},
+						{
+						"control": "comboBox",
+						"name": "falloff",
+						"title": "Falloff Type",
+						"tooltip": "Which type of light falloff to use.",
+						"elements": ["Inverse Square", "Linear", "Sigmoid", "Hard", "Stepped", "Inverse Square Stepped"],
+						"value-default": 0
+						},
+						{
+						"control": "spinBox",
+						"name": "maxlights",
+						"title": "Maximum Lights",
+						"tooltip": "How many lights can be visible at any one time (you should try and keep this as low as possible, as higher values may cause lag).",
+						"type": "int",
+						"value-min": 1,
+						"value-max": 512,
+						"value-default": 60
+						},
+						{
+						"control": "checkbox",
+						"name": "addbright",
+						"title": "Additive Brightness",
+						"tooltip": "If enabled, brightnesses above 1 will create a 'bloom' effect.",
+						"text-visible": false,
+						"value-default": true
+						},
+						
+						{
+							"control": "group",
+							"name": "playerlight",
+							"title": "Player Light",
+							"children": [{
+										"control": "checkbox",
+										"name": "enabled",
+										"title": "Enabled",
+										"tooltip": "Whether players should emit light.",
+										"text-visible": false,
+										"value-default": false
+										},
+										{
+										"control": "color",
+										"name": "color",
+										"title": "Color",
+										"tooltip": "The color of the light.",
+										"value-default": "#FFFFFF"
+										},
+										{
+											"control": "spinBox",
+											"name": "radius",
+											"title": "Radius",
+											"tooltip": "How far the light will spread away from the source.",
+											"type": "double",
+											"value-min": 0,
+											"value-max": 1000,
+											"value-default": 128
+										},
+										{
+											"control": "spinBox",
+											"name": "brightness",
+											"title": "Brightness",
+											"tooltip": "How bright the light will be.",
+											"type": "double",
+											"value-min": 0,
+											"value-max": 20,
+											"value-default": 1
+										},
+										{
+										"control": "checkbox",
+										"name": "flicker",
+										"title": "Flicker",
+										"tooltip": "Whether the light should flicker.",
+										"text-visible": false,
+										"value-default": false
+										}]
+						}]
+			},
+			{
+				"control": "group",
+				"name": "effects",
+				"title": "Effects",
+				"children": [{
+								"control": "comboBox",
+								"name": "weather",
+								"title": "Weather",
+								"tooltip": "Which weather effect (if any) should be visible in this section.",
+								"elements": ["None", "Rain", "Snow", "Fog", "Sandstorm", "Cinders", "Wisps"],
+								"value-default": 0
+							},
+							{
+								"control": "comboBox",
+								"name": "screenEffects",
+								"title": "Screen Effects",
+								"tooltip": "Which full screen effect (if any) should apply in this section.",
+								"elements": ["None", "Wavy", "Lava", "Caustics", "Underwater", "Mist", "Sepia", "Grayscale", "Inverted", "Gameboy", "Dithered Gameboy"],
+								"value-default": 0
+							}]
+			},
+			{
+				"control": "group",
+				"name": "beat",
+				"title": "Beat Timer",
+				"children": [{
+								"control": "checkbox",
+								"name": "enabled",
+								"title": "Enabled",
+								"tooltip": "When checked, the beat timer will be overwritten with these settings when entering this section.",
+								"text-visible": false,
+								"value-default": false
+							},
+							{
+								"control": "spinBox",
+								"name": "bpm",
+								"title": "BPM",
+								"tooltip": "How fast the beat should be in Beats Per Minute.",
+								"type": "double",
+								"value-min": 1,
+								"value-max": 1000,
+								"value-default": 40,
+								"decimals": 2
+							},
+							{
+								"control": "checkbox",
+								"name": "useMusicClock",
+								"title": "Use Music Clock",
+								"tooltip": "When checked, the beat timer will be synchronised to the music clock. Otherwise, it will just tick along with game time.",
+								"text-visible": false,
+								"value-default": false
+							},
+							{
+								"control": "spinBox",
+								"name": "timeSignature",
+								"title": "Time Signature",
+								"tooltip": "The number of beats per bar (some events will occur once per bar).",
+								"type": "int",
+								"value-min": 1,
+								"value-max": 16,
+								"value-default": 4
+							}]
+			}]
+}

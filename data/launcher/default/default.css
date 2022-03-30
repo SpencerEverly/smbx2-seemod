@@ -1,0 +1,139 @@
+html {
+	height: 100%;
+}
+
+body {
+	background: #005b9d/*-webkit-radial-gradient(#f3eddf, #ffd879);*/
+	/*background: url('bg.jpg')*/
+}
+body {
+	text-align: center;
+	height: 90%;
+	min-width: 385px;
+}
+.upperBody {
+	height: 100%;
+	width: 100%;
+}
+#midimage {
+	margin-bottom: -3px;
+	margin-top: 1em;
+}
+.bodycontent, #devCreditsBox {
+	display: inline-block;
+	border-radius: 30px;
+	text-shadow: rgba(0, 0, 0, .01) 0 0 1px;
+	color: #333;
+	/*-webkit-font-smoothing: antialiased;*/
+	background-color: #dcf0ff;
+	font-size: 1.05em;
+	font-weight: 400;
+	text-align: center;
+	padding: 1em;
+	padding-top: 0.25em;
+	padding-bottom: 2em;
+	width: calc(100% - 4em);
+	max-width: 800px;
+	position: relative; 
+	margin:1em;
+	z-index: 0;
+}
+
+#devCreditsBox {
+	font-family: Verdana, Geneva, sans-serif;
+}
+
+.bodycontent {
+	margin: 0em 0em 2em 0em;
+	padding: 1em;
+	min-height: 350px;
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.creditBox {
+	display: inline-block;
+	padding: 0.2em;
+	font-size: 0.9em;
+}
+.creditBox p {
+	text-align: left;
+	font-weight: bold;
+	display: -webkit-flex;
+}
+.creditBox p span {
+	display: inline-block;
+	padding-right: 10px;
+	-webkit-flex: 1;
+}
+
+#starsField {
+	font-weight: bold;
+}
+
+.bodycontent::after, #devCreditsBox::after {
+	content: "";
+	background-repeat: no-repeat;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	position: absolute;
+	z-index: -1;
+}
+.bodycontent::after {
+	background-image: url('McKnackus.png');
+	background-position-y: 100%;
+	background-position-x: 50%;
+	opacity: 0.4;
+	background-size: 420px;
+}
+
+#devCreditsBox::after {
+	background-image: url('header.png');
+	background-position-y: 50%;
+	background-position-x: 50%;
+	opacity: 0.1;
+	background-size: contain;
+	margin: 3em;
+}
+.bodycontent * {
+	margin: 0;
+	padding: 0;
+}
+.bodycontent h3 {
+	margin-top: 0.25em;
+}
+.bodycontent table {
+	margin-right: auto;
+	margin-left: auto;
+}
+.creditsTable th {
+	text-align: right;
+	width: 50%;
+}
+.creditsTable td {
+	text-align: left;
+	width: 50%;
+}
+.creditsTable td[colspan="2"] {
+	text-align: center;
+	width: 100%;
+	font-weight: bold;
+}
+ul {
+	list-style-type: none;
+}
+
+a {
+  text-decoration: none;
+}
+a:link {
+	color:#5577FF
+}
+a:visited {
+	color:#2244AA
+}
+a:hover {
+	color:#7799FF
+}
+

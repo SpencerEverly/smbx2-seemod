@@ -1,0 +1,20 @@
+{
+	"style" : "groupbox",
+	"title" : "Two checkboxes",
+	"layout": [
+		{
+			"control": "checkbox",
+			"name": "flag1",
+			"title": "A flag",
+			"text-visible": false,
+			"value-default": false
+		},
+		{
+			"control": "checkbox",
+			"name": "flag2",
+			"title": "Another flag",
+			"text-visible": false,
+			"value-default": false
+		}
+	]
+}

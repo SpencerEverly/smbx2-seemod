@@ -1,0 +1,44 @@
+{
+	"style" : "frame",
+	"title" : "Level Settings",
+	"layout": [{
+				"control": "checkbox",
+				"name": "showInMarioChallenge",
+				"title": "Appear in Mario Challenge",
+				"tooltip": "When checked, this level will appear in the random level roulette for the Mario Challenge. Disable this for hubs or levels that won't be possible to finish on their own.\nLevels with this checked will not appear if their episode is excluded from Mario Challenge.",
+				"text-visible": false,
+				"value-default": true
+			}, 
+			{
+				"control": "group",
+				"name": "timer",
+				"title": "Level Timer",
+				"children": [{
+								"control": "checkbox",
+								"name": "enable",
+								"title": "Enable",
+								"tooltip": "When checked, the timer will be active in this level.",
+								"text-visible": false,
+								"value-default": false
+							},
+							{
+								"control": "spinBox",
+								"type": "int",
+								"name": "time",
+								"title": "Time",
+								"tooltip": "The length of the timer, in seconds. When the timer hits 0, the player will be killed.",
+								"value-default": 500,
+								"value-min": 1,
+								"value-max": 999999999
+							},
+							{
+							"control": "comboBox",
+							"name": "result",
+							"title": "When Timer Ends:",
+							"tooltip": "What occurs when the level timer ends.",
+							"elements": ["Kill players", "Call event 'Level Timer - End'"],
+							"value-default": 0
+							}]
+			}
+	]
+}

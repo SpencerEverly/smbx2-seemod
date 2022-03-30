@@ -1,0 +1,1 @@
+Press F12 while playing to capture a screenshot. The file will be saved here!

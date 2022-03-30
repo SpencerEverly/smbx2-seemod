@@ -1,0 +1,258 @@
+------------------------------
+-- Profiler memory checking --
+------------------------------
+
+do
+	ffi.cdef([[
+		typedef struct
+		{
+			uint32_t totalWorking;
+			uint32_t imgRawMem;
+			uint32_t imgCompMem;
+			uint32_t sndMem;
+			double   imgGpuMem;
+		} LunaLuaMemUsageData;
+		const LunaLuaMemUsageData* LunaLuaGetMemUsage();
+	]])
+	local LunaDLL = ffi.load("LunaDll.dll")
+	
+	Misc.GetMemUsage = function()
+		local data = LunaDLL.LunaLuaGetMemUsage()
+		return {
+			totalWorking = data.totalWorking,
+			imgRawMem    = data.imgRawMem,
+			imgCompMem   = data.imgCompMem,
+			sndMem       = data.sndMem,
+			imgGpuMem    = data.imgGpuMem
+		}
+	end
+end
+
+---------------------------
+-- High resolution clock --
+---------------------------
+do
+	ffi.cdef[[
+		typedef long            BOOL;
+		BOOL QueryPerformanceFrequency(int64_t *lpFrequency);
+		BOOL QueryPerformanceCounter(int64_t *lpPerformanceCount);
+	]]
+	local kernel32 = ffi.load("kernel32.dll")
+	
+	local function GetPerformanceFrequency()
+		local anum = ffi.new("int64_t[1]")
+		if kernel32.QueryPerformanceFrequency(anum) == 0 then
+			return nil
+		end
+		return tonumber(anum[0])
+	end
+	local function GetPerformanceCounter()
+		local anum = ffi.new("int64_t[1]")
+		if kernel32.QueryPerformanceCounter(anum) == 0 then
+			return nil
+		end
+		return tonumber(anum[0])
+	end
+	local performanceCounterFreq = GetPerformanceFrequency()
+	Misc.clock = function()
+		return GetPerformanceCounter() / performanceCounterFreq
+	end
+end
+
+---------------------
+-- Key state array --
+---------------------
+
+do
+	ffi.cdef([[
+		unsigned char* LunaLuaGetKeyStateArray();
+	]])
+	local LunaDLL = ffi.load("LunaDll.dll")
+	local keyArray = LunaDLL.LunaLuaGetKeyStateArray()
+	
+	function Misc.GetKeyState(keycode)
+		if (type(keycode) ~= "number") or (keycode < 0) or (keycode > 255) then
+			error("Invalid keycode")
+		end
+		return keyArray[keycode] ~= 0
+	end
+end
+
+--------------
+-- GameData --
+--------------
+
+do
+	ffi.cdef([[
+		typedef struct
+		{
+			int len;
+			char data[0];
+		} GameDataStruct;
+		
+		void LunaLuaSetGameData(const char* dataPtr, int dataLen);
+		GameDataStruct* LunaLuaGetGameData();
+		void LunaLuaFreeReturnedGameData(GameDataStruct* cpy);
+	]])
+	local LunaDLL = ffi.load("LunaDll.dll")
+	
+	function Misc.SetRawGameData(v)
+		LunaDLL.LunaLuaSetGameData(v, #v)
+	end
+	
+	function Misc.GetRawGameData()
+		local ptr = LunaDLL.LunaLuaGetGameData();
+		if ptr == nil then
+			return ""
+		end
+		local ret = ffi.string(ptr.data, ptr.len)
+		LunaDLL.LunaLuaFreeReturnedGameData(ptr)
+		return ret
+	end
+end
+
+--------------------------------
+-- Get controller information --
+--------------------------------
+
+do
+	ffi.cdef([[
+		int LunaLuaGetSelectedControllerPowerLevel(int playerNum);
+		const char* LunaLuaGetSelectedControllerName(int playerNum);
+		void LunaLuaRumbleSelectedController(int playerNum, int ms, float strength);
+	]])
+	local LunaDLL = ffi.load("LunaDll.dll")
+	
+	function Misc.GetSelectedControllerPowerLevel(playerNum)
+		if (playerNum == nil) then
+			playerNum = 1
+		end
+		return LunaDLL.LunaLuaGetSelectedControllerPowerLevel(playerNum)
+	end
+	
+	function Misc.GetSelectedControllerName(playerNum)
+		if (playerNum == nil) then
+			playerNum = 1
+		end
+		local strPtr = LunaDLL.LunaLuaGetSelectedControllerName(playerNum)
+		if strPtr == nil then
+			return "Unknown"
+		end
+		return ffi.string(strPtr)
+	end
+	
+	function Misc.RumbleSelectedController(playerNum, ms, strength)
+		if (playerNum == nil) then
+			playerNum = 1
+		end
+		if (ms == nil) then
+			ms = 1000
+		end
+		if (strength == nil) then
+			strength = 1.0
+		end
+		if (ms > 0) and (strength > 0) then
+			LunaDLL.LunaLuaRumbleSelectedController(playerNum, ms, strength)
+		end
+	end
+end
+
+---------------------
+-- Disabling fixes --
+---------------------
+
+do
+	ffi.cdef([[
+		void LunaLuaSetPlayerFilterBounceFix(bool enable);
+		void LunaLuaSetPlayerDownwardClipFix(bool enable);
+		void LunaLuaSetNPCDownwardClipFix(bool enable);
+	]])
+	local LunaDLL = ffi.load("LunaDll.dll")
+
+	function Misc.SetPlayerFilterBounceFix(enable)
+		if enable then
+			enable = true
+		else
+			enable = false
+		end
+		LunaDLL.LunaLuaSetPlayerFilterBounceFix(enable)
+	end
+	
+	function Misc.SetPlayerDownwardClipFix(enable)
+		if enable then
+			enable = true
+		else
+			enable = false
+		end
+		LunaDLL.LunaLuaSetPlayerDownwardClipFix(enable)
+	end
+	
+	function Misc.SetNPCDownwardClipFix(enable)
+		if enable then
+			enable = true
+		else
+			enable = false
+		end
+		LunaDLL.LunaLuaSetNPCDownwardClipFix(enable)
+	end
+end
+
+------------
+-- Timing --
+------------
+
+do
+	ffi.cdef([[
+        void LunaLuaSetFrameTiming(double value);
+        double LunaLuaGetFrameTiming();
+	]])
+	local LunaDLL = ffi.load("LunaDll.dll")
+	
+	local currentTickTimeMs = LunaDLL.LunaLuaGetFrameTiming()
+	local currentTps = 1000.0 / currentTickTimeMs
+	local currentSpeed = 15.6 / currentTickTimeMs
+	
+	function Misc.SetEngineTickDuration(t)
+		if (currentTickTimeMs ~= t) then
+			if (lunatime ~= nil) and (lunatime._notifyTickDurationChange ~= nil) then
+				lunatime._notifyTickDurationChange()
+			end
+			LunaDLL.LunaLuaSetFrameTiming(t)
+			currentTickTimeMs = t
+			currentTps = 1000.0 / t
+			currentSpeed = 15.6 / t
+		end
+	end
+	local Misc_SetEngineTickDuration = Misc.SetEngineTickDuration
+	
+	function Misc.GetEngineTickDuration(t)
+		return currentTickTimeMs
+	end
+	
+	function Misc.SetEngineTPS(tps)
+		Misc_SetEngineTickDuration(1000.0 / tps)
+	end
+	
+	function Misc.GetEngineTPS(tps)
+		return currentTps
+	end
+	
+	function Misc.SetEngineSpeed(ratio)
+		Misc_SetEngineTickDuration(15.6 / ratio)
+	end
+	
+	function Misc.GetEngineSpeed(ratio)
+		return currentSpeed
+	end
+end
+
+do
+	ffi.cdef([[
+		void LunaLuaSetBackgroundRenderFlag(bool val);
+	]])
+	local LunaDLL = ffi.load("LunaDll.dll")
+
+	function Misc._SetVanillaBackgroundRenderFlag(val)
+		LunaDLL.LunaLuaSetBackgroundRenderFlag(val)
+	end
+end

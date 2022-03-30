@@ -1,0 +1,51 @@
+{
+	"style" : "groupbox",
+	"title" : "Audio Source Settings",
+	"layout": [
+		{
+			"control": "lineEdit",
+			"name": "source",
+			"title": "Sound",
+			"tooltip": "The path to the sound effect to play.",
+			"value-default": ""
+		},
+		{
+			"control": "spinBox",
+			"name": "volume",
+			"title": "Volume",
+			"tooltip": "How loud the sound will be.",
+			"type": "double",
+			"value-min": 0,
+			"value-max": 2,
+			"value-default": 1
+		},
+		{
+			"control": "sizeBox",
+			"name": "sourceSize",
+			"title": "Source Size",
+			"tooltip": "How large the source of the sound will be.",
+			"type": "double",
+			"value-min": {"w":0, "h":0},
+			"value-max": {"w":10000, "h":10000},
+			"value-default": {"w":32, "h":32}
+		},
+		{
+			"control": "spinBox",
+			"name": "falloffRadius",
+			"title": "Falloff Radius",
+			"tooltip": "How far the sound will spread away from the source circle.",
+			"type": "double",
+			"value-min": 0,
+			"value-max": 10000,
+			"value-default": 128
+		},
+		{
+			"control": "comboBox",
+			"name": "falloffType",
+			"title": "Falloff Type",
+			"tooltip": "Which type of audio falloff to use.",
+			"elements": ["Squared", "Linear", "None"],
+			"value-default": 0
+		}
+	]
+}

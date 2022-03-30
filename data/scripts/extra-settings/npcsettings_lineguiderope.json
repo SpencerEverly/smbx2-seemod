@@ -1,0 +1,24 @@
+{
+	"style" : "groupbox",
+	"title" : "Rope Settings",
+	"layout": [
+		{
+			"control": "spinBox",
+			"name": "length",
+			"title": "Length",
+			"type": "int",
+			"tooltip": "Repeats the middle piece of the rope in order to increase its length.",
+			"value-default": 1,
+			"value-min": 1,
+			"value-max": 100
+		},
+		{
+			"control": "combobox",
+			"name": "activeByDefault",
+			"title": "Start Active",
+			"tooltip": "If 'No', the engine block attached to the rope won't start moving until a player holds onto it. Default uses the default NPC config for this ID. Yes and no override the default setting.",
+			"elements": ["Default", "Yes", "No"],
+			"value-default": 0
+		}
+	]
+}

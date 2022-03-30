@@ -1,0 +1,1 @@
+Press F11 while playing to begin recording an animated gif. Press F11 again to stop. The file will be saved here!

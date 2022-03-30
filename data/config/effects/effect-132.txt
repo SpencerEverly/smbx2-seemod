@@ -1,0 +1,7 @@
+[1]
+import=AI_SINGLE
+frames=2
+framespeed=3
+onDeath=DEATH_SHELL
+xOffset=-16:16
+yOffset=-16:16

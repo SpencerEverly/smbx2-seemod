@@ -1,0 +1,3 @@
+[first]
+import=AI_SINGLE
+lifetime=6

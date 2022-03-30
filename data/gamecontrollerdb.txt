@@ -1,0 +1,13 @@
+#=============================================================================#
+# SDL Game Controller DB for SMBX2                                            #
+#-----------------------------------------------------------------------------#
+# This file contains a database for better supporting specific controllers.   #
+# Note that entries are only necessary when the built-in database does not    #
+# support a controller and the fallback generic controller support of SMBX2   #
+# is not sufficiently flexible to handle some quirk of the controller.        #
+# You can generate a mapping line for this file using the following tool:     #
+# http://generalarcade.com/gamepadtool/                                       #
+#=============================================================================#
+
+03000000790000004618000000000000,GameCube Controller Adapter,platform:Windows,a:b1,b:b2,x:b0,y:b3,back:b7,start:b9,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,leftx:a0,lefty:a1,rightx:a5,righty:a2,lefttrigger:a3,righttrigger:a4,
+03000000c01100000055000000000000,SNES Generic,platform:Windows,a:b0,b:b1,x:b2,y:b3,back:b8,start:b9,leftshoulder:b4,rightshoulder:b5,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,

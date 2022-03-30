@@ -1,0 +1,26 @@
+{
+  "style": "groupbox",
+  "title": "Crate Settings",
+  "layout": [
+    {
+      "control": "multiLineEdit",
+      "name": "contents",
+      "title": "Contents",
+      "tooltip": "A table that defines the crate's contents and their behaviour. Check the documentation for more details.",
+      "value-default": ""
+    },
+    {
+      "control": "group",
+      "title": "Examples",
+      "children": [
+        {
+          "control": "lineEdit",
+          "title": "Three Coins",
+          "tooltip": "Spawns three coins.",
+          "value-default": "{id=10, count=3}",
+          "read-only": true
+        }
+      ]
+    }
+  ]
+}

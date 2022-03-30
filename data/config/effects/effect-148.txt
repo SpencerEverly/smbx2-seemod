@@ -1,0 +1,27 @@
+[first]
+import=AI_PEACHBOMB
+speedX = 2
+speedY =-1
+priority=FOREGROUND
+
+[second]
+template=first
+speedX = -2
+
+[3]
+template=first
+speedY = 1
+
+[4]
+template=second
+speedY = 1
+
+[5]
+template=first
+speedX = 0
+speedY = -2
+
+[6]
+template=first
+speedX = 0
+speedY = 2

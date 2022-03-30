@@ -1,0 +1,14 @@
+{
+	"style" : "groupbox",
+	"title" : "Shell Settings",
+	"layout": [
+		{
+			"control": "checkbox",
+			"name": "shellStartsSpinning",
+			"title": "Starts Spinning",
+			"tooltip": "If enabled, the shell will start at full speed moving in its facing direction.",
+			"text-visible": false,
+			"value-default": false
+		}
+	]
+}

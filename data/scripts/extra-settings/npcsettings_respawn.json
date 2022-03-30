@@ -1,0 +1,14 @@
+{
+  "style": "groupbox",
+  "title": "Respawn Settings",
+  "layout": [
+    {
+      "control": "checkbox",
+      "name": "respawn",
+      "title": "Respawn",
+      "tooltip": "Whether or not this NPC should respawn.",
+	  "text-visible": false,
+      "value-default": true
+    }
+  ]
+}

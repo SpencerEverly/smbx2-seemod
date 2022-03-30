@@ -1,0 +1,5 @@
+[1]
+import=AI_STOMP
+framestyle=1
+yAlign=CENTER
+spawnBindY=CENTER

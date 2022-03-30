@@ -1,0 +1,26 @@
+{
+  "style": "groupbox",
+  "title": "Graf Settings",
+  "layout": [
+    {
+      "control": "multiLineEdit",
+      "name": "parserInput",
+      "title": "Movement",
+      "tooltip": "LunaLua function to define and customize the Grafs behaviour.",
+      "value-default": ""
+    },
+    {
+      "control": "group",
+      "title": "Examples",
+      "children": [
+        {
+          "control": "lineEdit",
+          "title": "Circle Graf",
+          "tooltip": "Makes the Graf fly in circles.",
+          "value-default": "x=sin(t * 2) * 2; y=cos(t * 2) * 2;",
+          "read-only": true
+        }
+      ]
+    }
+  ]
+}

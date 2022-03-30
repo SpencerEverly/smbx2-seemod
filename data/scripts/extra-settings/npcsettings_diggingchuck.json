@@ -1,0 +1,16 @@
+{
+	"style" : "groupbox",
+	"title" : "Diggin' Chuck Settings",
+	"layout": [
+		{
+			"control": "spinbox",
+			"name": "volley",
+			"title": "Volley",
+			"tooltip": "How many rocks should be dug up per volley.",
+			"type": "int",
+			"value-default": 3,
+			"value-min": 1,
+			"value-max": 32
+		}
+	]
+}

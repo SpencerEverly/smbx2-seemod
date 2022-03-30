@@ -1,0 +1,6 @@
+[first]
+import=AI_SLIDEPUFF
+framespeed=4
+frames=3
+xOffset=-4:4
+yOffset=-4:4

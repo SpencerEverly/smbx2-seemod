@@ -1,0 +1,16 @@
+{
+	"style" : "groupbox",
+	"title" : "Countdown Platform Settings",
+	"layout": [
+		{
+			"control": "spinBox",
+			"name": "timer",
+			"title": "Timer",
+			"type": "int",
+			"tooltip": "How long the platform sticks around (the number initially displayed on the sprite).",
+			"value-default": 4,
+			"value-min": 0,
+			"value-max": 9
+		}
+	]
+}

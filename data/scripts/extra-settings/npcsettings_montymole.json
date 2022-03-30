@@ -1,0 +1,39 @@
+{
+	"style" : "groupbox",
+	"title" : "Monty Mole Settings",
+	"layout": [
+		{
+			"control": "checkbox",
+			"name": "spawnHole",
+			"title": "Spawn Hole",
+			"tooltip": "Uncheck to prevent the mole from spawning their hole. Moles only spawn their holes when placed in midair.",
+			"text-visible": true,
+			"value-default": true
+		},
+		{
+			"control": "checkbox",
+			"name": "startHidden",
+			"title": "Start hidden",
+			"tooltip": "Uncheck to place an emerged mole instead of a hidden mole.",
+			"text-visible": true,
+			"value-default": true
+		},
+		{
+			"control": "checkbox",
+			"name": "needsWhistle",
+			"title": "Needs Whistle",
+			"tooltip": "When checked, proximity will no longer wake the buried mole.",
+			"text-visible": true,
+			"value-default": false
+		},
+		{
+			"control": "checkbox",
+			"name": "holeRemovesBlock",
+			"title": "Remove Objects",
+			"tooltip": "When checked, blocks, bumpers, line guides, coins, checkpoints and vines overlapping with a spawning mole will be removed when the mole emerges for the first time. For blocks and npcs only happens to objects smaller or of equal size to the mole. This list can be customized through montymolehole.lua",
+			"text-visible": true,
+			"value-default": false
+		}
+	]
+}
+

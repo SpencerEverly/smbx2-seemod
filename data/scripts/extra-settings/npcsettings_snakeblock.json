@@ -1,0 +1,30 @@
+{
+	"style" : "groupbox",
+	"title" : "Snake Block Settings",
+	"layout": [
+		{
+			"control": "combobox",
+			"name": "directionEnum",
+			"title": "Direction",
+			"tooltip": "Initial direction of the block. Multiplies with the NPC config <b>basespeed</b> value.",
+			"elements": ["Left", "Up", "Right", "Down"],
+			"value-default": 2
+		},
+		{
+			"control": "itemSelect",
+			"name": "id",
+			"title": "Block ID",
+			"type": "block",
+			"tooltip": "ID of the block to spawn.",
+			"value-default": 696
+		},
+		{
+			"control": "checkbox",
+			"name": "active",
+			"title": "Start Active",
+			"tooltip": "If not checked, the Snake Block won't move until a player steps on it.",
+			"text-visible": false,
+			"value-default": false
+		}
+	]
+}

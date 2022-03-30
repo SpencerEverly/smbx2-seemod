@@ -1,0 +1,14 @@
+Execution ran for 493.894s (1531 ticks), and produced 1 warnings:
+
+
+0t - Warning: Improperly calling NPC.iterateIntersecting before onStart
+stack traceback:
+	scripts/base/engine/ffi_utils.lua:28: in function 'iterateIntersecting'
+	scripts/base/colliders.lua:2003: in function 'getColliding'
+	E:/Github/Super Mario All-Stars++/bootmenu.lua:1143: in function 'func'
+	...s Files\SMBX\SMAS++\data/scripts/base/engine/require.lua:150: in function 'require'
+	E:/Github/Super Mario All-Stars++/intro_SMBX1.2/luna.lua:1: in function 'codeFile'
+	main.lua:743: in function 'loadCodeFile'
+	main.lua:893: in function <main.lua:793>
+	[C]: in function '__xpcall'
+	main.lua:793: in function <main.lua:792>

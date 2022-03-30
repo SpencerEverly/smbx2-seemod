@@ -1,0 +1,41 @@
+{
+	"style" : "groupbox",
+	"title" : "Light Source Settings",
+	"layout": [
+		{
+			"control": "color",
+			"name": "color",
+			"title": "Color",
+			"tooltip": "The color of the light.",
+			"value-default": "#FFFFFF"
+		},
+		{
+			"control": "spinBox",
+			"name": "radius",
+			"title": "Radius",
+			"tooltip": "How far the light will spread away from the source.",
+			"type": "double",
+			"value-min": 0,
+			"value-max": 1000,
+			"value-default": 64
+		},
+		{
+			"control": "spinBox",
+			"name": "brightness",
+			"title": "Brightness",
+			"tooltip": "How bright the light will be.",
+			"type": "double",
+			"value-min": 0,
+			"value-max": 20,
+			"value-default": 1
+		},
+		{
+		"control": "checkbox",
+		"name": "flicker",
+		"title": "Flicker",
+		"tooltip": "Whether the light should flicker.",
+		"text-visible": false,
+		"value-default": false
+		}
+	]
+}

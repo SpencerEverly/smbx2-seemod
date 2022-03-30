@@ -1,0 +1,46 @@
+{
+	"style" : "groupbox",
+	"title" : "Egg-Plant Settings",
+	"layout": [
+		{
+			"control": "spinBox",
+			"name": "spitAngle",
+			"title": "Spread",
+			"type": "double",
+			"tooltip": "The directional range, in degrees, which the eggplant will spit out NPCs.",
+			"value-default": 22,
+			"value-min": 0,
+			"value-max": 180
+		},
+		{
+			"control": "spinBox",
+			"name": "projectileSpeed",
+			"title": "Projectile Speed",
+			"type": "double",
+			"tooltip": "The speed that the NPC will be spit out at.",
+			"value-default": 6,
+			"value-min": 1,
+			"value-max": 36
+		},
+		{
+			"control": "spinBox",
+			"name": "fireDelayTicks",
+			"title": "Timer",
+			"type": "int",
+			"tooltip": "Number of frames the egg-plant waits between spit attempts.",
+			"value-default": 128,
+			"value-min": 1,
+			"value-max": 6400
+		},
+		{
+			"control": "spinBox",
+			"name": "spawnLimit",
+			"title": "Spawn limit",
+			"type": "int",
+			"tooltip": "Number of NPCs that the egg-plant can generate at a time;  it will not spit out any more until one or more of the NPCs it generated despawns.",
+			"value-default": 6,
+			"value-min": 1,
+			"value-max": 100
+		}
+	]
+}

@@ -1,0 +1,14 @@
+{
+	"style" : "groupbox",
+	"title" : "Whistlin' Chuck Settings",
+	"layout": [
+		{
+			"control": "checkbox",
+			"name": "proximity",
+			"title": "Proximity Activated",
+			"tooltip": "If checked, the Whistlin' Chuck will be activated when the player is near.",
+			"text-visible": false,
+			"value-default": true
+		}
+	]
+}

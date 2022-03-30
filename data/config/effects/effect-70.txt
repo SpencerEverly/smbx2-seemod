@@ -1,0 +1,2 @@
+[first]
+import=AI_BOMB_SMB3

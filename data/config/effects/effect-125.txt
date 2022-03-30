@@ -1,0 +1,4 @@
+[first]
+import=AI_SINGLE
+frames=4
+framespeed=4

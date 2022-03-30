@@ -1,0 +1,24 @@
+{
+	"style" : "groupbox",
+	"title" : "Podoboo Settings",
+	"layout": [
+		{
+			"control": "checkbox",
+			"name": "useFixed",
+			"title": "Fixed Mode",
+			"tooltip": "If this flag is set, the NPC should be placed above its rest position. It will then use its <b>Jump Height</b> value to determine how high to jump, rather than the distance it fell.",
+			"text-visible": false,
+			"value-default": false
+		},
+		{
+			"control": "spinBox",
+			"name": "jumpHeight",
+			"title": "Jump Height",
+			"type": "int",
+			"tooltip": "If using <b>Fixed Mode</b>, determines how high it should jump.",
+			"value-default": 250,
+			"value-min": 0,
+			"value-max": 1200
+		}
+	]
+}

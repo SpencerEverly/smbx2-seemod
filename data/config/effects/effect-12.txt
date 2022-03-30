@@ -1,0 +1,7 @@
+[first]
+import=AI_SINGLE
+xOffset=-12:12
+yOffset=40
+framespeed=4
+frames=3
+lifetime=500

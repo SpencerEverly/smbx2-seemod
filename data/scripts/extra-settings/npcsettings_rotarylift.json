@@ -1,0 +1,42 @@
+{
+	"style" : "groupbox",
+	"title" : "Rotary Lift Settings",
+	"layout": [
+		{
+		"control" : "group",
+		"title" : "",
+		"name" : "..",
+		"children": [
+			{
+				"control": "checkbox",
+				"name": "override",
+				"title": "Use Per-NPC Settings",
+				"tooltip": "When checked, per-NPC settings will be used for these settings in place of NPC config values.",
+				"text-visible": false,
+				"value-default": false
+			},
+			{
+				"control": "spinBox",
+				"type": "int",
+				"name": "spinTime",
+				"title": "Spin Time",
+				"tooltip": "The amount of frames the rotary lift will spin for.",
+				"value-default": 200,
+				"value-min": 0,
+				"value-max": 999,
+				"single-step": 1
+			},
+			{
+				"control": "spinBox",
+				"type": "int",
+				"name": "coolTime",
+				"title": "Cooldown Time",
+				"tooltip": "The amount of frames the rotary lift will stop spinning before rotating again.",
+				"value-default": 200,
+				"value-min": 0,
+				"value-max": 999,
+				"single-step": 1
+			}]
+		}
+	]
+}

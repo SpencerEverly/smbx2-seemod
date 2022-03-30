@@ -1,0 +1,3 @@
+[first]
+import=AI_ARC
+variants=16

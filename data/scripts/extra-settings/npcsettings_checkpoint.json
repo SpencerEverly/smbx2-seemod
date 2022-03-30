@@ -1,0 +1,16 @@
+{
+  "style": "groupbox",
+  "title": "Checkpoint Settings",
+  "layout": [
+    {
+		"control": "spinBox",
+		"name": "warpID",
+		"title": "Warp ID",
+		"type": "int",
+		"tooltip": "If set to a valid Warp ID, the player will spawn at that warp's exit location rather than on the checkpoint location.",
+		"value-default": 0,
+		"value-min": 0,
+		"value-max": 2000
+	}
+  ]
+}

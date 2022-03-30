@@ -1,0 +1,7 @@
+[1]
+gravity=0
+speedY=0
+speedX=0
+frames=7
+framespeed=4
+lifetime=28
