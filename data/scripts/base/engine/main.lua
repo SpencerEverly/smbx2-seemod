@@ -20,7 +20,7 @@
 ]]
 
 --LunaLua Version
-__LUNALUA = "0.7"
+__LUNALUA = "0.7 SEE Mod"
 __isLuaError = false
 
 --SMBX2 Version logic
@@ -65,12 +65,13 @@ do
 	_G["VER_BETA4_PATCH_3_1"] 	= 	makeVersion(2,	0,	0,	4,	0,	3,	1)
 	_G["VER_BETA4_PATCH_4"] 	= 	makeVersion(2,	0,	0,	4,	0,	4,	0)
 	_G["VER_BETA4_PATCH_4_1"] 	= 	makeVersion(2,	0,	0,	4,	0,	4,	1)
+	_G["VER_BETA4_PATCH_4_1_SEE"] = makeVersion(2,	0,	0,	4,	4,	4,	4)
 	
 	--								e.g.		2  .0  .0 .b4 .p2  .0  .1    = PAL Hotfix
 	
 	
 	--Update this to the latest version 
-	_G["SMBX_VERSION"] = VER_BETA4_PATCH_4_1
+	_G["SMBX_VERSION"] = VER_BETA4_PATCH_4_1_SEE
 	
 	
 	

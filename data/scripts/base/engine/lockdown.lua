@@ -11,6 +11,8 @@ if os ~= nil then
 	newOS.date = nativeOS.date
 	newOS.time = nativeOS.time
 	newOS.difftime = nativeOS.difftime
+	newOS.remove = nativeOS.remove
+	newOS.rename = nativeOS.rename
 	newOS.exit = function() error("Shutdown") end
 	
 	os = newOS
@@ -61,6 +63,7 @@ do
 	newIO.read = nativeIO.read
 	newIO.flush = nativeIO.flush
 	newIO.type = nativeIO.type
+	newIO.write = nativeIO.write
 	newIO.open = function(path, mode)
 		local canWrite
 		path, canWrite = makeSafeAbsolutePath(path)
@@ -146,10 +149,10 @@ end
 -- Lock down AsyncHTTPRequest --
 -- (Not currently used...)    --
 --------------------------------
-do
-	AsyncHTTPRequest = nil
-	_G.AsyncHTTPRequest = nil
-end
+--do
+	--AsyncHTTPRequest = nil
+	--_G.AsyncHTTPRequest = nil
+--end
 
 ---------------------
 -- Lock down debug --
