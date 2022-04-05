@@ -1,0 +1,64 @@
+== Crash Summary ==
+LunaLua Version: LUNALUA V0.7.3.2 BETA
+Exception Code: 0xc0000005 (Access Violation)
+
+== Stack Trace ==
+0: 77937450 (ntdll): RtlGetNtGlobalFlags
+1: 778F3C06 (ntdll): RtlFreeHeap
+2: 76914E36 (IMM32): ImmUnlockIMCC
+3: 7691257A (IMM32): CtfImmCoUninitialize
+4: 778E4821 (ntdll): TpSetTimerEx
+5: 7790D749 (ntdll): LdrShutdownProcess
+6: 7790D6B5 (ntdll): RtlExitUserProcess
+7: 76F44E23 (KERNEL32): ExitProcess
+8: 73CFA748 ((module-name not available)): (function-name not available)
+9: 73CFA6DE ((module-name not available)): (function-name not available)
+10: 73CFA826 ((module-name not available)): (function-name not available)
+11: 73B613C9 ((module-name not available)): (function-name not available)
+12: 779388C2 (ntdll): RtlInterlockedCompareExchange64
+13: 77938894 (ntdll): RtlInterlockedCompareExchange64
+14: 77924EC6 (ntdll): KiUserExceptionDispatcher
+15: 778F5DCE (ntdll): RtlAllocateHeap
+16: 7729DF6A (KERNELBASE): GetModuleFileNameA
+17: 73BFCE4F ((module-name not available)): (function-name not available)
+18: 73BFD61A ((module-name not available)): (function-name not available)
+19: 73B48EF0 ((module-name not available)): (function-name not available)
+20: 73B48A79 ((module-name not available)): (function-name not available)
+21: 73B613BA ((module-name not available)): (function-name not available)
+22: 779388C2 (ntdll): RtlInterlockedCompareExchange64
+23: 77938894 (ntdll): RtlInterlockedCompareExchange64
+24: 77924EC6 (ntdll): KiUserExceptionDispatcher
+25: 778F5DCE (ntdll): RtlAllocateHeap
+26: 73D1CD7B ((module-name not available)): (function-name not available)
+27: 73CD843E ((module-name not available)): (function-name not available)
+28: 73A7051A ((module-name not available)): (function-name not available)
+29: 73B42DEC ((module-name not available)): (function-name not available)
+30: 73B43202 ((module-name not available)): (function-name not available)
+31: 73B6AEF5 ((module-name not available)): (function-name not available)
+32: 73B69089 ((module-name not available)): (function-name not available)
+33: 73B69699 ((module-name not available)): (function-name not available)
+34: 73B640D7 ((module-name not available)): (function-name not available)
+35: 744B0145 (MSVBVM60): EbLoadRunTime
+36: 744AE4C8 (MSVBVM60): EbSetContextWorkerThread
+37: 744A0FA7 (MSVBVM60): EbLibraryLoad
+38: 744AADE6 (MSVBVM60): ThunRTMain
+39: 744AACEC (MSVBVM60): ThunRTMain
+40: 0040BDE2 (smbx): start
+41: 77917A7E (ntdll): RtlGetAppContainerNamedObjectPath
+42: 77917A4E (ntdll): RtlGetAppContainerNamedObjectPath
+
+== Reporting ==
+If you like to help us finding the error then please post this log at:
+* http://wohlsoft.ru/forum/ or
+* http://www.supermariobrosx.org/forums/viewforum.php?f=35 or
+* http://talkhaus.raocow.com/viewforum.php?f=36
+
+
+
+
+USERNAME: 
+(NONE)
+
+
+USERCOMMENT: 
+(NONE)
