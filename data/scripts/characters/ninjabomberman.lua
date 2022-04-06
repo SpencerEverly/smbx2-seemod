@@ -89,14 +89,14 @@ function ninjabomberman.onTick()
 			Text.printWP("Press run to Exit Level", 200, 200,-5)
 		else
 			unFreezePlayer(false, false)
-			Defines.gravity = oldGravity
+			Defines.gravity = 12
 		end
 		if not startedAsBomberman then
 			state = savestate.save(savestate.STATE_ALL)
 			startedAsBomberman = true
 		end
-		player:mem(0x1A, FIELD_WORD, 0)
-		player:mem(0x18, FIELD_WORD, -1)
+		player:mem(0x1A, FIELD_BOOL, false)
+		player:mem(0x18, FIELD_BOOL, false)
 
 		for k, v in pairs(NPC.get()) do
 			if (v.id == 192) then
@@ -186,10 +186,10 @@ function ninjabomberman.onTick()
 			end
 			if  player.jumpKeyPressing or player.altJumpKeyPressing then
 				if player.speedY > 0.2 then 
-					player.speedY = 0.2
+					player.speedY = 2.5
 				end
 				--Hover timer
-				player:mem(0x1C, FIELD_WORD, -1)
+				--player:mem(0x1C, FIELD_WORD) == 25
 			end			
 		else
 			canJump = false
@@ -214,7 +214,7 @@ function ninjabomberman.onKeyDown(keycode)
 			isInStartMenu = not isInStartMenu
 		elseif (keycode == KEY_JUMP) or (keycode == KEY_SPINJUMP) then
 			--prevent hover 
-			player:mem(0x1C, FIELD_WORD, -1)
+			player:mem(0x1C, FIELD_WORD, 0)
 			if (canJump) then
 				player.speedY = -10
 				playSFX(1)
