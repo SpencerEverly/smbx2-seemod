@@ -27,3 +27,38 @@ Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
 Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
 Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
 Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: LoadConfig -> image file is not exist: E:/Github2/SMBX2_SMAS/data/graphics/block/block-952.png
+Warning: LoadConfig -> BLOCK-949 image file is not exist: E:/Github2/SMBX2_SMAS/data/graphics/block/block-952.png
+Warning: LoadConfig -> image file is not exist: E:/Github2/SMBX2_SMAS/data/graphics/block/block-951.png
+Warning: LoadConfig -> BLOCK-950 image file is not exist: E:/Github2/SMBX2_SMAS/data/graphics/block/block-951.png
+Warning: LoadConfig -> Not all blocks loaded! Total: 2000, Loaded: 2001)
+Critical: Error! *.INI configs not loaded
+Warning: (:0, ): QString::arg: Argument missing: The editor was unable to open a file:
+The configuration pack was loaded, but contains errors., E:/Github2/SMBX2_SMAS/data/PGE/configs/SMBX2-Integration/
+Critical: Error! *.INI configs not loaded
+Warning: (:0, ): QString::arg: Argument missing: The editor was unable to open a file:
+The configuration pack was loaded, but contains errors., E:/Github2/SMBX2_SMAS/data/PGE/configs/SMBX2-Integration/
+Warning: LoadConfig -> image file is not exist: E:/Github2/SMBX2_SMAS/data/graphics/block/block-952.png
+Warning: LoadConfig -> BLOCK-949 image file is not exist: E:/Github2/SMBX2_SMAS/data/graphics/block/block-952.png
+Warning: LoadConfig -> image file is not exist: E:/Github2/SMBX2_SMAS/data/graphics/block/block-951.png
+Warning: LoadConfig -> BLOCK-950 image file is not exist: E:/Github2/SMBX2_SMAS/data/graphics/block/block-951.png
+Warning: LoadConfig -> Not all blocks loaded! Total: 2000, Loaded: 2001)
+Critical: Error! *.INI configs not loaded
+Warning: (:0, ): QString::arg: Argument missing: The editor was unable to open a file:
+The configuration pack was loaded, but contains errors., E:/Github2/SMBX2_SMAS/data/PGE/configs/SMBX2-Integration/
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
