@@ -63,7 +63,7 @@ function princessRinka.onTick()
 					displayText = not displayText
 				end
 				if displayText then
-					Text.printWP("RINKA INCOMING", 274, 295,5)
+					Text.printWP("RINKA INCOMING", 274, 295,-4)
 				end				
 			elseif rinkaCounter == nextRinka then
 				for i = 0, rng.randomInt(1, 6), 1 do
