@@ -8,6 +8,8 @@ Things to fix:
 - The camera vision cones on level seem to crach the game.
 ]]
 
+if Player(2) and Player(2).isValid then return end
+
 local colliders = require("colliders")
 local rng = require("rng");
 local vectr = require("vectr")
@@ -18,6 +20,8 @@ local pm = require("playerManager")
 local defs = require("expandedDefines")
 
 local snake = {}
+
+_G.CHARACTER_SNAKE = CHARACTER_SNAKE
 
 --Generated enemy vision cone info
 local visioncones = {}
@@ -81,9 +85,8 @@ local function contains(a,b)
 end
 
 function snake.onInitAPI()
-	registerEvent(snake, "onLoop", "onLoop", false)
+	registerEvent(snake, "onTick", "onTick", false)
 	registerEvent(snake, "onDraw", "onDraw", false)
-	registerEvent(snake, "onKeyDown", "onKeyDown", false)
 	registerEvent(snake, "onInputUpdate", "onInputUpdate", false)
 	registerEvent(snake, "onJump", "onJump", true)
 	registerEvent(snake, "onJumpEnd", "onJumpEnd", false)
@@ -113,11 +116,13 @@ local function npcfilter(v)
 	return not v.friendly and not v.isHidden and snake.enemies[v.id];
 end
 
-
-function snake.onKeyDown(key)
+--Disable up and down slash
+function snake.onInputUpdate()
 	if (player.character == CHARACTER_SNAKE) then
 		--Powerup handling
-		if(key == KEY_RUN and player:mem(0x114,FIELD_WORD) ~= 11 and player:mem(0x114,FIELD_WORD) ~= 10 and player:mem(0x40,FIELD_WORD)~= 3) then --Pressed Tanuki and not climbing
+		pm.winStateCheck()
+		--Pressed Tanuki and not climbing
+		if (player.keys.run == KEYS_PRESSED) and player:mem(0x114,FIELD_WORD) ~= 11 and player:mem(0x114,FIELD_WORD) ~= 10 and player:mem(0x40,FIELD_WORD) ~= 3 then
 			if(player.powerup == PLAYER_FIREFLOWER) then
 				if(c4 == nil) then
 					--Spawn new C4 object
@@ -152,18 +157,11 @@ function snake.onKeyDown(key)
 				end
 			end
 		end
-	end
-end
-
---Disable up and down slash
-function snake.onInputUpdate()
-	if (player.character == CHARACTER_SNAKE) then
-		pm.winStateCheck()
 		if(Misc.isPaused()) then
 			return;
 		end
 		if((player.jumpKeyPressing or player.altJumpKeyPressing) and player:mem(0x60,FIELD_WORD) ~= -1) then
-			player.upKeyPressing = false;
+			--player.upKeyPressing = false;
 		end
 		if(player:mem(0x146,FIELD_WORD) == 0 and player:mem(0x48,FIELD_WORD) == 0 and (player:mem(0x40, FIELD_WORD) ~= 3 and player:mem(0x40, FIELD_WORD) ~= 2)) then
 			player.downKeyPressing = false;
@@ -184,7 +182,7 @@ function snake.alert(source, spawnid)
 	end
 end
 
-function snake.onLoop()
+function snake.onTick()
 	if(c4 ~= nil and c4.isValid) then
 		c4:mem(0xF0,FIELD_DFLOAT,0); --Make C4 perpetual
 		if(player.character ~= CHARACTER_SNAKE or player.powerup ~= PLAYER_FIREFLOWER) then	--Destroy C4 if the player changes character or powerup
@@ -218,10 +216,8 @@ function snake.onLoop()
 		--Set player direction variable
 		playerDirection = player:mem(0x106,FIELD_WORD)
 		
-		--Lower jump height when not in Leaf mode
-		if player.powerup ~= PLAYER_LEAF and player:mem(0x11C, FIELD_WORD) > 12 then
-			player:mem(0x11C, FIELD_WORD, 12);
-		end
+		--Jump height
+		Defines.jumpheight = 20
 		
 		--Cap to 2 hearts
 		if(player:mem(0x16, FIELD_WORD) > 2) then
@@ -440,27 +436,22 @@ function snake.onDraw()
 				climbTimer = climbtime;
 			end
 			--Draw alertness element
-			Graphics.drawImageWP(pm.getGraphic(CHARACTER_SNAKE, snake.HUD_CAMO), 748, 12, 5);
+			Graphics.drawImageWP(pm.getGraphic(CHARACTER_SNAKE, snake.HUD_CAMO), 348, 12, -1.99999);
 			local camo = tostring(math.ceil(100*(snake.alertCooldown-snake.alertTimer)/(snake.alertCooldown)));
 			--textblox.printExt("%",{x=774,y=38,font=textblox.FONT_SPRITEDEFAULT3, z=5});
-			FONT.text = "%"
-			FONT.x=774
-			FONT.y=38
-			FONT.maxWidth=nil
-			textplus.print(FONT)
-			Text.printWP(camo,1,782-#camo*18 - 8,36,5)
+			Text.printWP(camo,1,400-#camo*18 - 8,46,-5)
 			
 			--Draw powerup elements
 			if(player:mem(0x16, FIELD_WORD) > 1 and player.forcedState ~= 1 and player.forcedState ~= 4) then
 				local power = {label = "", graphic = snake.HUD_POWER_ARMOUR}
 				if(player.powerup <= PLAYER_BIG) then
-					power.label = "BODY ARMOUR";
+					power.label = "BODY ARMOR";
 					power.graphic = snake.HUD_POWER_ARMOUR;
 				elseif(player.powerup == PLAYER_FIREFLOWER) then
 					power.label = "C4";
 					power.graphic = snake.HUD_POWER_C4;
 				elseif(player.powerup == PLAYER_LEAF) then
-					power.label = "ATHLETIC ARMOUR";
+					power.label = "ATHLETIC ARMOR";
 					power.graphic = snake.HUD_POWER_ATHLETIC;
 				elseif(player.powerup == PLAYER_TANOOKIE) then
 					power.label = "STEALTH BOX";
@@ -472,13 +463,12 @@ function snake.onDraw()
 					power.label = "MK22";
 					power.graphic = snake.HUD_POWER_MK22;
 				end
-				
-				Graphics.drawImageWP(pm.getGraphic(CHARACTER_SNAKE, power.graphic), 16, 16, 5);
-				--textblox.printExt(power.label,{x=16,y=52,width=80,font=textblox.FONT_SPRITEDEFAULT3, z=5});
+				Graphics.drawImageWP(pm.getGraphic(CHARACTER_SNAKE, power.graphic), 400, 12, -5);
 				FONT.text = power.label
-				FONT.x=16
-				FONT.y=52
-				FONT.maxWidth=80
+				FONT.x=398
+				FONT.y=48
+				FONT.maxWidth=65
+				FONT.priority = -5
 				textplus.print(FONT)
 			end
 			
@@ -491,7 +481,7 @@ end
 
 function snake.initCharacter()
 	-- CLEANUP NOTE: This is not safe if a level makes it's own use of activateHud
-	Graphics.activateHud(false)
+	--Graphics.activateHud(false)
 	
 	-- CLEANUP NOTE: This is not quite safe in various cases
 	Defines.player_link_shieldEnabled = false
@@ -499,7 +489,7 @@ end
 
 function snake.cleanupCharacter()
 	-- CLEANUP NOTE: This is not safe if a level makes it's own use of activateHud
-	Graphics.activateHud(true)
+	--Graphics.activateHud(true)
 	
 	-- CLEANUP NOTE: This is not quite safe in various cases
 	Defines.player_link_shieldEnabled = true

@@ -881,7 +881,7 @@ end
 
 local function drawHUD()
 	--NPC box
-	Graphics.draw{x=405,y=16,type=RTYPE_IMAGE,image=pm.getGraphic(CHARACTER_BOWSER,HUD.npc_box), priority=5};
+	Graphics.draw{x=405,y=16,type=RTYPE_IMAGE,image=pm.getGraphic(CHARACTER_BOWSER,HUD.npc_box), priority=-5};
 	if(#minionQueue > 0 and minionQueue[1].npc.isValid) then
 		local gfxw = NPC.config[minionQueue[1].id].gfxwidth;
 		local gfxh = NPC.config[minionQueue[1].id].gfxheight;
@@ -891,7 +891,7 @@ local function drawHUD()
 		if(gfxh == 0) then
 			gfxh = minionQueue[1].npc.height;
 		end
-		Graphics.draw{x=433-gfxw*0.5,y=44-gfxh*0.5,type=RTYPE_IMAGE,image=Graphics.sprites.npc[minionQueue[1].id].img,sourceX=0,sourceY=0,sourceWidth=gfxw,sourceHeight=gfxh, priority=5};
+		Graphics.draw{x=433-gfxw*0.5,y=44-gfxh*0.5,type=RTYPE_IMAGE,image=Graphics.sprites.npc[minionQueue[1].id].img,sourceX=0,sourceY=0,sourceWidth=gfxw,sourceHeight=gfxh, priority=-5};
 	end
 	
 	--HP box
@@ -901,27 +901,27 @@ local function drawHUD()
 	else
 		hitimg = pm.getGraphic(CHARACTER_BOWSER,HUD.hit_empty);
 	end
-	Graphics.draw{x=339,y=16,type=RTYPE_IMAGE,image=hitimg, priority=5};
+	Graphics.draw{x=339,y=16,type=RTYPE_IMAGE,image=hitimg, priority=-5};
 	
 	--Life counter
-	Graphics.draw{x=234,y=26,type=RTYPE_IMAGE,image=Graphics.sprites.hardcoded["33-3"].img, priority=5};
-	Graphics.draw{x=274,y=27,type=RTYPE_IMAGE,image=Graphics.sprites.hardcoded["33-1"].img, priority=5};
-	Text.printWP(mem(0x00B2C5AC,FIELD_FLOAT),1,296,27,5);
+	--Graphics.draw{x=234,y=26,type=RTYPE_IMAGE,image=Graphics.sprites.hardcoded["33-3"].img, priority=-5};
+	--Graphics.draw{x=274,y=27,type=RTYPE_IMAGE,image=Graphics.sprites.hardcoded["33-1"].img, priority=-5};
+	--Text.printWP(mem(0x00B2C5AC,FIELD_FLOAT),1,296,27,-5);
 	
 	--Coin counter
-	Graphics.draw{x=488,y=26,type=RTYPE_IMAGE,image=Graphics.sprites.hardcoded["33-2"].img, priority=5};
-	Graphics.draw{x=512,y=27,type=RTYPE_IMAGE,image=Graphics.sprites.hardcoded["33-1"].img, priority=5};
-	Text.printWP(mem(0x00B2C5A8,FIELD_WORD),1,552-18*(#tostring(mem(0x00B2C5A8,FIELD_WORD))-1),27, 5);
+	--Graphics.draw{x=488,y=26,type=RTYPE_IMAGE,image=Graphics.sprites.hardcoded["33-2"].img, priority=-5};
+	--Graphics.draw{x=512,y=27,type=RTYPE_IMAGE,image=Graphics.sprites.hardcoded["33-1"].img, priority=-5};
+	--Text.printWP(mem(0x00B2C5A8,FIELD_WORD),1,552-18*(#tostring(mem(0x00B2C5A8,FIELD_WORD))-1),27, -5);
 	
 	--Score
-	Text.printWP(mem(0x00B2C8E4,FIELD_DWORD),1,552-18*(#tostring(mem( 0x00B2C8E4,FIELD_DWORD))-1),47, 5);
+	--Text.printWP(mem(0x00B2C8E4,FIELD_DWORD),1,552-18*(#tostring(mem( 0x00B2C8E4,FIELD_DWORD))-1),47, -5);
 	
 	--Star counter
-	if(mem(0x00B251E0,FIELD_WORD) > 0) then
-		Graphics.draw{x=250,y=46,type=RTYPE_IMAGE,image=Graphics.sprites.hardcoded["33-5"].img, priority=5};
-		Graphics.draw{x=274,y=47,type=RTYPE_IMAGE,image=Graphics.sprites.hardcoded["33-1"].img, priority=5};
-		Text.printWP(mem(0x00B251E0,FIELD_WORD),1,296,47,5);
-	end
+	--if(mem(0x00B251E0,FIELD_WORD) > 0) then
+		--Graphics.draw{x=250,y=46,type=RTYPE_IMAGE,image=Graphics.sprites.hardcoded["33-5"].img, priority=-5};
+		--Graphics.draw{x=274,y=47,type=RTYPE_IMAGE,image=Graphics.sprites.hardcoded["33-1"].img, priority=-5};
+		--Text.printWP(mem(0x00B251E0,FIELD_WORD),1,296,47,5);
+	--end
 end
 
 function bowser.onDraw()
@@ -1001,7 +1001,7 @@ function bowser.initCharacter()
 	end
 	
 	--TODO: Make this more stable
-	hud(false);
+	--hud(false);
 end
 
 function bowser.cleanupCharacter()

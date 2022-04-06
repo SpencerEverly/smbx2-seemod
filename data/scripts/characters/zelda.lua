@@ -128,8 +128,6 @@ local function playASong(songName)
 end
 
 function zelda.onInitAPI()
-	registerEvent(zelda, "onKeyDown", "onKeyDown", false)
-	registerEvent(zelda, "onKeyUp", "onKeyUp", false)
 	registerEvent(zelda, "onInputUpdate", "onInputUpdate", false)
 	registerEvent(zelda, "onTick", "onTick", false)
 	registerEvent(zelda, "onJump", "onJump", false)
@@ -175,7 +173,7 @@ function zelda.onDraw()
 	end
 	
 	if(flashtimer > 0) then
-		Graphics.glDraw{priority = 4.9, vertexCoords = {0,0,800,0,800,600,0,600}, primitive=Graphics.GL_TRIANGLE_FAN, color = {1,1,1,flashtimer*0.1}};
+		Graphics.glDraw{priority = -5, vertexCoords = {0,0,800,0,800,600,0,600}, primitive=Graphics.GL_TRIANGLE_FAN, color = {1,1,1,flashtimer*0.1}};
 		flashtimer = flashtimer - 1;
 	end
 	
@@ -232,14 +230,14 @@ function zelda.onDraw()
 		end
 		
 		if(timeTravelAccess) then
-			Graphics.draw{type=RTYPE_IMAGE,image=pm.getGraphic(CHARACTER_ZELDA, flute),x=580,y=25,priority=5}
+			Graphics.draw{type=RTYPE_IMAGE,image=pm.getGraphic(CHARACTER_ZELDA, flute),x=580,y=25,priority=-5}
 		elseif(state ~= nil and canTimeTravel) then
-			Graphics.draw{type=RTYPE_IMAGE,image=pm.getGraphic(CHARACTER_ZELDA, fluteused),x=580,y=25,priority=5}
+			Graphics.draw{type=RTYPE_IMAGE,image=pm.getGraphic(CHARACTER_ZELDA, fluteused),x=580,y=25,priority=-5}
 		else
-			Graphics.draw{type=RTYPE_IMAGE,image=pm.getGraphic(CHARACTER_ZELDA, flutegrey),x=580,y=25,priority=5}
+			Graphics.draw{type=RTYPE_IMAGE,image=pm.getGraphic(CHARACTER_ZELDA, flutegrey),x=580,y=25,priority=-5}
 		end
 	
-			Graphics.draw{type=RTYPE_IMAGE,image=pm.getGraphic(CHARACTER_ZELDA, playerStateGraphic[currentPowerup]),x=620,y=25,priority=5}
+			Graphics.draw{type=RTYPE_IMAGE,image=pm.getGraphic(CHARACTER_ZELDA, playerStateGraphic[currentPowerup]),x=620,y=25,priority=-5}
 	end
 end
 
@@ -249,6 +247,31 @@ local statueTriggerTime = 0;
 function zelda.onInputUpdate()
 	if (player.character == CHARACTER_ZELDA and player:mem(0x13E,FIELD_WORD) == 0 and not Misc.isPaused()) then
 		pm.winStateCheck()
+		if (player.character == CHARACTER_ZELDA) and player:mem(0x13E,FIELD_WORD) == 0 and ((player.forcedState == 0) or (player.forcedState == 500)) then
+			if(player:mem(0x4A,FIELD_WORD) == 0) then
+				if player.keys.run == KEYS_PRESSED then
+					if (timeTravelAccess) then
+						playASong(pm.getSound(CHARACTER_ZELDA, playerSongs[playerStates[player.powerup]].."1"))
+						if(playerStates[player.powerup] == savestate.STATE_PLAYER) then
+							warpspot = {x=player.x+player.width*0.5,y=player.y+player.height};
+						end
+						state = savestate.save(playerStates[player.powerup])
+						timeTravelAccess = false
+						canTimeTravel = false
+						hasSetPoint = true
+						firstUseAvailable = false
+					end
+				end
+				if player.keys.run == KEYS_PRESSED and (state ~= nil) and canTimeTravel then
+					playASong(pm.getSound(CHARACTER_ZELDA, playerSongs[playerStates[player.powerup]].."2"))
+					flashtimer = 10;
+					savestate.load(state, playerStates[player.powerup])
+					canTimeTravel = false
+					loopCounter = 0
+					timeTravelAccess = true;
+				end
+			end
+		end
 		if(teleportDoJump and not player.jumpKeyPressing and not player.altJumpKeyPressing) then
 				player.speedY = -4;
 		end
@@ -335,34 +358,6 @@ function zelda.onInputUpdate()
 				player:mem(0x164,FIELD_WORD,0);
 			end
 			waitForStatue = false;
-		end
-	end
-end
-
-function zelda.onKeyUp(keycode)
-	if (player.character == CHARACTER_ZELDA) and player:mem(0x13E,FIELD_WORD) == 0 and ((player.forcedState == 0) or (player.forcedState == 500)) then
-		if(player:mem(0x4A,FIELD_WORD) == 0) then
-			if (keycode == KEY_RUN) then
-				if (timeTravelAccess) then
-					playASong(pm.getSound(CHARACTER_ZELDA, playerSongs[playerStates[player.powerup]].."1"))
-					if(playerStates[player.powerup] == savestate.STATE_PLAYER) then
-						warpspot = {x=player.x+player.width*0.5,y=player.y+player.height};
-					end
-					state = savestate.save(playerStates[player.powerup])
-					timeTravelAccess = false
-					canTimeTravel = false
-					hasSetPoint = true
-					firstUseAvailable = false
-				end
-			end
-			if (keycode == KEY_RUN) and (state ~= nil) and canTimeTravel then
-				playASong(pm.getSound(CHARACTER_ZELDA, playerSongs[playerStates[player.powerup]].."2"))
-				flashtimer = 10;
-				savestate.load(state, playerStates[player.powerup])
-				canTimeTravel = false
-				loopCounter = 0
-				timeTravelAccess = true;
-			end
 		end
 	end
 end

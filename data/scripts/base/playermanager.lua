@@ -4,6 +4,7 @@
 --Edited by Rednaxela, because why not
 --Rocky was here too
 --Enjl.
+--Spencer Everly.
 local playerManager = {}
 
 -- Local function definitions
@@ -65,6 +66,7 @@ function playerManagerInit()
 	configCharacter{id=14, name="ultimaterinka",   base=4, switchBlock=655, filterBlock=656, deathEffect=157}
 	configCharacter{id=15, name="unclebroadsword", base=1, switchBlock=659, filterBlock=660, deathEffect=159}
 	configCharacter{id=16, name="samus",           base=5, switchBlock=663, filterBlock=664, deathEffect=161}
+	configCharacter{id=17, name="yiyoshi",         base=3, switchBlock=661, filterBlock=662, deathEffect=160}
 	
 	-- Load Character APIs if this is not the overworld
 	--if not isOverworld then

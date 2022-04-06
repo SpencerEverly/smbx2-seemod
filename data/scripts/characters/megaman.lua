@@ -4,6 +4,8 @@
 --Continued by Enjl, 2016
 --Contact me at https://www.youtube.com/subscription_center?add_user=msotane
 
+if Player(2) and Player(2).isValid then return end
+
 local colliders = require("colliders")
 local imagic = require("imagic")
 local particles = require("particles")
@@ -179,14 +181,14 @@ local isExternallyPaused = false
 local slideCollider = colliders.Box(0,0,0,0)
 
 local function drawBar(x, y, powerup, value, priority)
-	Graphics.drawImageWP(pm.getGraphic(CHARACTER_MEGAMAN,megamanHud), x - 8, y, priority)
+	Graphics.drawImageWP(pm.getGraphic(CHARACTER_MEGAMAN,megamanHud), x - 8, y + 80, -5)
 	for i=1, value do
 		imagic.Draw{texture = pm.getGraphic(CHARACTER_MEGAMAN,energyBits),
 					rotation = 90,
 					align = imagic.ALIGN_CENTRE,
 					x=x,
-					y=115 + y - (4 * i),
-					priority=priority,
+					y=115 + y + 80 - (4 * i),
+					priority=-5,
 					sourceY=12 * (powerup - 1),
 					sourceWidth=2,
 					sourceHeight=12}
@@ -213,9 +215,9 @@ local function drawHudElements(playerIdx, camObj, playerObj, priority, isSplit, 
 		offset = 800-offset;
 	end
 	
-	drawBar(offset, y, 1, healthValue, priority)
+	drawBar(offset, y, 1, healthValue, -5)
 	if playerObj.powerup > 2 then
-		drawBar(offset+20*side, y, playerObj.powerup, megaman.powerUpStuff[playerObj.powerup].left, priority)
+		drawBar(offset+20*side, y, playerObj.powerup, megaman.powerUpStuff[playerObj.powerup].left, -5)
 	end
 end
 
@@ -669,7 +671,6 @@ end
 function megaman.onInitAPI()
 	registerEvent(megaman, "onTick", "onTick", false)
 	registerEvent(megaman, "onTickEnd", "onTickEnd", false)
-	registerEvent(megaman, "onKeyDown", "onKeyDown", false)
 	registerEvent(megaman, "onInputUpdate", "onInputUpdate", false)
 	registerEvent(megaman, "onMessageBox", "onMessageBox", false)
 	registerEvent(megaman, "onCameraUpdate", "onCameraUpdate", false)
@@ -841,59 +842,6 @@ function megaman.onCameraUpdate()
 	end
 end
 
-function megaman.onKeyDown(keycode)
-	if player.character == CHARACTER_MEGAMAN then
-		if(player:mem(0x13E, FIELD_WORD) > 0) or (player.forcedState ~= 0) then
-			return;
-		end
-		
-		if cantShoot then
-			cantShoot = false
-			return
-		end
-		
-		if (keycode == KEY_X) and not isDead and introOver and not introDelay and not isSliding and not inPause then
-			if megaman.powerUpStuff[player.powerup].left > 0 or player.powerup <= 2 then
-				local assignSpeedX, xOffset, spawnModifier
-				Audio.playSFX(pm.getSound(CHARACTER_MEGAMAN,sfx_shoot));
-				shootAlarm = 10;
-				assignSpeedX = direction * npcPowerup.speedX
-				if (npcPowerup.id == 160 and direction == -1) then
-					xOffset = (-1 * NPC.config[160].width)
-				else
-					xOffset = direction * npcPowerup.xOffset
-				end
-				theFireball = NPC.spawn(npcPowerup.id, player.x + xOffset, player.y - 8 + npcPowerup.yOffset + (player:mem(0xD0, FIELD_DFLOAT) - 53)*0.5, player.section)
-				theFireball.direction = direction
-				if (npcPowerup.id) == 13 then
-					theFireball.ai1 = 4
-				elseif (npcPowerup.id == 282) then
-					theFireball.friendly = true
-				elseif (npcPowerup.id == 292) then
-					theFireball.ai3 = 1
-					theFireball.ai5 = 1
-					theFireball:mem(0x11E, FIELD_BYTE, 240)
-				end
-				if (player.powerup == 3) then
-					table.insert(playerFireballs, theFireball)
-					if (theFireball.direction == -1) then
-						spawnModifier = 0
-					else
-						spawnModifier = NPC.config[282].width
-					end
-					theHammer = NPC.spawn(171, theFireball.x + spawnModifier, theFireball.y + (0.5 * NPC.config[282].height), player.section)
-					table.insert(playerHammers, theHammer)
-				end
-				if (player.powerup == 5) then
-					table.insert(playerJets, theFireball)
-				end
-				theFireball.speedX = assignSpeedX
-				megaman.powerUpStuff[player.powerup].left = math.max(megaman.powerUpStuff[player.powerup].left - npcPowerup.cost,0)
-			end
-		end
-	end
-end
-
 local function setPlayerPowerup()
 	player.powerup = currentMenu[menuPosition]
 	if player.powerup == 1 and health >= 4 then
@@ -923,6 +871,56 @@ function megaman.onInputUpdate()
 		end
 		handleAnim(runanim)
 		handleAnim(rungrabanim)
+		if player.character == CHARACTER_MEGAMAN then
+			if(player:mem(0x13E, FIELD_WORD) > 0) or (player.forcedState ~= 0) then
+				return;
+			end
+			
+			if cantShoot then
+				cantShoot = false
+				return
+			end
+			
+			if player.keys.run == KEYS_DOWN and not isDead and introOver and not introDelay and not isSliding and not inPause then
+				if megaman.powerUpStuff[player.powerup].left > 0 or player.powerup <= 2 then
+					local assignSpeedX, xOffset, spawnModifier
+					Audio.playSFX(pm.getSound(CHARACTER_MEGAMAN,sfx_shoot));
+					shootAlarm = 10;
+					assignSpeedX = direction * npcPowerup.speedX
+					if (npcPowerup.id == 160 and direction == -1) then
+						xOffset = (-1 * NPC.config[160].width)
+					else
+						xOffset = direction * npcPowerup.xOffset
+					end
+					theFireball = NPC.spawn(npcPowerup.id, player.x + xOffset, player.y - 8 + npcPowerup.yOffset + (player:mem(0xD0, FIELD_DFLOAT) - 53)*0.5, player.section)
+					theFireball.direction = direction
+					if (npcPowerup.id) == 13 then
+						theFireball.ai1 = 4
+					elseif (npcPowerup.id == 282) then
+						theFireball.friendly = true
+					elseif (npcPowerup.id == 292) then
+						theFireball.ai3 = 1
+						theFireball.ai5 = 1
+						theFireball:mem(0x11E, FIELD_BYTE, 240)
+					end
+					if (player.powerup == 3) then
+						table.insert(playerFireballs, theFireball)
+						if (theFireball.direction == -1) then
+							spawnModifier = 0
+						else
+							spawnModifier = NPC.config[282].width
+						end
+						theHammer = NPC.spawn(171, theFireball.x + spawnModifier, theFireball.y + (0.5 * NPC.config[282].height), player.section)
+						table.insert(playerHammers, theHammer)
+					end
+					if (player.powerup == 5) then
+						table.insert(playerJets, theFireball)
+					end
+					theFireball.speedX = assignSpeedX
+					megaman.powerUpStuff[player.powerup].left = math.max(megaman.powerUpStuff[player.powerup].left - npcPowerup.cost,0)
+				end
+			end
+		end
 		if not isExternallyPaused then
 			if (player:mem(0x140, FIELD_WORD) > 95 and not inPause) or Level.winState() > 0 then
 				player.jumpKeyPressing = false

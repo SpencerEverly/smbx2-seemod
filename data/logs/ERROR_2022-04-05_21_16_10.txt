@@ -1,0 +1,48 @@
+== Crash Summary ==
+LunaLua Version: LUNALUA V0.7.3.2 BETA
+Exception Code: 0xc0000005 (Access Violation)
+
+== Stack Trace ==
+0: f:\dd\vctools\crt\vcruntime\src\string\i386\memcpy.asm (636): TrailingDownVec
+1: 63144B3B (LunaDll): lj_buf_putmem
+2: 63136496 (LunaDll): lj_strfmt_pushvf
+3: 63122F42 (LunaDll): luaL_error
+4: c:\lunalua\lunadll\luamain\luaproxycomponent\luaproxyglobalfunctions.cpp (48): LuaProxy::loadHitboxes
+5: c:\lunalua\lunadll\libs\luabind-include\luabind\detail\call.hpp (292): luabind::detail::invoke_normal<void (__cdecl*)(int,int,std::basic_string<char,std::char_traits<char>,std::allocator<char> > const &),boost::mpl::vector4<void,int,int,std::basic_string<char,std::char_traits<char>,std::allocator<char> > const &>,luabind::detail::null_type>
+6: c:\lunalua\lunadll\libs\luabind-include\luabind\make_function.hpp (63): luabind::detail::function_object_impl<void (__cdecl*)(int,int,std::basic_string<char,std::char_traits<char>,std::allocator<char> > const &),boost::mpl::vector4<void,int,int,std::basic_string<char,std::char_traits<char>,std::allocator<char> > const &>,luabind::detail::null_type>::entry_point
+7: 62EE280D (LunaDll): lj_BC_FUNCC
+8: 6311F096 (LunaDll): lua_pcall
+9: 62F11050 (LunaDll): luabind::detail::pcall
+10: c:\lunalua\lunadll\libs\luabind-include\luabind\detail\call_function.hpp (264): luabind::detail::proxy_function_void_caller<boost::tuples::tuple<std::shared_ptr<Event> const *,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type> >::~proxy_function_void_caller<boost::tuples::tuple<std::shared_ptr<Event> const *,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type> >
+11: c:\lunalua\lunadll\luamain\lunaluamain.h (109): CLunaLua::callLuaFunction<lua_State *,char const *,std::shared_ptr<Event> >
+12: c:\lunalua\lunadll\luamain\lunaluamain.h (148): CLunaLua::callEvent<>
+13: c:\lunalua\lunadll\misc\testmodemenu.cpp (146): testModePauseMenu
+14: c:\lunalua\lunadll\misc\testmode.cpp (308): pauseTestModeHook
+15: 008CA59C (smbx): levelLoop
+16: 008C224A (smbx): Sub_Main
+17: 73F10145 (MSVBVM60): EbLoadRunTime
+18: 73F0E4C8 (MSVBVM60): EbSetContextWorkerThread
+19: 73F00FA7 (MSVBVM60): EbLibraryLoad
+20: 73F0ADE6 (MSVBVM60): ThunRTMain
+21: 73F0ACEC (MSVBVM60): ThunRTMain
+22: 0040BDE2 (smbx): start
+23: 77917A7E (ntdll): RtlGetAppContainerNamedObjectPath
+24: 77917A4E (ntdll): RtlGetAppContainerNamedObjectPath
+25: 78746341 (atioglxx): atiPPHSN
+
+== Reporting ==
+If you see this crash, chances are this may be out of our jurisdiction.If you like to help Codehaus find the error, then please post this log at:
+* http://wohlsoft.ru/forum/ or
+* http://www.supermariobrosx.org/forums/viewforum.php?f=35 or
+* http://talkhaus.raocow.com/viewforum.php?f=36
+
+Or if you also want to report Spencer Everly, report them at:* https://github.com/SpencerEverly/smasplusplus/issues
+
+
+
+USERNAME: 
+(NONE)
+
+
+USERCOMMENT: 
+(NONE)

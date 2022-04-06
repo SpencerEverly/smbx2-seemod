@@ -18,6 +18,7 @@ local rng = require("rng")
 local pm = require("playerManager")
 local imagic = require("imagic")
 local defs = require("expandedDefines")
+local HUDOverride = require("hudoverride")
 
 local megashroom = require("NPCs/AI/megashroom")
 
@@ -44,7 +45,6 @@ function samus.onInitAPI()
 	registerEvent(samus, "onDraw", "onDraw", false)
 	registerEvent(samus, "onExitLevel", "onExitLevel", false)
 	registerEvent(samus, "onInputUpdate", "onInputUpdate", false)
-	registerEvent(samus, "onKeyDown", "onKeyDown", false)
 	registerEvent(samus, "onJumpEnd", "onJumpEnd", false)
 	registerEvent(samus, "onNPCKill", "onNPCKill", false)
 	registerEvent(samus, "onMessageBox", "onMessageBox", false)
@@ -103,9 +103,9 @@ end
 local function paintHealth(countChoice, graphicChoice)
 	for i = 1, countChoice do
 		if i <= 10 then
-			Graphics.drawImageWP(graphicChoice, -13 + (18 * i), 45, 5)
+			Graphics.drawImageWP(graphicChoice, 292 + (18 * i), 45, -5)
 		else
-			Graphics.drawImageWP(graphicChoice, -13 + (18 * (i - 10)), 61, 5)
+			Graphics.drawImageWP(graphicChoice, 292 + (18 * (i - 10)), 61, -5)
 		end
 	end
 end
@@ -145,9 +145,9 @@ local function checkHealth()
 	if samusHealth == 0 and player:mem(0x13E,FIELD_WORD) == 0 then
 		player:kill()
 	end
-	Graphics.drawImageWP(pm.getGraphic(CHARACTER_SAMUS, healthBox), 5, 5, 5)
-	Text.printWP("SUPPLY", 39, 2, 5)
-	Text.printWP("Energy Tank", 5, 22,5)
+	Graphics.drawImageWP(pm.getGraphic(CHARACTER_SAMUS, healthBox), 313, 5, -5)
+	Text.printWP("SUPPLY", 348, 2, -5)
+	Text.printWP("Energy Tank", 303, 22,-5)
 	paintHealth(samusMaxHealth, pm.getGraphic(CHARACTER_SAMUS, blackBox))
 	paintHealth(samusLocalMaxHealth, pm.getGraphic(CHARACTER_SAMUS, emptyBox))
 	paintHealth(samusHealth, pm.getGraphic(CHARACTER_SAMUS, fullBox))
@@ -206,15 +206,6 @@ local function initDataStorage()
 end
 initDataStorage()
 
-
-function samus.onKeyDown(keycode)
-	if player.character == CHARACTER_SAMUS and (keycode == KEY_JUMP and (player.powerup == 4 or player.powerup == 5) and hasJumpedCounter < 5 and canJump) then
-		player.speedY = -7
-		hasJumpedCounter = hasJumpedCounter + 1
-		twirl = Audio.SfxOpen(pm.getSound(CHARACTER_SAMUS, sfx_twirl))
-		Audio.SfxPlayCh(16, twirl, 0)
-	end
-end
 
 function samus.onJumpEnd()
 	if player.character == CHARACTER_SAMUS then
@@ -427,6 +418,12 @@ local wasRunKeyPressing = false
 function samus.onInputUpdate()
 	if (player.character == CHARACTER_SAMUS) then
 		pm.winStateCheck()
+		if player.keys.jump == KEYS_PRESSED and (player.powerup == 4 or player.powerup == 5) and hasJumpedCounter < 5 and canJump then
+			player.speedY = -7
+			hasJumpedCounter = hasJumpedCounter + 1
+			twirl = Audio.SfxOpen(pm.getSound(CHARACTER_SAMUS, sfx_twirl))
+			Audio.SfxPlayCh(16, twirl, 0)
+		end
 	end
 	
 	if Misc.isPaused() then return end
@@ -723,7 +720,16 @@ function samus.initCharacter()
 	initDataStorage()
 	
 	-- CLEANUP NOTE: This is not safe if a level makes it's own use of activateHud
-	Graphics.activateHud(false)
+	HUDOverride.visible.keys = true
+	HUDOverride.visible.bombs = true
+	HUDOverride.visible.coins = true
+	HUDOverride.visible.score = false
+	HUDOverride.visible.lives = false
+	HUDOverride.visible.stars = true
+	HUDOverride.visible.starcoins = false
+	HUDOverride.visible.timer = true
+	HUDOverride.visible.levelname = true
+	HUDOverride.visible.overworldPlayer = true
 	
 	-- CLEANUP NOTE: This is not quite safe in various cases
 	Defines.player_link_shieldEnabled = false
@@ -741,8 +747,16 @@ end
 function samus.cleanupCharacter()
 	initDataStorage()
 	
-	-- CLEANUP NOTE: This is not safe if a level makes it's own use of activateHud
-	Graphics.activateHud(true)
+	HUDOverride.visible.keys = true
+	HUDOverride.visible.bombs = true
+	HUDOverride.visible.coins = true
+	HUDOverride.visible.score = false
+	HUDOverride.visible.lives = false
+	HUDOverride.visible.stars = true
+	HUDOverride.visible.starcoins = false
+	HUDOverride.visible.timer = true
+	HUDOverride.visible.levelname = true
+	HUDOverride.visible.overworldPlayer = true
 	
 	-- CLEANUP NOTE: This is not quite safe in various cases
 	Defines.player_link_shieldEnabled = true
