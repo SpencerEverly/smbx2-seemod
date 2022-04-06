@@ -100,7 +100,7 @@ HUDOverride.visible.timer = true
 HUDOverride.visible.levelname = true
 HUDOverride.visible.overworldPlayer = true
 
-HUDOverride.priority = 4.999999;
+HUDOverride.priority = -4;
 
 HUDOverride.ALIGN_LEFT = 0;
 HUDOverride.ALIGN_RIGHT = 1;
