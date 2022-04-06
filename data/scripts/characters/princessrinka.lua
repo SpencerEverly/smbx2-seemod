@@ -46,11 +46,11 @@ function princessRinka.onTick()
 			hasDied = true
 		end
 		if not princessRinka.iAmAWussLikeWoah then
-			if mem(0xB2C62A, FIELD_WORD) > 0 then -- Save Slot
-				mem(0x00B2C5AC, FIELD_FLOAT, 0) -- Lives
-			else
-				mem(0x00B2C5AC, FIELD_FLOAT, 1)
-			end
+			--if mem(0xB2C62A, FIELD_WORD) > 0 then -- Save Slot
+				--mem(0x00B2C5AC, FIELD_FLOAT, 0) -- Lives
+			--else
+				--mem(0x00B2C5AC, FIELD_FLOAT, 1)
+			--end
 		end
 
 		rinkaCounter = rinkaCounter + 1
