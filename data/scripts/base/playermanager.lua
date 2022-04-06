@@ -67,6 +67,7 @@ function playerManagerInit()
 	configCharacter{id=15, name="unclebroadsword", base=1, switchBlock=659, filterBlock=660, deathEffect=159}
 	configCharacter{id=16, name="samus",           base=5, switchBlock=663, filterBlock=664, deathEffect=161}
 	configCharacter{id=17, name="yiyoshi",         base=3, switchBlock=661, filterBlock=662, deathEffect=160}
+	configCharacter{id=18, name="juni",            base=4, switchBlock=1292, filterBlock=1293, deathEffect=158}
 	
 	-- Load Character APIs if this is not the overworld
 	--if not isOverworld then
@@ -507,9 +508,9 @@ function initOverworldCharacters()
 		
 		if(#playerManager.overworldCharacters == 0) then
 			for k,v in pairs(characters) do
-				if(k ~= CHARACTER_ULTIMATERINKA --[[and k~= CHARACTER_PRINCESSRINKA]]) then --Exclude certain rinka-based characters
-					table.insert(playerManager.overworldCharacters, k);
-				end
+				--if(k ~= CHARACTER_ULTIMATERINKA and k~= CHARACTER_PRINCESSRINKA) then --Exclude certain rinka-based characters
+				table.insert(playerManager.overworldCharacters, k);
+				--end
 			end
 		end
 	end
