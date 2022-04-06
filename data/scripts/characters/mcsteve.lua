@@ -20,6 +20,123 @@ local lib3d = require("lib3d")
 
 local steve = {}
 
+local priority = -4.2
+
+steve.generalSettings = {
+    walkSpeed = 2,
+    runSpeed  = 4,
+
+    jumpForce = 18,
+
+
+    -- How fast crouch-walking is.
+    crouchingAcceleration = 0.3,
+    crouchingMaxSpeed = 1,
+
+    -- The number of hearts the player starts with.
+    startingHealth = 2,
+    -- The maximum number of hearts the player can have.
+    maxHealth = 3,
+
+
+    -- The Y rotation that the player usually has.
+    normalYRotation = 40,
+    -- How fast the player rotates when turning.
+    turningRotationSpeed = 16,
+
+    -- How much the models are scaled when they're being loaded.
+    modelScale = 30,
+
+
+    -- How much the currently held item is offset from the hand.
+    heldToolOffset  = vector(-0.125,0.1875,-0.375),
+    heldBlockOffset = vector(-0.125,0.3125,-0.25),
+
+    -- How far the head gets rotated when looking up.
+    headLookUpRotation = -35,
+    -- How fast the head's rotation can change.
+    headRotationSpeed = 3,
+
+    glintFrames = 3,
+    glintFrameDelay = 3,
+
+    -- The sounds played when the player gets hurt.
+    hitSound = playerManager.registerSound(CHARACTER_MCSTEVE, "mcsteve/hurt_1.ogg"),
+    
+    -- The sound played when dying due to a bottomless pit.
+    dieOffScreenSound = playerManager.registerSound(CHARACTER_MCSTEVE, "mcsteve/fall.ogg"),
+    -- The amount of ticks that the player goes red for when getting hit.
+    hitRedTime = 16,
+    -- The knockback recieved by the player upon getting hit.
+    hitKnockbackSpeed = vector(-5,-4),
+
+
+    -- The ID of the dust spawned when dying.
+    deathEffectID = 961,
+}
+
+steve.hudSettings = {
+    itemNameStayTime = 96,
+    itemNameFadeTime = 32,
+
+    -- The size of each individual inventory slot.
+    inventorySlotWidth  = 40,
+    inventorySlotHeight = 40,
+
+
+    -- How much certain HUD elements are moved when using the character.
+    moveHUDElementsDistance = 0,
+
+
+    -- The font used in the HUD.
+    font = textplus.loadFont("characters/mcsteve/font.ini"),
+    fontScale = 2,
+}
+
+
+steve.inventorySettings = {
+    -- How many slots there are for items.
+    slots = 9,
+
+    -- The maximum amount of each item type you can have.
+    maxItems = {
+        tool = 1,
+        block = 64,
+    },
+}
+
+steve.miningSettings = {
+    -- The maximum distance that the mining block can be from the player.
+    maxDistanceFromBlock = 256,
+    -- The amount of time needed to mine a block before any multipliers are added.
+    baseDestroyingTime = 96,
+
+    -- The maximum rotation that the player's head can have.
+    maxHeadRotation = 65,
+	
+    -- How many stages the image specified above has.
+    destroyingFrames = 10,
+
+    -- The number of ticks between each sound.
+    soundDelay = 12,
+
+
+    -- How long each type of pickaxe takes to destroy one block. Each value here is a multiplier.
+}
+
+steve.combatSettings = {
+    -- The maximum distance that the hit block can be from the player.
+    maxDistanceFromNPC = 256,
+}
+
+steve.blockPlacingSettings = {
+    -- The maximum distance from the player that a placed block can be.
+    maxDistanceFromPlayer = 384,
+
+    -- The size of the grid blocks are snapped to when placed.
+    gridSize = 32,
+}
+
 local timer = 0
 
 ready = false
@@ -39,7 +156,7 @@ local savedData = SaveData.steveData
 savedData.items = savedData.items or {}
 
 local steveskin = playerManager.registerGraphic(CHARACTER_MCSTEVE,"skins/steve.png")
-
+local destroyingImage = playerManager.registerGraphic(CHARACTER_MCSTEVE,"destroying.png")
 
 local data = {} -- used kinda like an NPC's data
 steve.playerData = data
@@ -82,8 +199,15 @@ steve.itemMaterialShader = Misc.resolveFile("characters/mcsteve/itemMaterialShad
 steve.bodyMaterial = nil
 steve.camera = nil
 
-local upgradeToolSound = pm.registerSound(CHARACTER_MCSTEVE, "mcsteve/upgradeTool.ogg")
-local breakToolSound = pm.registerSound(CHARACTER_MCSTEVE, "mcsteve/breakTool.ogg")
+local upgradeToolSound = playerManager.registerSound(CHARACTER_MCSTEVE, "mcsteve/upgradeTool.ogg")
+local breakToolSound = playerManager.registerSound(CHARACTER_MCSTEVE, "mcsteve/breakTool.ogg")
+
+local inventoryImage = playerManager.registerGraphic(CHARACTER_MCSTEVE,"inventory.png")
+local healthImage = playerManager.registerGraphic(CHARACTER_MCSTEVE,"heart.png")
+local selectedInventoryImage = playerManager.registerGraphic(CHARACTER_MCSTEVE,"inventory_selected.png")
+local toolImage = playerManager.registerGraphic(CHARACTER_MCSTEVE,"tools.png")
+local powerupImage = playerManager.registerGraphic(CHARACTER_MCSTEVE,"powerups.png")
+local glintImage = playerManager.registerGraphic(CHARACTER_MCSTEVE,"glint.png")
 
 local colBox = Colliders.Box(0,0,0,0)
 
@@ -140,7 +264,7 @@ local function decreaseItemDurability(slot,amount,correctToolType)
     if item.durability == 0 then
         data.inventoryItems[slot] = {}
 
-        Audio.playSFX(pm.getSound(CHARACTER_MCSTEVE,breakToolSound))
+        Audio.playSFX(playerManager.getSound(CHARACTER_MCSTEVE,breakToolSound))
     end
 end
 
@@ -266,7 +390,7 @@ do
         steve.destroyMeshes()
 
 
-        data.bodyMaterial = lib3d.Material(nil,{texture = pm.getGraphic(CHARACTER_MCSTEVE,steveskin)},nil,meshMacros)
+        data.bodyMaterial = lib3d.Material(nil,{texture = playerManager.getGraphic(CHARACTER_MCSTEVE,steveskin)},nil,meshMacros)
 
         for _,partData in ipairs(steve.bodyParts) do
             -- Find the path. Tries the skin type's folder first, but if it can't find it there, tries the generic folder.
@@ -297,9 +421,9 @@ do
     function steve.createItemMesh(type,isDropped) -- also used by dropped items
         local texturehold
         if type == "tool" then
-            texturehold = pm.getGraphic(CHARACTER_MCSTEVE,steve.generalSettings.toolImage)
+            texturehold = playerManager.getGraphic(CHARACTER_MCSTEVE,toolImage)
         elseif type == "powerup" then
-            texturehold = pm.getGraphic(CHARACTER_MCSTEVE,steve.generalSettings.powerupImage)
+            texturehold = playerManager.getGraphic(CHARACTER_MCSTEVE,powerupImage)
         end
 
 
@@ -534,7 +658,7 @@ do
 
                 data.glintTimer = 0
 
-                Audio.playSFX(pm.getSound(CHARACTER_MCSTEVE,upgradeToolSound))
+                Audio.playSFX(playerManager.getSound(CHARACTER_MCSTEVE,upgradeToolSound))
             end
 
             if time <= 0 then
@@ -784,18 +908,18 @@ do
     local heartsY = 10
 
     function steve.drawHearts(playerIdx,camObj,playerObj,priority,isSplit,playerCount)
-        local image = pm.getGraphic(CHARACTER_MCSTEVE,steve.hudSettings.healthImage)
+        local image = playerManager.getGraphic(CHARACTER_MCSTEVE,healthImage)
 
-        local width = image.width
-        local height = image.height/4
+        local width = 18
+        local height = 72/4
 
         local max = steve.generalSettings.maxHealth
         local current = savedData.health
 
         
         for i=1,max do
-            local x = (camObj.width*0.5)-(max*width*0.5)+(width*(i-1))-(width*0.5)
-            local y = heartsY
+            local x = (800*0.5)-(max*width*0.5)+(width*(i-1))-(width*0.5)
+            local y = 10
 
             local frame = 2
             if i <= current then
@@ -806,7 +930,7 @@ do
             end
 
 
-            Graphics.drawImageWP(image,x,y,0,frame*height,width,height,priority)
+            Graphics.drawImageWP(playerManager.getGraphic(CHARACTER_MCSTEVE,healthImage),x,y,0,frame*height,width,height,priority)
         end
     end
 
@@ -814,27 +938,27 @@ do
     local inventoryY = heartsY+18+4 --21
 
     local function getItemPosition(camObj,slotWidth,slotHeight,slots,width,height,slotIndex)
-        local x = (camObj.width*0.5)-(slotWidth*slots*0.5)+(slotWidth*(slotIndex-1))+(slotWidth*0.5)-(width*0.5)
+        local x = (800*0.5)-(slotWidth*slots*0.5)+(slotWidth*(slotIndex-1))+(slotWidth*0.5)-(width*0.5)
         local y = inventoryY+2+(slotHeight*0.5)-(height*0.5)
 
         return x,y
     end
     function steve.drawInventory(playerIdx,camObj,playerObj,priority,isSplit,playerCount)
-        local inventoryImage = pm.getGraphic(CHARACTER_MCSTEVE,steve.hudSettings.inventoryImage)
-        local slotWidth = pm.getGraphic(CHARACTER_MCSTEVE,steve.hudSettings.inventorySlotWidth)
-        local slotHeight = pm.getGraphic(CHARACTER_MCSTEVE,steve.hudSettings.inventorySlotHeight)
-        local slots = pm.getGraphic(CHARACTER_MCSTEVE,steve.inventorySettings.slots)
+        --local inventoryImage = playerManager.getGraphic(CHARACTER_MCSTEVE,inventoryImage)
+        local slotWidth = steve.hudSettings.inventorySlotWidth
+        local slotHeight = steve.hudSettings.inventorySlotHeight
+        local slots = steve.inventorySettings.slots
 
-        Graphics.drawImageWP(inventoryImage,(camObj.width*0.5)-(inventoryImage.width*0.5),inventoryY,priority)
+        Graphics.drawImageWP(playerManager.getGraphic(CHARACTER_MCSTEVE,inventoryImage),218,31,-4.2)
 
 
         -- Draw item selector
         if data.selectedInventorySlot > 0 then
-            local image = pm.getGraphic(CHARACTER_MCSTEVE,steve.hudSettings.selectedInventoryImage)
+            local image = playerManager.getGraphic(CHARACTER_MCSTEVE,selectedInventoryImage)
 
-            local x,y = getItemPosition(camObj,slotWidth,slotHeight,slots,image.width,image.height,data.selectedInventorySlot)
+            local x,y = getItemPosition(800,slotWidth,slotHeight,slots,48,48,data.selectedInventorySlot)
 
-            Graphics.drawImageWP(image,x,y,priority)
+            Graphics.drawImageWP(playerManager.getGraphic(CHARACTER_MCSTEVE,selectedInventoryImage),x,y,priority)
 
 
             -- Item name
@@ -848,10 +972,10 @@ do
             end
 
             if name ~= nil and name ~= "" and opacity > 0 then
-                local x = (camObj.width*0.5)
-                local y = inventoryY+inventoryImage.height+8
+                local x = (800*0.5)
+                local y = inventoryY+44+8
 
-                drawText("itemName",name,x,y,vector(0.5,0),priority,Color.white*opacity,inventoryImage.width)
+                drawText("itemName",name,x,y,vector(0.5,0),priority,Color.white*opacity,364)
             end
         end
 
@@ -865,10 +989,10 @@ do
             local item = data.inventoryItems[i]
 
             if item.type == "tool" or (item.type == nil and i <= steve.toolTypesCount) then
-                image = pm.getGraphic(CHARACTER_MCSTEVE,steve.generalSettings.toolImage)
+                image = playerManager.getGraphic(CHARACTER_MCSTEVE,toolImage)
 
-                width = image.width/steve.toolTypesCount
-                height = image.height/steve.toolTiersCount
+                width = 64/steve.toolTypesCount
+                height = 224/steve.toolTiersCount
 
                 if item.type ~= nil then
                     sourceX = (item.toolType-1)*width
@@ -937,6 +1061,7 @@ do
     end
 
     function steve.drawHUD(playerIdx,camObj,playerObj,priority,isSplit,playerCount)
+		local camObj = Camera.get()
         steve.drawHearts(playerIdx,camObj,playerObj,priority,isSplit,playerCount)
         steve.drawInventory(playerIdx,camObj,playerObj,priority,isSplit,playerCount)
 	end
@@ -1157,7 +1282,7 @@ do
     local function harmPlayer(amount)
         savedData.health = savedData.health - (amount or 1)
 
-        Audio.playSFX(pm.getSound(CHARACTER_MCSTEVE,steve.generalSettings.hitSounds))
+        Audio.playSFX(playerManager.getSound(CHARACTER_MCSTEVE,steve.generalSettings.hitSounds))
 
 
         if savedData.health > 0 then
@@ -1281,7 +1406,7 @@ do
             harmPlayer(1)
         elseif player.deathTimer > 0 then
             if player.deathTimer == 1 and player.y > (player.sectionObj.boundary.bottom+64) then
-                Audio.playSFX(pm.getSound(CHARACTER_MCSTEVE,steve.generalSettings.dieOffScreenSound))
+                Audio.playSFX(playerManager.getSound(CHARACTER_MCSTEVE,steve.generalSettings.dieOffScreenSound))
             end
 
             savedData.health = 0
@@ -1492,7 +1617,7 @@ do
             end
 
             if (data.miningTime-1)%steve.miningSettings.soundDelay == 0 then
-                data.miningSound = Audio.playSFXpm.getSound(CHARACTER_MCSTEVE,steve.miningSettings.sounds)
+                data.miningSound = Audio.playSFXplayerManager.getSound(CHARACTER_MCSTEVE,steve.miningSettings.sounds)
             end
 
             data.punchAnimationTimer = data.punchAnimationTimer or 0
@@ -1520,7 +1645,7 @@ do
         local blockFrame = math.max(0,blockutils.getBlockFrame(block.id))
         local blockSourceY = (blockFrame*block.height)
 
-        local destroyingImage = pm.getGraphic(CHARACTER_MCSTEVE,steve.miningSettings.destroyingImage)
+        local destroyingImage = playerManager.getGraphic(CHARACTER_MCSTEVE,destroyingImage)
         local destroyingFrames = steve.miningSettings.destroyingFrames
         local destroyingFrame = math.min(destroyingFrames-1,math.floor((data.miningTime/getNeededMiningTime(block))*destroyingFrames))
 
@@ -1536,7 +1661,7 @@ do
                 blockSourceY = (blockSourceY/blockImage.height),
 
                 destroyingImage = destroyingImage,
-                destroyingSize = vector(destroyingImage.width,destroyingImage.height),
+                destroyingSize = vector(32,320),
                 destroyingFrames = destroyingFrames,
                 destroyingFrame = destroyingFrame,
             },
@@ -1620,9 +1745,9 @@ do
                 data.swingingAtPosition = vector(mem(MOUSE_X,FIELD_DFLOAT)+camera.x,mem(MOUSE_Y,FIELD_DFLOAT)+camera.y)
                 data.swingingAtTimer = 0
 
-				Audio.playSFX(pm.getSound(CHARACTER_MCSTEVE,steve.combatSettings.missSound))
+				Audio.playSFX(playerManager.getSound(CHARACTER_MCSTEVE,steve.combatSettings.missSound))
             else
-                Audio.playSFX(pm.getSound(CHARACTER_MCSTEVE,steve.combatSettings.hitSound))
+                Audio.playSFX(playerManager.getSound(CHARACTER_MCSTEVE,steve.combatSettings.hitSound))
             end
 
 
@@ -1725,7 +1850,7 @@ do
         data.swingingAtTimer = 0
 
 
-        Audio.playSFX(pm.getSound(CHARACTER_MCSTEVE,steve.blockPlacingSettings.sounds))
+        Audio.playSFX(playerManager.getSound(CHARACTER_MCSTEVE,steve.blockPlacingSettings.sounds))
 
 
         -- Remove 1 from the item
@@ -1830,7 +1955,7 @@ local function resetData()
     data.punchAnimationTimer = nil
 
 
-    data.glintSprite = Sprite{texture = pm.getGraphic(CHARACTER_MCSTEVE,steve.generalSettings.glintImage),frames = steve.generalSettings.glintFrames,pivot = Sprite.align.CENTRE}
+    data.glintSprite = Sprite{texture = playerManager.getGraphic(CHARACTER_MCSTEVE,glintImage),frames = steve.generalSettings.glintFrames,pivot = Sprite.align.CENTRE}
     data.glintTimer = nil
 
     data.onTickFrame = player.frame
@@ -1940,7 +2065,7 @@ function steve.onTickEnd()
     handleAnimation()
 end
 
-local emptysheet = pm.registerGraphic(CHARACTER_MCSTEVE,"blanksheet.png")
+local emptysheet = playerManager.registerGraphic(CHARACTER_MCSTEVE,"blanksheet.png")
 
 function steve.onDraw()
     if player.character ~= CHARACTER_MCSTEVE then
@@ -1949,8 +2074,8 @@ function steve.onDraw()
 
 	local p = player
 	
-	if Graphics.sprites.mcsteve[p.powerup].img ~= pm.getGraphic(CHARACTER_MCSTEVE,emptysheet) then
-        Graphics.sprites.mcsteve[p.powerup].img = pm.getGraphic(CHARACTER_MCSTEVE,emptysheet)
+	if Graphics.sprites.mcsteve[p.powerup].img ~= playerManager.getGraphic(CHARACTER_MCSTEVE,emptysheet) then
+        Graphics.sprites.mcsteve[p.powerup].img = playerManager.getGraphic(CHARACTER_MCSTEVE,emptysheet)
     end
 
 
@@ -2195,94 +2320,6 @@ steve.skinSettings = {
     type = steve.SKIN_TYPE.NORMAL,
 }
 
-steve.generalSettings = {
-    walkSpeed = 2,
-    runSpeed  = 4,
-
-    jumpForce = 18,
-
-
-    -- How fast crouch-walking is.
-    crouchingAcceleration = 0.3,
-    crouchingMaxSpeed = 1,
-
-    -- The number of hearts the player starts with.
-    startingHealth = 2,
-    -- The maximum number of hearts the player can have.
-    maxHealth = 3,
-
-
-    -- The Y rotation that the player usually has.
-    normalYRotation = 40,
-    -- How fast the player rotates when turning.
-    turningRotationSpeed = 16,
-
-    -- How much the models are scaled when they're being loaded.
-    modelScale = 30,
-
-
-    -- How much the currently held item is offset from the hand.
-    heldToolOffset  = vector(-0.125,0.1875,-0.375),
-    heldBlockOffset = vector(-0.125,0.3125,-0.25),
-
-    -- How far the head gets rotated when looking up.
-    headLookUpRotation = -35,
-    -- How fast the head's rotation can change.
-    headRotationSpeed = 3,
-
-
-    -- The graphic used by tools.
-    toolImage = pm.registerGraphic(CHARACTER_MCSTEVE,"tools.png"),
-    -- The graphic used by powerups.
-    powerupImage = pm.registerGraphic(CHARACTER_MCSTEVE,"powerups.png"),
-    -- The graphic used by the glint effect used in the tool upgrading animation.
-    glintImage = pm.registerGraphic(CHARACTER_MCSTEVE,"glint.png"),
-    glintFrames = 3,
-    glintFrameDelay = 3,
-
-    -- The sounds played when the player gets hurt.
-    hitSound = pm.registerSound(CHARACTER_MCSTEVE, "mcsteve/hurt_1.ogg"),
-    
-    -- The sound played when dying due to a bottomless pit.
-    dieOffScreenSound = pm.registerSound(CHARACTER_MCSTEVE, "mcsteve/fall.ogg"),
-    -- The amount of ticks that the player goes red for when getting hit.
-    hitRedTime = 16,
-    -- The knockback recieved by the player upon getting hit.
-    hitKnockbackSpeed = vector(-5,-4),
-
-
-    -- The ID of the dust spawned when dying.
-    deathEffectID = 961,
-}
-
-steve.hudSettings = {
-    -- The image used by the inventory/hotbar.
-    inventoryImage = pm.registerGraphic(CHARACTER_MCSTEVE,"inventory.png"),
-    -- The image used for the item currently selected.
-    selectedInventoryImage = pm.registerGraphic(CHARACTER_MCSTEVE,"inventory_selected.png"),
-
-    itemNameStayTime = 96,
-    itemNameFadeTime = 32,
-
-    -- The size of each individual inventory slot.
-    inventorySlotWidth  = 40,
-    inventorySlotHeight = 40,
-
-
-    -- The image used by the hearts.
-    healthImage = pm.registerGraphic(CHARACTER_MCSTEVE,"heart.png"),
-
-
-    -- How much certain HUD elements are moved when using the character.
-    moveHUDElementsDistance = 0,
-
-
-    -- The font used in the HUD.
-    font = textplus.loadFont("characters/mcsteve/font.ini"),
-    fontScale = 2,
-}
-
-
 steve.inventorySettings = {
     -- How many slots there are for items.
     slots = 9,
@@ -2348,14 +2385,12 @@ steve.miningSettings = {
 
     -- The maximum rotation that the player's head can have.
     maxHeadRotation = 65,
-
-    -- The image used for the effect while destroying a block.
-    destroyingImage = pm.registerGraphic(CHARACTER_MCSTEVE,"destroying.png"),
+	
     -- How many stages the image specified above has.
     destroyingFrames = 10,
 
     -- The sounds played while mining a block.
-    sounds = pm.registerSound(CHARACTER_MCSTEVE, "mcsteve/mine_1.ogg"),
+    sounds = playerManager.registerSound(CHARACTER_MCSTEVE, "mcsteve/mine_1.ogg"),
     -- The number of ticks between each sound.
     soundDelay = 12,
 
@@ -2387,9 +2422,9 @@ steve.combatSettings = {
     },
 
     -- The sounds played when successfully hitting an enemy.
-    hitSound = pm.registerSound(CHARACTER_MCSTEVE, "mcsteve/attack_1.ogg"),
+    hitSound = playerManager.registerSound(CHARACTER_MCSTEVE, "mcsteve/attack_1.ogg"),
     -- The sounds played when missing an enemy.
-    missSound = pm.registerSound(CHARACTER_MCSTEVE, "mcsteve/miss_1.ogg"),
+    missSound = playerManager.registerSound(CHARACTER_MCSTEVE, "mcsteve/miss_1.ogg"),
 }
 
 steve.blockPlacingSettings = {
@@ -2402,8 +2437,5 @@ steve.blockPlacingSettings = {
     -- The sounds played when placing a block.
     sounds = steve.miningSettings.sounds,
 }
-
-
-
 
 return steve
