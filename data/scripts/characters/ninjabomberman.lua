@@ -25,6 +25,7 @@ ninjabomberman.usesavestate = false;
 ninjabomberman.deathDelay = lunatime.toTicks(0.5);
 
 local sfx_death = pm.registerSound(CHARACTER_NINJABOMBERMAN,"nbm_death.ogg");
+local sfx_deathquick = pm.registerSound(CHARACTER_NINJABOMBERMAN,"nbm_death_quick.ogg");
 
 local function freezePlayer(pauseMusic, pauseSound, playerX, playerY)
 	pauseMusic = pauseMusic or false
@@ -166,8 +167,13 @@ function ninjabomberman.onTick()
 		end
 		if player:mem(0x13C, FIELD_DWORD) ~= 0 or player.forcedState == 227 or player.forcedState == 2 then
 			player:kill()
-			Audio.SfxStop(-1)
-			Audio.playSFX(pm.getSound(CHARACTER_NINJABOMBERMAN,sfx_death))
+			if SaveData.deathquickoption == false then
+				Audio.SfxStop(-1)
+				Audio.playSFX(pm.getSound(CHARACTER_NINJABOMBERMAN,sfx_death))
+			elseif SaveData.deathquickoption == true then
+				Audio.SfxStop(-1)
+				Audio.playSFX(pm.getSound(CHARACTER_NINJABOMBERMAN,sfx_deathquick))
+			end
 			player:mem(0x13E, FIELD_WORD,1)
 			Misc.pause();
 			deathTimer = 800;
