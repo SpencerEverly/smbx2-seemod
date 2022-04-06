@@ -21,7 +21,7 @@ local hasTurnedHudOn = false
 local deathTimer = -1;
 local deathSoundChan = -1;
 
-ninjabomberman.usesavestate = true;
+ninjabomberman.usesavestate = false;
 ninjabomberman.deathDelay = lunatime.toTicks(0.5);
 
 local sfx_death = pm.registerSound(CHARACTER_NINJABOMBERMAN,"nbm_death.ogg");
@@ -170,7 +170,7 @@ function ninjabomberman.onTick()
 			Audio.playSFX(pm.getSound(CHARACTER_NINJABOMBERMAN,sfx_death))
 			player:mem(0x13E, FIELD_WORD,1)
 			Misc.pause();
-			deathTimer = ninjabomberman.deathDelay;
+			deathTimer = 200;
 		end
 		
 		--Jumps
@@ -247,7 +247,6 @@ function ninjabomberman.onInputUpdate()
 				else
 					Misc.unpause();
 					player:mem(0x13E,FIELD_WORD,198);
-					deathTimer = -1;
 				end
 			end
 		end
