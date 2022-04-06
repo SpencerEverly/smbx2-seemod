@@ -47,11 +47,11 @@ local billboardTypes = {"level", "scene", "player"}
 
 local defaultHeightmap = Graphics.CaptureBuffer(1,1,true);
 
-local MAX_LEVEL = 36;
-local MAX_SCENE = 65;
-local MAX_PATH = 32;
-local MAX_TILE = 328;
-local MAX_PLAYER;
+local MAX_LEVEL = 100;
+local MAX_SCENE = 100;
+local MAX_PATH = 100;
+local MAX_TILE = 400;
+local MAX_PLAYER = 20;
 
 local tableinsert = table.insert;
 local tableremove = table.remove;
@@ -80,7 +80,6 @@ map3d.clearScene = true
 
 do
 	local pm = require("playerManager");
-	MAX_PLAYER = #pm.getCharacters();
 	
 	function pm.onCostumeChange(characterid)
 		map3d.RefreshCharacterSprite(characterid);
