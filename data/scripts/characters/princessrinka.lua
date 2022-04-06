@@ -83,7 +83,7 @@ function princessRinka.initCharacter()
 	-- CLEANUP NOTE: This is not quite safe if a level makes it's own use of activateHud
 	hasBeenActivated = Graphics.isHudActivated()
 	if Graphics.isHudActivated() then
-		Graphics.activateHud(false)
+		Graphics.activateHud(true)
 	end
 end
 
