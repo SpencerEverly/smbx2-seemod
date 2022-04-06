@@ -4906,7 +4906,7 @@ yoshi.generalSettings = {
 yoshi.introSettings = {
     enabled = false,
 
-    textFont = textplus.loadFont("yiYoshi/font.ini"),
+    textFont = textplus.loadFont("characters/yiYoshi/font.ini"),
     textMaxWidth = 384,
     textScale = 2,
 

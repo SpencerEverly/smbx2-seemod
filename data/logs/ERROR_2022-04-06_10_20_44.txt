@@ -1,0 +1,38 @@
+== Crash Summary ==
+LunaLua Version: LUNALUA V0.7.3.2 BETA
+Exception Code: 0xc0000005 (Access Violation)
+
+== Stack Trace ==
+0: 64860280 (SDL2): SDL_wcsstr
+1: 6484A9E3 (SDL2): SDL_wcsstr
+2: 647BD531 (SDL2): SDL_wcsstr
+3: 647BCEBD (SDL2): SDL_wcsstr
+4: c:\lunalua\lunadll\input\lunagamecontroller.cpp (89): LunaGameControllerManager::pollInputs
+5: c:\lunalua\lunadll\misc\runtimehookcomponents\runtimehookhooks.cpp (812): runtimeHookUpdateInput
+6: 008CA24F (smbx): levelLoop
+7: 008C224A (smbx): Sub_Main
+8: 6CC60145 (MSVBVM60): EbLoadRunTime
+9: 6CC5E4C8 (MSVBVM60): EbSetContextWorkerThread
+10: 6CC50FA7 (MSVBVM60): EbLibraryLoad
+11: 6CC5ADE6 (MSVBVM60): ThunRTMain
+12: 6CC5ACEC (MSVBVM60): ThunRTMain
+13: 0040BDE2 (smbx): start
+14: 77737A7E (ntdll): RtlGetAppContainerNamedObjectPath
+15: 77737A4E (ntdll): RtlGetAppContainerNamedObjectPath
+
+== Reporting ==
+If you see this crash, chances are this may be out of our jurisdiction.If you like to help Codehaus find the error, then please post this log at:
+* http://wohlsoft.ru/forum/ or
+* http://www.supermariobrosx.org/forums/viewforum.php?f=35 or
+* http://talkhaus.raocow.com/viewforum.php?f=36
+
+Or if you also want to report Spencer Everly, report them at:* https://github.com/SpencerEverly/smasplusplus/issues
+
+
+
+USERNAME: 
+(NONE)
+
+
+USERCOMMENT: 
+(NONE)

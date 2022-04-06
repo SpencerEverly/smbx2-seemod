@@ -4,9 +4,9 @@
 --...Shit. What are you doing here. GO AWAY.
 --Contact me at https://www.youtube.com/subscription_center?add_user=msotane
 
-local rng = loadSharedAPI("rng")
-local colliders = loadSharedAPI("colliders")
-local horikawaTools = loadSharedAPI("horikawaTools")
+local rng = require("rng")
+local colliders = require("colliders")
+--local horikawaTools = require("horikawaTools")
 
 local princessRinka = {}
 princessRinka.iAmAWussLikeWoah = false
@@ -30,7 +30,7 @@ function princessRinka.onTick()
 		if player.powerup > 1 then
 			player:mem(0x16, FIELD_WORD, 2)
 		end
-		for _, v in pairs(NPC.get(horikawaTools.powerUpList, player.section)) do
+		for _, v in pairs(NPC.get(player.powerup, player.section)) do
 			if colliders.collide(player, v) then
 				NPC.spawn(211, v.x, v.y, player.section)
 			end

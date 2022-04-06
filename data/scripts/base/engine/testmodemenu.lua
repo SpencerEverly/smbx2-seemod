@@ -277,10 +277,10 @@ local idItem = {
 		return settings.identity
 	end,
 	set=function(settings, n)
-		if n > 18 then 
+		if n > 20 then 
 			n = 1
 		elseif n < 1 then 
-			n = 18
+			n = 20
 		end
 		settings.identity = n
 		

@@ -170,7 +170,7 @@ function ninjabomberman.onTick()
 			Audio.playSFX(pm.getSound(CHARACTER_NINJABOMBERMAN,sfx_death))
 			player:mem(0x13E, FIELD_WORD,1)
 			Misc.pause();
-			deathTimer = 200;
+			deathTimer = 800;
 		end
 		
 		--Jumps

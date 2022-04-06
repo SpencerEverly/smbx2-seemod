@@ -68,6 +68,8 @@ function playerManagerInit()
 	configCharacter{id=16, name="samus",           base=5, switchBlock=663, filterBlock=664, deathEffect=161}
 	configCharacter{id=17, name="yiyoshi",         base=3, switchBlock=661, filterBlock=662, deathEffect=160}
 	configCharacter{id=18, name="juni",            base=4, switchBlock=1292, filterBlock=1293, deathEffect=158}
+	configCharacter{id=19, name="mcsteve",         base=4, switchBlock=1296, filterBlock=1297, deathEffect=157}
+	configCharacter{id=20, name="princessrinka",   base=4, switchBlock=1294, filterBlock=1295, deathEffect=158}
 	
 	-- Load Character APIs if this is not the overworld
 	--if not isOverworld then
