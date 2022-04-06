@@ -27,3 +27,54 @@ Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
 Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
 Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
 Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): setGeometry: Unable to set geometry 424x387+964+550 (frame: 440x426+956+519) on QWidgetWindow/"CustomMusicSetupWindow" on "\\.\DISPLAY2". Resulting geometry: 424x400+964+550 (frame: 440x439+956+519) margins: 8, 31, 8, 8 minimum size: 424x387 MINMAXINFO maxSize=0,0 maxpos=0,0 mintrack=440,426 maxtrack=0,0)
+Warning: (:0, ): setGeometry: Unable to set geometry 424x168+964+550 (frame: 440x207+956+519) on QWidgetWindow/"CustomMusicSetupWindow" on "\\.\DISPLAY2". Resulting geometry: 424x181+964+550 (frame: 440x220+956+519) margins: 8, 31, 8, 8 minimum size: 424x168 MINMAXINFO maxSize=0,0 maxpos=0,0 mintrack=440,207 maxtrack=0,0)
+Warning: (:0, ): setGeometry: Unable to set geometry 424x387+964+550 (frame: 440x426+956+519) on QWidgetWindow/"CustomMusicSetupWindow" on "\\.\DISPLAY2". Resulting geometry: 424x400+964+550 (frame: 440x439+956+519) margins: 8, 31, 8, 8 minimum size: 424x387 MINMAXINFO maxSize=0,0 maxpos=0,0 mintrack=440,426 maxtrack=0,0)
+Warning: (:0, ): setGeometry: Unable to set geometry 424x700+964+550 (frame: 440x739+956+519) on QWidgetWindow/"CustomMusicSetupWindow" on "\\.\DISPLAY2". Resulting geometry: 424x834+964+550 (frame: 440x873+956+519) margins: 8, 31, 8, 8 minimum size: 424x700 MINMAXINFO maxSize=0,0 maxpos=0,0 mintrack=440,739 maxtrack=0,0)
+Warning: (:0, ): setGeometry: Unable to set geometry 424x720+964+550 (frame: 440x759+956+519) on QWidgetWindow/"CustomMusicSetupWindow" on "\\.\DISPLAY2". Resulting geometry: 424x834+964+550 (frame: 440x873+956+519) margins: 8, 31, 8, 8 minimum size: 424x700 MINMAXINFO maxSize=0,0 maxpos=0,0 mintrack=440,739 maxtrack=0,0)
+Warning: (:0, ): setGeometry: Unable to set geometry 424x700+964+550 (frame: 440x739+956+519) on QWidgetWindow/"CustomMusicSetupWindow" on "\\.\DISPLAY2". Resulting geometry: 424x834+964+550 (frame: 440x873+956+519) margins: 8, 31, 8, 8 minimum size: 424x700 MINMAXINFO maxSize=0,0 maxpos=0,0 mintrack=440,739 maxtrack=0,0)
+Warning: (:0, ): setGeometry: Unable to set geometry 424x720+964+550 (frame: 440x759+956+519) on QWidgetWindow/"CustomMusicSetupWindow" on "\\.\DISPLAY2". Resulting geometry: 424x834+964+550 (frame: 440x873+956+519) margins: 8, 31, 8, 8 minimum size: 424x700 MINMAXINFO maxSize=0,0 maxpos=0,0 mintrack=440,739 maxtrack=0,0)
+Warning: (:0, ): setGeometry: Unable to set geometry 424x168+886+129 (frame: 440x207+878+98) on QWidgetWindow/"CustomMusicSetupWindow" on "\\.\DISPLAY2". Resulting geometry: 424x181+886+129 (frame: 440x220+878+98) margins: 8, 31, 8, 8 minimum size: 424x168 MINMAXINFO maxSize=0,0 maxpos=0,0 mintrack=440,207 maxtrack=0,0)
+Warning: (:0, ): setGeometry: Unable to set geometry 424x387+886+129 (frame: 440x426+878+98) on QWidgetWindow/"CustomMusicSetupWindow" on "\\.\DISPLAY2". Resulting geometry: 424x400+886+129 (frame: 440x439+878+98) margins: 8, 31, 8, 8 minimum size: 424x387 MINMAXINFO maxSize=0,0 maxpos=0,0 mintrack=440,426 maxtrack=0,0)
+Warning: (:0, ): setGeometry: Unable to set geometry 424x700+964+550 (frame: 440x739+956+519) on QWidgetWindow/"CustomMusicSetupWindow" on "\\.\DISPLAY2". Resulting geometry: 424x834+964+550 (frame: 440x873+956+519) margins: 8, 31, 8, 8 minimum size: 424x700 MINMAXINFO maxSize=0,0 maxpos=0,0 mintrack=440,739 maxtrack=0,0)
+Warning: (:0, ): setGeometry: Unable to set geometry 424x720+964+550 (frame: 440x759+956+519) on QWidgetWindow/"CustomMusicSetupWindow" on "\\.\DISPLAY2". Resulting geometry: 424x834+964+550 (frame: 440x873+956+519) margins: 8, 31, 8, 8 minimum size: 424x700 MINMAXINFO maxSize=0,0 maxpos=0,0 mintrack=440,739 maxtrack=0,0)

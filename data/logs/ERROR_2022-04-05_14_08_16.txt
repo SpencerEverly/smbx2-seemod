@@ -1,0 +1,49 @@
+== Crash Summary ==
+LunaLua Version: LUNALUA V0.7.3.2 BETA
+Exception Code: 0xc000008f (VB Error)
+VB6 Error Code: 7 (Out of Memory)
+
+== Stack Trace ==
+0: 73FE8546 (MSVBVM60): _vbaStrI4
+1: c:\lunalua\lunadll\libs\luabind-include\luabind\detail\call.hpp (308): luabind::detail::invoke_normal<void (__cdecl*)(int),boost::mpl::vector2<void,int>,luabind::detail::null_type>
+2: c:\lunalua\lunadll\libs\luabind-include\luabind\make_function.hpp (63): luabind::detail::function_object_impl<void (__cdecl*)(short),boost::mpl::vector2<void,short>,luabind::detail::null_type>::entry_point
+3: 739F280D (LunaDll): lj_BC_FUNCC
+4: 73C4321B (LunaDll): lj_meta_tset
+5: 73C367D0 (LunaDll): luaopen_string
+6: 739F344F (LunaDll): lj_ff_coroutine_resume
+7: 73C2F096 (LunaDll): lua_pcall
+8: 73A21050 (LunaDll): luabind::detail::pcall
+9: c:\lunalua\lunadll\libs\luabind-include\luabind\detail\call_function.hpp (264): luabind::detail::proxy_function_void_caller<boost::tuples::tuple<std::shared_ptr<Event> const *,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type> >::~proxy_function_void_caller<boost::tuples::tuple<std::shared_ptr<Event> const *,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type,boost::tuples::null_type> >
+10: c:\lunalua\lunadll\luamain\lunaluamain.h (109): CLunaLua::callLuaFunction<lua_State *,char const *,std::shared_ptr<Event> >
+11: c:\lunalua\lunadll\luamain\lunaluamain.h (148): CLunaLua::callEvent<>
+12: c:\lunalua\lunadll\eventstatemachine.cpp (22): sendSimpleLuaEvent<>
+13: c:\lunalua\lunadll\eventstatemachine.cpp (109): EventStateMachine::hookInputUpdate
+14: c:\lunalua\lunadll\misc\runtimehookcomponents\runtimehookhooks.cpp (787): UpdateInputFinishHook
+15: 00A755D7 (smbx): updateInput
+16: 008CA24F (smbx): levelLoop
+17: 008C224A (smbx): Sub_Main
+18: 73FE0145 (MSVBVM60): EbLoadRunTime
+19: 73FDE4C8 (MSVBVM60): EbSetContextWorkerThread
+20: 73FD0FA7 (MSVBVM60): EbLibraryLoad
+21: 73FDADE6 (MSVBVM60): ThunRTMain
+22: 73FDACEC (MSVBVM60): ThunRTMain
+23: 0040BDE2 (smbx): start
+24: 77917A7E (ntdll): RtlGetAppContainerNamedObjectPath
+25: 77917A4E (ntdll): RtlGetAppContainerNamedObjectPath
+
+== Reporting ==
+If you see this crash, chances are this may be out of our jurisdiction.If you like to help Codehaus find the error, then please post this log at:
+* http://wohlsoft.ru/forum/ or
+* http://www.supermariobrosx.org/forums/viewforum.php?f=35 or
+* http://talkhaus.raocow.com/viewforum.php?f=36
+
+Or if you also want to report Spencer Everly, report them at:* https://github.com/SpencerEverly/smasplusplus/issues
+
+
+
+USERNAME: 
+(NONE)
+
+
+USERCOMMENT: 
+(NONE)

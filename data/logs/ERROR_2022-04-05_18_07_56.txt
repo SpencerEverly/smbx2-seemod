@@ -1,0 +1,45 @@
+== Crash Summary ==
+LunaLua Version: LUNALUA V0.7.3.2 BETA
+Exception Code: 0xe24c4a02
+
+== Stack Trace ==
+0: 772AB922 (KERNELBASE): RaiseException
+1: 73B5254E (LunaDll): lj_err_throw
+2: 73B52DA9 (LunaDll): lj_err_run
+3: 73B5265C (LunaDll): lj_err_throw
+4: 73B52CD0 (LunaDll): lj_err_optype
+5: 73B6330F (LunaDll): lj_meta_tset
+6: 73B4F6A3 (LunaDll): lua_setfield
+7: c:\lunalua\lunadll\luamain\lunaluamain.cpp (209): CLunaLua::init
+8: c:\lunalua\lunadll\main.cpp (242): OnLvlLoad
+9: c:\lunalua\lunadll\filemanager\loadfile_level.cpp (148): LunaLua_loadLevelFile
+10: c:\lunalua\lunadll\filemanager\smbxfilemanager.cpp (149): SMBXLevelFileBase::ReadFileMem
+11: c:\lunalua\lunadll\misc\testmode.cpp (278): testModeLoadLevelHook
+12: c:\lunalua\lunadll\misc\runtimehookcomponents\runtimehookhooks.cpp (1745): runtimeHookLoadLevel
+13: 008C14E5 (smbx): Sub_Main
+14: 74160145 (MSVBVM60): EbLoadRunTime
+15: 7415E4C8 (MSVBVM60): EbSetContextWorkerThread
+16: 74150FA7 (MSVBVM60): EbLibraryLoad
+17: 7415ADE6 (MSVBVM60): ThunRTMain
+18: 7415ACEC (MSVBVM60): ThunRTMain
+19: 0040BDE2 (smbx): start
+20: 77917A7E (ntdll): RtlGetAppContainerNamedObjectPath
+21: 77917A4E (ntdll): RtlGetAppContainerNamedObjectPath
+22: 78746341 (atioglxx): atiPPHSN
+
+== Reporting ==
+If you see this crash, chances are this may be out of our jurisdiction.If you like to help Codehaus find the error, then please post this log at:
+* http://wohlsoft.ru/forum/ or
+* http://www.supermariobrosx.org/forums/viewforum.php?f=35 or
+* http://talkhaus.raocow.com/viewforum.php?f=36
+
+Or if you also want to report Spencer Everly, report them at:* https://github.com/SpencerEverly/smasplusplus/issues
+
+
+
+USERNAME: 
+(NONE)
+
+
+USERCOMMENT: 
+(NONE)
