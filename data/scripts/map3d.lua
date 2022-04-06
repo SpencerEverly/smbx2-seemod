@@ -51,7 +51,7 @@ local MAX_LEVEL = 100;
 local MAX_SCENE = 100;
 local MAX_PATH = 100;
 local MAX_TILE = 400;
-local MAX_PLAYER = 20;
+local MAX_PLAYER;
 
 local tableinsert = table.insert;
 local tableremove = table.remove;
@@ -80,6 +80,7 @@ map3d.clearScene = true
 
 do
 	local pm = require("playerManager");
+	MAX_PLAYER = #pm.getCharacters();
 	
 	function pm.onCostumeChange(characterid)
 		map3d.RefreshCharacterSprite(characterid);
