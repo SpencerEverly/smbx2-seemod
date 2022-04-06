@@ -20,6 +20,7 @@ local egg = require("characters/yiyoshi/egg_ai")
 local cloudai = require("characters/yiyoshi/cloud_ai")
 local eggBlockai = require("characters/yiyoshi/eggBlock_ai")
 local melonai = require("characters/yiyoshi/melon_ai")
+local HUDOverride = require("hudoverride")
 
 local megashroom,starman,playerstun
 
@@ -3636,7 +3637,7 @@ do
 
 
     function initHUD()
-		Graphics.activateHud(true)
+		--Graphics.activateHud(true)
         local type = Graphics.HUD_HEARTS
         local actions
 

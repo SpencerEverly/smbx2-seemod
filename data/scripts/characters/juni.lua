@@ -60,8 +60,8 @@ function juni.initCharacter()
 	Defines.jumpheight = 12
 	Defines.jumpheight_bounce = 13
 	-- CLEANUP NOTE: This is not safe if a level makes it's own use of activateHud
-	hud(false)
-	hasTurnedHudOn = false
+	--hud(false)
+	--hasTurnedHudOn = false
 	Audio.sounds[1].muted = true
 	Audio.sounds[71].muted = true
 end
@@ -73,8 +73,8 @@ function juni.cleanupCharacter()
 	-- CLEANUP NOTE: This is not safe if a level makes it's own use jumpheight
 	Defines.jumpheight = nil
 	Defines.jumpheight_bounce = nil
-	hud(true)
-	hasTurnedHudOn = true
+	--hud(true)
+	--hasTurnedHudOn = true
 	Audio.sounds[1].muted = false
 	Audio.sounds[71].muted = false
 end

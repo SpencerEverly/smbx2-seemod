@@ -57,7 +57,7 @@ function princessRinka.onTick()
 		if rinkaCounter == (nextRinka - 140) then
 			displayText = true
 		elseif rinkaCounter > (nextRinka - 140) and rinkaCounter < nextRinka then
-			if (math.mod(rinkaCounter, 25) == 0) then
+			if (math.max(rinkaCounter, 25) == 0) then
 				displayText = not displayText
 			end
 			if displayText then
@@ -83,7 +83,7 @@ function princessRinka.initCharacter()
 	-- CLEANUP NOTE: This is not quite safe if a level makes it's own use of activateHud
 	hasBeenActivated = Graphics.isHudActivated()
 	if Graphics.isHudActivated() then
-		Graphics.activateHud(true)
+		--Graphics.activateHud(true)
 	end
 end
 
