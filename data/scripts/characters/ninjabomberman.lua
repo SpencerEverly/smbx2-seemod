@@ -170,13 +170,12 @@ function ninjabomberman.onTick()
 			if SaveData.deathquickoption == false then
 				Audio.SfxStop(-1)
 				Audio.playSFX(pm.getSound(CHARACTER_NINJABOMBERMAN,sfx_death))
+				player:mem(0x13E, FIELD_WORD,1)
+				Misc.pause();
+				deathTimer = 800;
 			elseif SaveData.deathquickoption == true then
-				Audio.SfxStop(-1)
-				Audio.playSFX(pm.getSound(CHARACTER_NINJABOMBERMAN,sfx_deathquick))
+				--Audio.playSFX(pm.getSound(CHARACTER_NINJABOMBERMAN,sfx_deathquick))
 			end
-			player:mem(0x13E, FIELD_WORD,1)
-			Misc.pause();
-			deathTimer = 800;
 		end
 		
 		--Jumps

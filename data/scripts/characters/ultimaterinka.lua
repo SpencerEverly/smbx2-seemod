@@ -147,11 +147,11 @@ function ultimateRinka.onTick()
 		direction = player:mem(0x106,FIELD_WORD)
 
 		-- Hovering
-		if (player.jumpKeyPressing and floatTimer < 180) then
+		if (player.jumpKeyPressing and floatTimer < 56) then
 			player.speedY = -floatFactor;
 			player:mem(0x44,FIELD_WORD,0)
 		end
-		if floatTimer < 180 and (not player:isGroundTouching()) and player:mem(0x13E,FIELD_WORD) == 0 and player.jumpKeyPressing and player:mem(0x40, FIELD_WORD) == 0 then
+		if floatTimer < 56 and (not player:isGroundTouching()) and player:mem(0x13E,FIELD_WORD) == 0 and player.jumpKeyPressing and player:mem(0x40, FIELD_WORD) == 0 then
 			local butt = Animation.spawn(12,player.x+rng.randomInt(8,player.width-8) - 16, player.y + player.height - 48)
 			butt.speedY = 2;
 			playSFX(16)
@@ -385,8 +385,8 @@ function ultimateRinka.onDraw()
 		if numberOfRinkas > 9 then
 			rinkaDisplayOffset = 8
 		end
-		Graphics.draw{type=RTYPE_IMAGE, image=pm.getGraphic(CHARACTER_ULTIMATERINKA,rinkaHUD), x = 400 - 16 - rinkaDisplayOffset, y = 74, priority = 5}
-		Text.printWP(numberOfRinkas,400+8 - rinkaDisplayOffset,74, 5)
+		Graphics.draw{type=RTYPE_IMAGE, image=pm.getGraphic(CHARACTER_ULTIMATERINKA,rinkaHUD), x = 400 - 16 - rinkaDisplayOffset, y = 74, priority = -4.2}
+		Text.printWP(numberOfRinkas,400+8 - rinkaDisplayOffset,74, -4.2)
 		
 		--make rinkas friendly definitely
 		for k,v in pairs(NPC.get(210, -1)) do
@@ -396,11 +396,11 @@ function ultimateRinka.onDraw()
 		--flight timer
 		
 		
-		local floatTimerMod = floatTimer/180 * 96
-		if floatTimerMod > 98 then
-			floatTimerMod = 98
+		local floatTimerMod = floatTimer/56 * 46
+		if floatTimerMod > 48 then
+			floatTimerMod = 48
 		end
-		local p = (floatTimerMod/98);
+		local p = (floatTimerMod/48);
 		local c = math.ceil(#flightColor*0.25);
 		c = math.min(4*math.floor(p*c + 0.5) + 1, #flightColor-3);
 		p = 1-p;
@@ -413,7 +413,8 @@ function ultimateRinka.onDraw()
 				   texture=pm.getGraphic(CHARACTER_ULTIMATERINKA,meterBase), 
 				   percent = p, 
 				   color = {flightColor[c+2], flightColor[c+1], flightColor[c], flightColor[c+3]},
-				   outline = true
+				   outline = true,
+				   priority = -4.2
 				   };
 		
 		
@@ -435,7 +436,8 @@ function ultimateRinka.onDraw()
 				   texture=pm.getGraphic(CHARACTER_ULTIMATERINKA,meterBase), 
 				   percent = p, 
 				   color = {attackColor[c+2], attackColor[c+1], attackColor[c], attackColor[c+3]},
-				   outline = true
+				   outline = true,
+				   priority = -4.2
 				   };
 	end
 end
