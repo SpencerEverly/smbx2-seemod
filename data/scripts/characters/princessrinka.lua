@@ -9,8 +9,7 @@ local colliders = require("colliders")
 --local horikawaTools = require("horikawaTools")
 
 local princessRinka = {}
-princessRinka.iAmAWussLikeWoah = false
-GameData.friendlyArea = true
+princessRinka.friendlyArea = true
 
 local rinkaCounter = 0
 local hasDied = false
@@ -28,7 +27,10 @@ end
 
 function princessRinka.onTick()
 	if player.character == CHARACTER_PRINCESSRINKA then
-		if GameData.friendlyArea == false then
+		for _, v in pairs(Block.getIntersecting(player.x - 32, player.y + player.height, player.x + player.width + 32, player.y + player.height + 2)) do
+			v.slippery = true
+		end
+		if princessRinka.friendlyArea == false then
 			if player.powerup > 1 then
 				player:mem(0x16, FIELD_WORD, 2)
 			end
@@ -40,21 +42,10 @@ function princessRinka.onTick()
 			for _, v in pairs(NPC.get(192, player.section)) do
 				v:kill()
 			end
-			for _, v in pairs(Block.getIntersecting(player.x - 32, player.y + player.height, player.x + player.width + 32, player.y + player.height + 2)) do
-				v.slippery = true
-			end
 			if (player:mem(0x13C, FIELD_DWORD) ~= 0 or player:mem(0x122, FIELD_WORD) == 227 or player:mem(0x122, FIELD_WORD) == 2) and not hasDied then
 				player:kill()
 				hasDied = true
 			end
-			if not princessRinka.iAmAWussLikeWoah then
-				--if mem(0xB2C62A, FIELD_WORD) > 0 then -- Save Slot
-					--mem(0x00B2C5AC, FIELD_FLOAT, 0) -- Lives
-				--else
-					--mem(0x00B2C5AC, FIELD_FLOAT, 1)
-				--end
-			end
-
 			rinkaCounter = rinkaCounter + 1
 			if rinkaCounter == (nextRinka - 140) then
 				displayText = true
@@ -80,19 +71,6 @@ function princessRinka.onTick()
 			end
 		end
 	end
-end
-
-function princessRinka.initCharacter()
-	-- CLEANUP NOTE: This is not quite safe if a level makes it's own use of activateHud
-	hasBeenActivated = Graphics.isHudActivated()
-	if Graphics.isHudActivated() then
-		--Graphics.activateHud(true)
-	end
-end
-
-function princessRinka.cleanupCharacter()
-	-- CLEANUP NOTE: This is not quite safe if a level makes it's own use of activateHud
-	Graphics.activateHud(hasBeenActivated)
 end
 
 return princessRinka

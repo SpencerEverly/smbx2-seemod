@@ -25,6 +25,8 @@ function ultimateRinka.onInitAPI()
 	registerEvent(ultimateRinka, "onDraw", "onDraw", false)
 end
 
+ultimateRinka.hud = true
+
 -- Player variables
 local floatFactor = 0;
 local floatTimer = 0;
@@ -380,8 +382,10 @@ function ultimateRinka.onDraw()
 		if numberOfRinkas > 9 then
 			rinkaDisplayOffset = 8
 		end
-		Graphics.draw{type=RTYPE_IMAGE, image=pm.getGraphic(CHARACTER_ULTIMATERINKA,rinkaHUD), x = 400 - 16 - rinkaDisplayOffset, y = 74, priority = -4.2}
-		Text.printWP(numberOfRinkas,400+8 - rinkaDisplayOffset,74, -4.2)
+		if ultimateRinka.hud == true then
+			Graphics.draw{type=RTYPE_IMAGE, image=pm.getGraphic(CHARACTER_ULTIMATERINKA,rinkaHUD), x = 400 - 16 - rinkaDisplayOffset, y = 74, priority = -4.2}
+			Text.printWP(numberOfRinkas,400+8 - rinkaDisplayOffset,74, -4.2)
+		end
 		
 		--make rinkas friendly definitely
 		for k,v in pairs(NPC.get(210, -1)) do
@@ -399,7 +403,8 @@ function ultimateRinka.onDraw()
 		local c = math.ceil(#flightColor*0.25);
 		c = math.min(4*math.floor(p*c + 0.5) + 1, #flightColor-3);
 		p = 1-p;
-		imagic.Bar{priority = 5, 
+		if ultimateRinka.hud == true then
+			imagic.Bar{priority = 5, 
 				   x = 400, 
 				   y = 55, 
 				   width=98, 
@@ -411,6 +416,7 @@ function ultimateRinka.onDraw()
 				   outline = true,
 				   priority = -4.2
 				   };
+		end
 		
 		
 		-- Special attack ready?
@@ -422,7 +428,8 @@ function ultimateRinka.onDraw()
 			c = math.min(4*math.floor(p*c + 0.5) + 1, #attackColor-3);
 			p = 1-p;
 		end
-		imagic.Bar{priority = 5, 
+		if ultimateRinka.hud == true then
+			imagic.Bar{priority = 5, 
 				   x = 400, 
 				   y = 66, 
 				   width=98, 
@@ -434,6 +441,7 @@ function ultimateRinka.onDraw()
 				   outline = true,
 				   priority = -4.2
 				   };
+		end		
 	end
 end
 

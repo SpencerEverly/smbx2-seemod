@@ -63,7 +63,6 @@ end
 
 function ninjabomberman.onInitAPI()
 	registerEvent(ninjabomberman, "onTick", "onTick", false)
-	registerEvent(ninjabomberman, "onKeyDown", "onKeyDown", false)
 	registerEvent(ninjabomberman, "onInputUpdate", "onInputUpdate", false)
 	registerEvent(ninjabomberman, "onJump", "onJump", false)
 	registerEvent(ninjabomberman, "onJumpEnd", "onJumpEnd", false)
@@ -208,16 +207,17 @@ function ninjabomberman.onTick()
 	end
 end
 
---onkeydown
+--onInputUpdate
 
-function ninjabomberman.onKeyDown(keycode)
+function ninjabomberman.onInputUpdate()
 	if (player.character == CHARACTER_NINJABOMBERMAN) then
-		if (keycode) == KEY_SEL and ninjabomberman.usesavestate then
+		pm.winStateCheck()
+		if player.keys.altRun == KEYS_PRESSED and ninjabomberman.usesavestate then
 			if not isInStartMenu then
 				oldGravity = Defines.gravity
 			end
 			isInStartMenu = not isInStartMenu
-		elseif (keycode == KEY_JUMP) or (keycode == KEY_SPINJUMP) then
+		elseif player.keys.jump == KEYS_PRESSED or player.keys.altJump == KEYS_PRESSED then
 			--prevent hover 
 			player:mem(0x1C, FIELD_WORD, 0)
 			if (canJump) then
@@ -227,14 +227,6 @@ function ninjabomberman.onKeyDown(keycode)
 				canJump = false
 			end
 		end
-	end
-end
-
---onInputUpdate
-
-function ninjabomberman.onInputUpdate()
-	if (player.character == CHARACTER_NINJABOMBERMAN) then
-		pm.winStateCheck()
 		if isInStartMenu then
 			player.leftKeyPressing = false
 			player.rightKeyPressing = false

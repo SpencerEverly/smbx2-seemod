@@ -2493,6 +2493,7 @@ do
             and p:mem(0x34,FIELD_WORD) == 0
             and data.hurtState == HURT_STATE.NORMAL
             and data.tongueState == TONGUE_STATE.INACTIVE
+			and not GameData.bootmenuactive
         )
     end
 
@@ -2500,6 +2501,7 @@ do
         return (
             not isOnGroundRedigit()
             and p:mem(0x11C,FIELD_WORD) == 0
+			and not GameData.bootmenuactive
         )
     end
 

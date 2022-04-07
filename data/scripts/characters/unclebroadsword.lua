@@ -253,16 +253,17 @@ local function SetCooldown() ---------------------------------------------------
 	unclebroadsword.attackState = ATKSTATE.COOLDOWN
 	attack_timer = DURATION[ATKSTATE.COOLDOWN]
 end
-function unclebroadsword.onKeyDown(keycode, playerIndex)
-	if player.character == CHARACTER_UNCLEBROADSWORD and not is_hurt and not inforcedanim() then
-		-- If pressing the attack key
-		if keycode == KEY_X and not (is_hurt or statued()) then
+
+function unclebroadsword.onInputUpdate()
+	if player.character == CHARACTER_UNCLEBROADSWORD then
+		pm.winStateCheck()
+		if player.keys.jump == KEYS_PRESSED and not (is_hurt or statued()) then
 			-- Prevent attacking when submerged, sliding, climbing, spinjumping, mounted, holding, or picking up something
 			if inforcedanim() or submerged() or sliding() or climbing() or spinjumping() or mounted() or holding() or pickingup() then return end
 			-- Prevent attacking in air if you already have
 			if airborne() and not can_aerial then return end
 			-- Alter attack combo state
-			if		unclebroadsword.attackState == ATKSTATE.NONE	then
+			if unclebroadsword.attackState == ATKSTATE.NONE	then
 				unclebroadsword.attackState = ATKSTATE.SWIPE1				-- Swipe upward
 				attack_timer = DURATION[ATKSTATE.SWIPE1]*3
 				Audio.SfxPlayCh(-1, Audio.SfxOpen(pm.getSound(CHARACTER_UNCLEBROADSWORD, sfx.swipe)), 0)
@@ -280,18 +281,18 @@ function unclebroadsword.onKeyDown(keycode, playerIndex)
 				Audio.SfxPlayCh(-1, Audio.SfxOpen(pm.getSound(CHARACTER_UNCLEBROADSWORD, sfx.lunge)), 0)
 			end
 		-- Stall-and-fall
-		elseif keycode == KEY_DOWN and player.powerup > PLAYER_SMALL and airborne() and can_stallnfall then
+		elseif player.keys.down == KEYS_PRESSED and player.powerup > PLAYER_SMALL and airborne() and can_stallnfall then
 			unclebroadsword.attackState = ATKSTATE.STALLANDFALL
 			can_stallnfall = false
 		-- Cancel charge when moving
-		elseif (keycode == KEY_LEFT or keycode == KEY_RIGHT) and (unclebroadsword.attackState == ATKSTATE.CHARGING or unclebroadsword.attackState == ATKSTATE.CHARGED) then
+		elseif player.keys.left == KEYS_PRESSED or player.keys.right == KEYS_PRESSED and (unclebroadsword.attackState == ATKSTATE.CHARGING or unclebroadsword.attackState == ATKSTATE.CHARGED) then
 			SetCooldown()
 		-- Falling statue
-		elseif player.powerup == PLAYER_TANOOKIE and keycode == KEY_RUN and not grounded() and not mounted() then
+		elseif player.powerup == PLAYER_TANOOKIE and player.keys.run == KEYS_PRESSED and not grounded() and not mounted() then
 			unclebroadsword.attackState = ATKSTATE.STATUEFALL
 			can_stallnfall = false
 		-- Double jump
-		elseif (player.powerup == PLAYER_LEAF or player.powerup == PLAYER_TANOOKIE) and (keycode == KEY_JUMP or keycode == KEY_SPINJUMP) and doublejump_ready and player:mem(0x60, FIELD_WORD) == -1 then
+		elseif (player.powerup == PLAYER_LEAF or player.powerup == PLAYER_TANOOKIE) and player.keys.jump == KEYS_PRESSED or player.keys.altJump == KEYS_PRESSED and doublejump_ready and player:mem(0x60, FIELD_WORD) == -1 then
 			colliders.bounceResponse(player, nil, false)
 			doublejump_ready = false
 			if keycode == KEY_JUMP then
@@ -309,11 +310,6 @@ function unclebroadsword.onKeyDown(keycode, playerIndex)
 				star.speedY = math.sin(angle)*rng.random(0.2,1.2)
 			end
 		end
-	end
-end
-function unclebroadsword.onInputUpdate()
-	if player.character == CHARACTER_UNCLEBROADSWORD then
-		pm.winStateCheck()
 	
 		-- Block movement if attacking or hurt
 		if is_hurt or (unclebroadsword.attackState >= ATKSTATE.STALLED
@@ -990,7 +986,6 @@ end
 
 ---------------------------------------------------------------------------------------------- CHARACTER MANAGEMENT ----------------------------
 function unclebroadsword.onInitAPI()
-	registerEvent(unclebroadsword, "onKeyDown", "onKeyDown")
 	registerEvent(unclebroadsword, "onInputUpdate", "onInputUpdate")
 	registerEvent(unclebroadsword, "onNPCKill", "onNPCKill")
 	registerEvent(unclebroadsword, "onTick", "onTick")

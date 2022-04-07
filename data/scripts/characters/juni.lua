@@ -50,7 +50,6 @@ local umbrellab = playerManager.registerSound(CHARACTER_JUNI, "junisfx/UmbrellaB
 function juni.onInitAPI()
 	registerEvent(juni, "onInputUpdate", "onInputUpdate")
 	registerEvent(juni, "onTick", "onTick")
-	registerEvent(juni, "onKeyDown", "onKeyDown")
 end
 
 function juni.initCharacter()
@@ -224,21 +223,22 @@ function juni.onTick()
 end
 
 
-	----------------
-	---ONKEY DOWN---
-	----------------
+--------------------
+---ONINPUT UPDATE---
+--------------------
 
-function juni.onKeyDown(keycode, playerIndex)
+function juni.onInputUpdate()
 	if player.character == CHARACTER_JUNI then
+		playerManager.winStateCheck()
 		--SAVEPOINTS
-		if keycode == KEY_DOWN and colliders.collideNPC(player, 182) then
+		if player.keys.down == KEYS_PRESSED and colliders.collideNPC(player, 182) then
 			junisave = savestate.save(savestate.STATE_ALL)
 			Audio.playSFX(playerManager.getSound(CHARACTER_JUNI,savepoint))
 			juniPowerupSave1, juniPowerupSave2, juniPowerupSave3, juniPowerupSave4, juniPowerupSave5, juniPowerupSave6 = juni.doublejump, juni.running, juni.highjump, juni.hologram, juni.parasol, juni.wallclimb
 		end
 
 		--HOLOGRAM
-		if keycode== KEY_SPINJUMP and player:mem(0x140, FIELD_WORD) == 0 then
+		if player.keys.altJump == KEYS_PRESSED and player:mem(0x140, FIELD_WORD) == 0 then
 
 			if juni.hologram then
 				--if on ground
@@ -250,17 +250,6 @@ function juni.onKeyDown(keycode, playerIndex)
 				end
 			end
 		end
-	end
-end
-
-
---------------------
----ONINPUT UPDATE---
---------------------
-
-function juni.onInputUpdate()
-	if player.character == CHARACTER_JUNI then
-		playerManager.winStateCheck()
 		--DOUBLEJUMP
 		if not climb then
 			if player.keys.jump == KEYS_PRESSED and Level.winState() == 0 then
