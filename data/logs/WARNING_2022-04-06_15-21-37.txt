@@ -1,0 +1,13 @@
+Execution ran for 5905.165s (3665 ticks), and produced 1 warnings:
+
+
+2876t - Warning: Could not load sound: _OST/Super Mario Bros/World Clear.spc|0;g=2.5
+stack traceback:
+	scripts/base/audiomaster.lua:79: in function 'convertAudioSource'
+	scripts/base/audiomaster.lua:381: in function 'play'
+	E:/Github/Super Mario All-Stars++/musicalchairs.lua:68: in function <E:/Github/Super Mario All-Stars++/musicalchairs.lua:37>
+	scripts/base/engine/main_events.lua:63: in function 'callApiListeners'
+	scripts/base/engine/main_events.lua:169: in function 'callEventInternal'
+	scripts/base/engine/main_events.lua:319: in function <scripts/base/engine/main_events.lua:316>
+	[C]: in function '__xpcall'
+	main.lua:787: in function <main.lua:786>
