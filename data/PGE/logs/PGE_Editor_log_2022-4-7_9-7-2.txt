@@ -288,3 +288,11 @@ Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
 Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
 Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
 Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
