@@ -77,6 +77,10 @@ end
 function Misc.setLoadScreenTimeout(t)
 	_G._loadScreenTimeout = t
 end
+-- Function for setting load screen sound
+function Misc.setLoadScreenSound(bool)
+	_G._loadScreenSound = bool
+end
 
 -- Utility code to generate a normalized relative path
 -- TODO: Move to common file

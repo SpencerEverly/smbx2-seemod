@@ -1,6 +1,8 @@
 (Check https://docs.codehaus.moe/ for all other documentation not on this readme)
 
 THE SPENCER EVERLY EDITION LUNALUA MOD (v1.0)
+Modded by Spencer Everly
+Misc.setWindowTitle/Icon by MrDoubleA
 
 This is a mod of the original SMBX2 LunaLua architecture that fixes issues and gets updated more often than the originl SMBX2. It does many things:
 
@@ -29,7 +31,7 @@ string: A string, which is a word or a sentence in quotes ("")
 -Level/Overworld-
 Misc.playPSwitchMusic(bool) - Plays a P-Switch music indefinitely on all sections until stopped with false.
 Misc.setWindowTitle("string") - Sets the window title of the SMBX game into any title.
-Misc.setWindowIcon[Resolved]("string/to/file.extension") - Loads an image as an icon in the episode folder and replaces it with the window icon. Resolved can also be optionally used.
+Misc.setWindowIcon("string/to/file.extension") - Loads an image as an icon in the episode folder and replaces it with the window icon with Graphics.loadImage. Graphics.loadImageResolved can also be optionally used.
 Misc.saveDataManage(slot, destination..optional, action, booltocountext, booloverwrite..optional) - A stripped down version of os.remove/os.rename that manages save files.
 - slot: The slot of the save file to manage
 - destination: Optional argument when using the move command.

@@ -20,6 +20,7 @@ local hasJumped = true
 local hasTurnedHudOn = false
 local deathTimer = -1;
 local deathSoundChan = -1;
+local killed = false
 
 ninjabomberman.usesavestate = false;
 ninjabomberman.deathDelay = lunatime.toTicks(0.5);
@@ -51,7 +52,6 @@ local function unFreezePlayer(musicPaused, soundPaused)
 	soundPaused = soundPaused or false
 	mem(0x00B2C8B4, FIELD_WORD, 0)
 	player:mem(0x04, FIELD_WORD, 0)
-	--player:mem(0x11E, FIELD_WORD, -1) || don't do this, it enables autojump
 	if musicPaused then
 		Audio.MusicResume()
 		Audio.ReleaseStream(-1)
@@ -66,11 +66,20 @@ function ninjabomberman.onInitAPI()
 	registerEvent(ninjabomberman, "onInputUpdate", "onInputUpdate", false)
 	registerEvent(ninjabomberman, "onJump", "onJump", false)
 	registerEvent(ninjabomberman, "onJumpEnd", "onJumpEnd", false)
+	registerEvent(ninjabomberman, "onDraw", "onDraw", false)
 	if (player.isValid) then
 		if (player.character == CHARACTER_NINJABOMBERMAN) then
-			player:mem(0x16, FIELD_WORD, 1)
+			--player:mem(0x16, FIELD_WORD, 1)
 		end
 	end
+end
+
+function dyinganimation()
+	Audio.playSFX(pm.getSound(CHARACTER_NINJABOMBERMAN,sfx_death))
+	player:mem(0x13E, FIELD_WORD,1)
+	Misc.pause();
+	Routine.waitFrames(30, true)
+	Misc.unpause()
 end
 
 --OnTick
@@ -83,14 +92,8 @@ function ninjabomberman.onTick()
 			state = savestate.save(savestate.STATE_ALL)
 			firstSave = true
 		end
-		if isInStartMenu then
-			Defines.gravity = 0
-			freezePlayer(false, false, player.x, player.y)
-			Text.printWP("Press run to Exit Level", 200, 200,-5)
-		else
-			unFreezePlayer(false, false)
-			Defines.gravity = 12
-		end
+		unFreezePlayer(false, false)
+		Defines.gravity = 12
 		if not startedAsBomberman then
 			state = savestate.save(savestate.STATE_ALL)
 			startedAsBomberman = true
@@ -161,19 +164,14 @@ function ninjabomberman.onTick()
 			end
 		end
 
-		if player:mem(0x16, FIELD_WORD) > 1 then
-			player:mem(0x16, FIELD_WORD, 1)
-		end
-		if player:mem(0x13C, FIELD_DWORD) ~= 0 or player.forcedState == 227 or player.forcedState == 2 then
-			player:kill()
-			if SaveData.deathquickoption == false then
-				Audio.SfxStop(-1)
-				Audio.playSFX(pm.getSound(CHARACTER_NINJABOMBERMAN,sfx_death))
-				player:mem(0x13E, FIELD_WORD,1)
-				Misc.pause();
-				deathTimer = 800;
-			elseif SaveData.deathquickoption == true then
-				--Audio.playSFX(pm.getSound(CHARACTER_NINJABOMBERMAN,sfx_deathquick))
+		--if player:mem(0x16, FIELD_WORD) > 1 then
+			--player:mem(0x16, FIELD_WORD, 1)
+		--end
+		if(not killed and player:mem(0x13E,FIELD_BOOL)) then
+            killed = true
+			Audio.SfxStop(-1)
+			if SaveData.deathquickoption == nil or SaveData.deathquickoption == false then
+				Routine.run(dyinganimation)
 			end
 		end
 		
@@ -227,26 +225,6 @@ function ninjabomberman.onInputUpdate()
 				canJump = false
 			end
 		end
-		if isInStartMenu then
-			player.leftKeyPressing = false
-			player.rightKeyPressing = false
-		end
-		if(Misc.isPaused()) then
-			if(deathTimer > 0) then
-				deathTimer = deathTimer - 1;
-			elseif(deathTimer == 0) then
-				if(ninjabomberman.usesavestate) then
-					savestate.load(state, savestate.STATE_ALL)
-					player.jumpKeyPressing = false
-					player:mem(0x16, FIELD_WORD, 1)
-					Misc.unpause();
-					deathTimer = -1;
-				else
-					Misc.unpause();
-					player:mem(0x13E,FIELD_WORD,198);
-				end
-			end
-		end
 	end
 end
 
@@ -277,16 +255,16 @@ function ninjabomberman.initCharacter()
 	Defines.jumpheight_bounce = 12
 
 	-- CLEANUP NOTE: This is not safe if a level makes it's own use of activateHud
-	hasTurnedHudOn = false
-	hud(false)
+	--hasTurnedHudOn = false
+	--hud(false)
 end
 
 function ninjabomberman.cleanupCharacter()
 	-- CLEANUP NOTE: This is not safe if a level makes it's own use of activateHud
-	if not hasTurnedHudOn then
-		hud(true)
-		hasTurnedHudOn = true
-	end
+	--if not hasTurnedHudOn then
+		--hud(true)
+		--hasTurnedHudOn = true
+	--end
 	
 	isInStartMenu = false
 	startedAsBomberman = false

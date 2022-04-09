@@ -256,3 +256,59 @@ do
 		LunaDLL.LunaLuaSetBackgroundRenderFlag(val)
 	end
 end
+
+do
+	-- mda wuz ere (:<
+	ffi.cdef([[
+		typedef struct _LunaImageRef LunaImageRef;
+
+		void LunaLuaSetWindowTitle(const char* newName);
+		void LunaLuaSetWindowIcon(LunaImageRef* img, int iconType);
+	]])
+	local LunaDLL = ffi.load("LunaDll.dll")
+
+	function Misc.setWindowTitle(newName)
+		if type(newName) ~= "string" then
+			error("Invalid type for window title.")
+		end
+
+		-- Originally implemented via C++ side but it's here now
+		-- for consistency with setWindowIcon, since it needed it.
+		LunaDLL.LunaLuaSetWindowTitle(newName)
+	end
+
+	function Misc.setWindowIcon(iconImageSmall,iconImageBig)
+		if type(iconImageSmall) ~= "LuaImageResource" then
+			error("Invalid type for window icon.")
+		end
+
+		if iconImageBig == nil then
+			-- Only one image, use small for both
+			LunaDLL.LunaLuaSetWindowIcon(iconImageSmall._ref,0)
+		elseif type(iconImageBig) == "LuaImageResource" then
+			-- Two images, use each
+			LunaDLL.LunaLuaSetWindowIcon(iconImageSmall._ref,1)
+			LunaDLL.LunaLuaSetWindowIcon(iconImageBig._ref,2)
+		else
+			error("Invalid type for window icon.")
+		end
+
+		--[[local smallImageRef,bigImageRef
+
+		if type(iconImageSmall) == "LuaImageResource" then
+			smallImageRef = iconImageSmall._ref
+
+			if type(iconImageBig) == "LuaImageResource" then
+				bigImageRef = iconImageBig._ref
+			elseif iconImageBig == nil then
+				bigImageRef = smallImageRef
+			else
+				error("Invalid type for window icon.")
+			end
+		else
+			error("Invalid type for window icon.")
+		end
+
+		LunaDLL.LunaLuaSetWindowIcon(smallImageRef,bigImageRef)]]
+	end
+end
