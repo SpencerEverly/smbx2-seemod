@@ -292,6 +292,11 @@ do
 		else
 			error("Invalid type for window icon.")
 		end
+	end
+		
+	function Misc.setWindowPosition(xPos,yPos)
+		LunaDLL.LunaLuaSetWindowPos(xPos,yPos)
+	end
 
 		--[[local smallImageRef,bigImageRef
 
@@ -310,5 +315,4 @@ do
 		end
 
 		LunaDLL.LunaLuaSetWindowIcon(smallImageRef,bigImageRef)]]
-	end
 end
