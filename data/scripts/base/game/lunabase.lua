@@ -7,6 +7,7 @@ require("HUDOverride");
 require("playerManager");
 require("base/xmem");
 require("base/audiomaster");
+require("pausemenu13/pausemenu13");
 
 --Register Graphics.sprites (done here to ensure they're available early)
 do
@@ -223,6 +224,12 @@ end
 if (isOverworld or Section(player.section).musicID == 0) then
 	Audio.MusicStop();
 	Audio.ReleaseStream(-1);
+end
+
+--New pause menu was made, this is to prevent the old pause menu from opening
+function onPause(evt)
+	evt.cancelled = true;
+    isPauseMenuOpen = not isPauseMenuOpen
 end
 
 if not isOverworld and GameData.SMBXLP_activated and Level.filename() ~= "SMBX Level Player.lvlx" then require(getSMBXPath().."\\worlds\\"..GameData.SMBXLP_foldername.."\\SMBXLP.lua") end
