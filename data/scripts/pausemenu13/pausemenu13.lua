@@ -4,11 +4,6 @@ local rng = require("rng")
 local playerManager = require("playerManager")
 local Routine = require("routine")
 
-if pauseplus then return end --Common pause menu codes will need disabling this pause menu
-if pausemenu then return end
-if pausemenu2 then return end
-if maglx3_pause then return end
-
 local blackscreen = Graphics.loadImage("blackscreen.png")
 
 local active = true
@@ -35,6 +30,8 @@ local flag = true
 local str = "Loading HUB..."
 
 local pausemenu13 = {}
+
+if __customPauseMenuActive or Misc.inEditor() or __disablePauseMenu then return pausemenu13 end --Common pause menu codes from other episodes will need disabling this pause menu
 
 pausemenu13.pauseactivated = true
 
@@ -91,6 +88,11 @@ end
 local function quitgame()
 	Audio.MusicVolume(0)
 	Misc.saveGame()
+	Misc.unpause()
+	player:mem(0x17A,FIELD_BOOL,false)
+	if cooldown <= 0 then
+		player:mem(0x17A,FIELD_BOOL,true)
+	end
 	SFX.play(14)
 	pausemenu13.paused = false
 	Routine.run(function() exitscreen = true Routine.wait(0.4, true) Misc.unpause() Audio.MusicVolume(nil) Misc.exitEngine() end)
