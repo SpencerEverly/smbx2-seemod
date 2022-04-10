@@ -1,0 +1,10 @@
+gfxoffsetx=0
+gfxoffsety=2
+gfxwidth=160
+gfxheight=32
+width=160
+height=32
+grabside=0
+speed=0
+noyoshi=1
+nogravity=1

@@ -1,0 +1,14 @@
+gfxoffsety=4
+gfxwidth=140
+gfxheight=182
+width=128
+height=128
+playerblock=0
+playerblocktop=0
+npcblock=0
+npcblocktop=0
+jumphurt=1
+nohurt=0
+nogravity=0
+frames=12
+framestyle=1

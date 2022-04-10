@@ -8,8 +8,8 @@ local mega2 = {}
 
 local offsets = nil;
 mega2.sfxFile = Misc.resolveSoundFile("megashroom.ogg")
-mega2.megashrinksfx = Misc.resolveSoundFile("_OST/_Sound Effects/mega_shrink.ogg")
-mega2.megagrowsfx = Misc.resolveSoundFile("_OST/_Sound Effects/mega_grow.ogg")
+mega2.megashrinksfx = Misc.resolveSoundFile("mega_shrink.ogg")
+mega2.megagrowsfx = Misc.resolveSoundFile("mega_grow.ogg")
 mega2.megarunningoutsfx = Misc.resolveSoundFile("megashroom-running-out.ogg")
 
 mega2.duration = lunatime.toTicks(13.8);

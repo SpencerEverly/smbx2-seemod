@@ -1,0 +1,2 @@
+height=70
+gfxheight=70

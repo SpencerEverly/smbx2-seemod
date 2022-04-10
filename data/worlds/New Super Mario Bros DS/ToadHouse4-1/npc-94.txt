@@ -1,0 +1,6 @@
+gfxoffsetx=-4
+gfxwidth=40
+gfxheight=54
+width=32
+height=54
+framestyle=1

@@ -1,0 +1,4 @@
+framestyle=1
+framespeed=8
+frames=4
+score=2

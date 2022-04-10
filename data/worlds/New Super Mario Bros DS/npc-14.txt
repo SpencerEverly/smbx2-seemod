@@ -1,0 +1,4 @@
+framestyle=0
+framespeed=3
+frames=4
+gfxoffsety=0

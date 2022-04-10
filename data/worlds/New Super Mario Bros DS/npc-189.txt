@@ -1,0 +1,5 @@
+gfxwidth=48
+gfxheight=48
+width=24
+height=48
+cliffturn=1

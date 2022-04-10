@@ -1,0 +1,47 @@
+@charset "utf-8";
+/* CSS Document */
+
+body {
+	background-image: url("hills.png");
+	background-size: cover;
+	background-repeat: no-repeat;
+	 background-attachment: fixed;
+}
+
+#logo {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 50%;
+}
+
+#pipes {
+	position: relative;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 50%;
+}
+.pipeFont {
+	font-family: Calibri;
+	position: absolute;
+	font-weight: 800;
+	margin-top: -50px;
+	left: 40px;
+	font-size: 20px;
+	color: white;
+	
+    text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000; 
+	
+}
+
+#ground {
+	background-image: url("ground.png");
+	background-repeat: repeat-x;
+    position: absolute;
+    right: 0; bottom: 0; left: 0;
+}

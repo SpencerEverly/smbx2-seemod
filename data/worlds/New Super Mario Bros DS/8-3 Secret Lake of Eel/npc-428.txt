@@ -1,0 +1,3 @@
+score=10
+speed=0.195
+nohammer=0

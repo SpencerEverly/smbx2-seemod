@@ -1,0 +1,6 @@
+playerblocktop=0
+npcblocktop=0
+cliffturn=1
+noyoshi=1
+nofireball=1
+noiceball=1

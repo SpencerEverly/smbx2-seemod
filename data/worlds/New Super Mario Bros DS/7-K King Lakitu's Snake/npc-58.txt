@@ -1,0 +1,10 @@
+playerblock=0
+playerblocktop=0
+npcblock=0
+npcblocktop=0
+grabside=0
+grabtop=0
+jumphurt=0
+nohurt=1
+noblockcollision=1
+noyoshi=1

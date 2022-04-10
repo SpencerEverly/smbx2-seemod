@@ -1,0 +1,5 @@
+gfxwidth=192
+gfxheight=32
+width=192
+height=32
+speed=0.75

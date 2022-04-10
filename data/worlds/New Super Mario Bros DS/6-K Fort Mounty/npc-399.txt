@@ -1,0 +1,10 @@
+gfxwidth=128
+gfxheight=32
+width=128
+height=32
+playerblock=1
+playerblocktop=1
+npcblock=1
+npcblocktop=1
+frames=3
+framespeed=6

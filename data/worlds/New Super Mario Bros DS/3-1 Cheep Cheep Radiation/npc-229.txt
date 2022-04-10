@@ -1,0 +1,9 @@
+height=56
+width=56
+gfxheight=64
+gfxwidth=64
+gfxoffsety=4
+nofireball=1
+noiceball=1
+noyoshi=1
+score=4

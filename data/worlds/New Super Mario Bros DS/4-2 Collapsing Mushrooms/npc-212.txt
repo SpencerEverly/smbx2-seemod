@@ -1,0 +1,7 @@
+gfxoffsetx=0
+gfxoffsety=2
+gfxwidth=160
+gfxheight=32
+width=160
+height=32
+speed=0

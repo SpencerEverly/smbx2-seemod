@@ -1,0 +1,11 @@
+gfxoffsety=8
+gfxwidth=146
+gfxheight=182
+width=128
+height=128
+noyoshi=1
+nofireball=1
+noiceball=1
+frames=1
+framestyle=1
+noshell=1

@@ -1,0 +1,7 @@
+width=32
+height=32
+gfxwidth=32
+gfxheight=32
+scripts=##Celling
+speed=0.8
+nofireball=1

@@ -1,6 +1,6 @@
 local npcManager = require("npcmanager")
 
-local megashroom = require("npcs/ai/megashroom")
+local megashroom = require("mega/megashroom")
 
 local mega = {};
 

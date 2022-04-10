@@ -1,0 +1,6 @@
+gfxwidth=32
+gfxheight=48
+width=32
+height=48
+jumphurt=1
+noyoshi=1

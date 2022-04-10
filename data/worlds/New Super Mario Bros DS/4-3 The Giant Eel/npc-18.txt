@@ -1,0 +1,15 @@
+gfxwidth=261
+gfxheight=256
+width=251
+height=256
+score=10
+jumphurt=1
+speed=1
+noyoshi=1
+nofireball=1
+noiceball=1
+frames=3
+framespeed=8
+framestyle=1
+nohammer=0
+noshell=1
