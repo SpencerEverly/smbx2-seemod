@@ -119,8 +119,7 @@ do
 	end
 end
 
-local __customPauseMenuActive = false --Use this to enable a custom pause menu
-local __disablePauseMenu = false --Use this to disable the new pause menu on any episode if you only want to diable it
+local __disablePauseMenu = false --Use this to disable the new pause menu on any episode if you only want to disable it
 
 -- Implement print based on console:println
 do

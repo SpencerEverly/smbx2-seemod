@@ -6,7 +6,6 @@
 
 local npcManager = require("npcManager")
 local npcutils = require("npcs/npcutils")
-local extrasounds = require("extrasounds")
 local playerManager = require("playermanager")
 --local yiyoshi = require("characters/yiyoshi")
 

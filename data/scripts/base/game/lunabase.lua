@@ -7,7 +7,6 @@ require("HUDOverride");
 require("playerManager");
 require("base/xmem");
 require("base/audiomaster");
-require("pausemenu13/pausemenu13");
 
 --Register Graphics.sprites (done here to ensure they're available early)
 do

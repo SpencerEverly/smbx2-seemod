@@ -1458,3 +1458,295 @@ Warning: (:0, ): QFSFileEngine::open: No file name specified
 Warning: (:0, ): QFSFileEngine::open: No file name specified
 Warning: (:0, ): QFSFileEngine::open: No file name specified
 Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QMetaObject::connectSlotsByName: No matching signal for on_SaveProportion_clicked(bool)
+Warning: (:0, ): QMetaObject::connectSlotsByName: No matching signal for on_HidePaths_clicked(bool)
+Warning: (:0, ): QMetaObject::connectSlotsByName: No matching signal for on_HideMusBoxes_clicked(bool)
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): setGeometry: Unable to set geometry 285x266+895+430 (frame: 301x305+887+399) on QWidgetWindow/"CustomMusicSetupWindow" on "\\.\DISPLAY2". Resulting geometry: 285x292+895+430 (frame: 301x331+887+399) margins: 8, 31, 8, 8 minimum size: 285x266 MINMAXINFO maxSize=0,0 maxpos=0,0 mintrack=301,305 maxtrack=0,0)
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QFSFileEngine::open: No file name specified
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals
+Warning: (:0, ): QObject::startTimer: Timers cannot have negative intervals

@@ -31,7 +31,7 @@ local str = "Loading HUB..."
 
 local pausemenu13 = {}
 
-if __customPauseMenuActive or Misc.inEditor() or __disablePauseMenu then return pausemenu13 end --Common pause menu codes from other episodes will need disabling this pause menu
+if __disablePauseMenu or Misc.inEditor() then return end --Custom pause menu codes from other episodes will need disabling this pause menu
 
 pausemenu13.pauseactivated = true
 
@@ -62,6 +62,8 @@ function pausemenu13.onInitAPI()
 	registerEvent(pausemenu13, "onStart")
 	
 	local Routine = require("routine")
+	
+	if __disablePauseMenu or Misc.inEditor() then return end --Custom pause menu codes from other episodes will need disabling this pause menu
 	
 	ready = true
 end
@@ -156,8 +158,9 @@ local function drawPauseMenu(y, alpha)
 end
 
 function pausemenu13.onDraw(camIdx,priority,isSplit)
+	if __disablePauseMenu or Misc.inEditor() then return end
 	if pausemenu13.paused then
-		Misc.pause()
+		--Misc.pause()
 		if(pause_box == nil) then
 			pause_height = drawPauseMenu(-600,0);
 			pause_box = imagic.Create{x=393,y=300,width=405,height=pause_height,primitive=imagic.TYPE_BOX,align=imagic.ALIGN_CENTRE}
@@ -166,7 +169,7 @@ function pausemenu13.onDraw(camIdx,priority,isSplit)
 		drawPauseMenu(300-pause_height*0.5,1)
 		
 		--Fix for anything calling Misc.unpause
-		Misc.pause();
+		--Misc.pause();
 	end
 	if not pausemenu13.paused then
 		pause_box = nil
@@ -188,8 +191,8 @@ function pausemenu13.onInputUpdate()
 			cooldown = 5
 			Misc.unpause()
 			player:mem(0x11E,FIELD_BOOL,false)
-		elseif(player:mem(0x13E, FIELD_WORD) == 0 and not dying and (isOverworld or Level.winState() == 0) and not Misc.isPaused() and pausemenu13.pauseactivated == true) then
-			--Misc.pause();
+		elseif(player:mem(0x13E, FIELD_WORD) == 0 and not dying and (isOverworld or Level.winState() == 0) and not Misc.isPaused() and pausemenu13.pauseactivated == true)and not __disablePauseMenu or not Misc.inEditor() then
+			Misc.pause();
 			pausemenu13.paused = true
 			pauseactive = true
 			pause_index = 0;
@@ -299,8 +302,9 @@ end
 
 function pausemenu13.onTick()
 	Defines.player_hasCheated = false --No disabling in my house
+	if __disablePauseMenu or Misc.inEditor() then return end
 	if(pausemenu13.paused) then
-		Misc.pause();
+		--Misc.pause();
 	end
 	if(pausemenu13.paused_char) then
 		if pause_index_char == 0 then

@@ -11,9 +11,6 @@
 
 local playerManager = require("playermanager")
 local npcManager = require("npcManager")
-if not isOverworld then
-	local extrasounds = require("extrasounds")
-end
 local Cheats = require("base/game/newcheats")
 local textplus = require("textplus")
 local egg = require("characters/yiyoshi/egg_ai")
@@ -2517,7 +2514,7 @@ do
         for _,block in ipairs(blocks) do
             if block.id == 370 or block.contentID == 0  and not block:mem(0x5A,FIELD_BOOL) and block.id ~= 90 and Block.MEGA_SMASH_MAP[block.id] then
                 block:remove(true)
-				Audio.playSFX(extrasounds.id4)
+				Audio.playSFX(4)
             else
                 block:hit(true)
             end
