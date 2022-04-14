@@ -6,6 +6,7 @@
 
 local rng = require("rng")
 local colliders = require("colliders")
+local playerManager = require("playerManager")
 --local horikawaTools = require("horikawaTools")
 
 local princessRinka = {}
