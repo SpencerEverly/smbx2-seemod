@@ -1,9 +1,0 @@
-[first]
-import=AI_SINGLE
-framespeed=4
-frames=3
-lifetime=500
-xAlign=MID
-yAlign=MID
-spawnBindX=MID
-spawnBindY=MID

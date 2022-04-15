@@ -1,7 +1,0 @@
-gfxwidth=64
-gfxheight=32
-width=64
-height=20
-nogravity=1
-frames=1
-framestyle=1

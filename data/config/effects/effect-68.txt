@@ -1,4 +1,0 @@
-[first]
-import=AI_DROP
-frames=1
-img=68

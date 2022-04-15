@@ -1,4 +1,0 @@
-[1]
-frames=1
-framestyle=1
-gravity=0.5

@@ -1,7 +1,0 @@
-[1]
-xAlign=MID
-yAlign=BOTTOM
-yOffset=24
-import=AI_SINGLE
-frames=8
-framespeed=3

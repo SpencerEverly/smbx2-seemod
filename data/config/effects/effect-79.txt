@@ -1,7 +1,0 @@
-[1]
-lifetime=60
-onTick=TICK_SLOWDOWN
-variants=13
-speedY=-2
-xOffset=0
-yOffset=0

@@ -1,5 +1,0 @@
-playerblocktop=0
-npcblocktop=1
-grabtop=0
-nofireball=0
-noiceball=0

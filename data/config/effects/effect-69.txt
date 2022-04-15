@@ -1,3 +1,0 @@
-[first]
-frames=2
-framespeed=2

@@ -1,3 +1,0 @@
-[1]
-import=AI_PLAYER
-framestyle=1

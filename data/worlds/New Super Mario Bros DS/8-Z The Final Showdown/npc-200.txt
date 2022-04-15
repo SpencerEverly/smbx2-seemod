@@ -1,9 +1,0 @@
-gfxoffsetx=0
-gfxoffsety=2
-gfxwidth=128
-gfxheight=144
-width=128
-height=144
-health=36
-frames=5
-framestyle=1

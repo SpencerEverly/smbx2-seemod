@@ -1,3 +1,0 @@
-[first]
-import=AI_ARC
-framestyle=1

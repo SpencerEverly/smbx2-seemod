@@ -1,6 +1,0 @@
-[1]
-onTick=TICK_BLAARG
-frames=2
-framespeed=16
-lifetime=100
-priority=BACKGROUND

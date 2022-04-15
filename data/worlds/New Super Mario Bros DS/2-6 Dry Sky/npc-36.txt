@@ -1,7 +1,0 @@
-gfxwidth=32
-gfxheight=48
-width=32
-height=48
-npcblock=0
-jumphurt=1
-noyoshi=1

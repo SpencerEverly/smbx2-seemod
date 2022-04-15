@@ -1,5 +1,0 @@
-[first]
-import=AI_SINGLE_DOUBLESPEED
-framespeed=4
-frames=3
-lifetime=500

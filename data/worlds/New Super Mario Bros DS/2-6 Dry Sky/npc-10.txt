@@ -1,5 +1,0 @@
-gfxwidth=22
-gfxheight=32
-width=22
-height=32
-npcblock=0

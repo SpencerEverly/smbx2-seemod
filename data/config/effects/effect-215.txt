@@ -1,4 +1,0 @@
-[1]
-onDeath=DEATH_SMOKE
-yOffset=2
-lifetime=118

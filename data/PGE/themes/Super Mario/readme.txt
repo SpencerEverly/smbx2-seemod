@@ -1,1 +1,0 @@
-This is the Super Mario Theme Pack created by Squishy Rex. Images may be subject to change over the course of the development of PGE.

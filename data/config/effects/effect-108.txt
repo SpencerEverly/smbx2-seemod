@@ -1,4 +1,0 @@
-[first]
-import=AI_SINGLE
-frames=7
-framespeed=4

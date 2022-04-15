@@ -1,9 +1,0 @@
-height=56
-width=64
-gfxheight=56
-gfxwidth=64
-framestyle=1
-framespeed=8
-frames=4
-score=4
-speed=2

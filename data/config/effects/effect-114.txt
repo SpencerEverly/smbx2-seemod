@@ -1,3 +1,0 @@
-[first]
-import=AI_WATERSPLASH
-priority=BACKGROUND

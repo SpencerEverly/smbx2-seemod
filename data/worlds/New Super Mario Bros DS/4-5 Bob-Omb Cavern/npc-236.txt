@@ -1,2 +1,0 @@
-scripts=Celling
-nofireball=1

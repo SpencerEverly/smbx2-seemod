@@ -1,7 +1,0 @@
-[first]
-import=AI_SINGLE
-framespeed=6
-frames=3
-maxSpeedX=0
-maxSpeedY=0
-lifetime=500
