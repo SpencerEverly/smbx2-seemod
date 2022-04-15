@@ -2,4 +2,4 @@ This version of SMBX2 is actually a bit different compared to the mainline versi
 
 To use this, extract and overwrite everything in your SMBX2 folder, or you can seperately use this on a clean install overwriting those files.
 
-(The only problem this has is it crashes with recoridng GIFs, but other than that, everything works as intended)
+(The only problem this has is that it crashes with recording GIFs, but other than that, everything works as intended)
