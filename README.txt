@@ -3,7 +3,7 @@ This version of SMBX2 is actually a bit different compared to the mainline versi
 - Enables online support (Experimental)
 - Reenables os.rename/os.remove
 - Fixes GIF Recording crashing (Coming soon)
-- Redoes Defines to support player2 (Coming soon)
+- Adds the new Misc. commands by MrDoubleA (Coming soon)
 
 To use this, extract and overwrite everything in your SMBX2 folder, or you can seperately use this on a clean install overwriting those files.
 
