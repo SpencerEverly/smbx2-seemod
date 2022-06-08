@@ -853,7 +853,7 @@ end
 	local function anyValidFields()
 		sectionlist[1] = player.section
 		if Player(2) and Player(2).isValid then
-			sectionlist[2] = player2.section
+			sectionlist[2] = Player(2).section
 		else
 			sectionlist[2] = nil
 		end
