@@ -24,11 +24,10 @@ float: Timing and speed, I think
 
 ----Functions----
 
-VER_SEE_MOD - This is the SMBX version that's being used. Use `if SMBX_VERSION == VER_SEE_MOD then` to detect the version. Useful for breaking SEE Mod-only commands and SMBX2's commands apart.
+VER_SEE_MOD - This is the SMBX version that's being used. Use `if SMBX_VERSION == VER_SEE_MOD then` to seperate the version from other codes. Useful for breaking SEE Mod-only commands and SMBX2's commands apart.
 
 ----Misc----
 
----MISC---
 --Level/Overworld--
 Misc.setWindowTitle("string") - Sets the window title of the SMBX game into any title.
 Misc.setWindowIcon("string/to/file.extension") - Loads an image as an icon in the episode folder and replaces it with the window icon. loadImageResolved is recommended.
