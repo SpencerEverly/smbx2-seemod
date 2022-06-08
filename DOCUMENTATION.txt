@@ -1,7 +1,32 @@
-<-----SMBX2 LUNALUA SEE MOD----->
-    <-----Documentation----->
+(Check https://docs.codehaus.moe/ for all other documentation not on this readme)
 
-Ever wanted MORE from SMBX2? How about your own advanced methods of gameplay? Anything interesting you might wanna try out? Look no further! The LunaLua Spencer Everly Edition Mod will help you out big time!
+THE SPENCER EVERLY EDITION LUNALUA MOD (v1.0)
+Modded by Spencer Everly
+Misc.setWindowTitle/Icon by MrDoubleA
+
+This is a mod of the original SMBX2 LunaLua architecture. It does many things:
+
+- Compatibility to change the window title (Misc) and icon (loadIconImgResolved)
+- Adding loadscreen sound support with loadscreen.ogg in the episode folder
+- Adds online capibilities
+- And more that isn't on this list
+
+For documentation, see below.
+
+-------DOCUMENTATION-------
+
+(Field types, aka things that the code does that indicates what it does)
+word: Can be a number (Like 0, or 1)
+bool: This, or that. which is really true or false (Think of a true or false quiz)
+float: Timing and speed, I think
+"string": A string, which is a word or a sentence in quotes ("")
+..optional: Optional argument, specific for something
+
+----Functions----
+
+VER_SEE_MOD - This is the SMBX version that's being used. Use `if SMBX_VERSION == VER_SEE_MOD then` to detect the version. Useful for breaking SEE Mod-only commands and SMBX2's commands apart.
+
+----Misc----
 
 ---MISC---
 --Level/Overworld--
