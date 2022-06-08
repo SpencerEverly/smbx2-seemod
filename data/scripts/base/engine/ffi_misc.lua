@@ -259,6 +259,7 @@ end
 
 do
 	-- mda wuz ere (:<
+	--Spencer Everly lol
 	ffi.cdef([[
 		typedef struct _LunaImageRef LunaImageRef;
 
@@ -313,7 +314,6 @@ do
 
 		LunaDLL.LunaLuaSetWindowIcon(smallImageRef,bigImageRef)]]
 	end
-	--Spencer Everly was here lol
 	function Misc.setWindowPosition(x, y)
 		LunaDLL.LunaLuaSetWindowPosition(x, y)
 	end
@@ -324,5 +324,8 @@ do
 			enable = false
 		end
 		LunaDLL.LunaLuaToggleWindowFocus(enable)
+	end
+	function Misc.centerWindow()
+		LunaDLL.LunaLuaCenterWindow(gMainWindowHwnd, 0)
 	end
 end
