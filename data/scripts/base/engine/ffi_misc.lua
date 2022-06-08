@@ -267,7 +267,6 @@ do
 		void LunaLuaSetWindowIcon(LunaImageRef* img, int iconType);
 		void LunaLuaSetWindowPosition(int x, int y);
 		void LunaLuaToggleWindowFocus(bool enable);
-		void LunaLuaCenterWindow(HWND hwnd, HWND hwndCenter);
 	]])
 	local LunaDLL = ffi.load("LunaDll.dll")
 
