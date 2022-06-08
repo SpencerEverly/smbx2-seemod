@@ -264,6 +264,8 @@ do
 
 		void LunaLuaSetWindowTitle(const char* newName);
 		void LunaLuaSetWindowIcon(LunaImageRef* img, int iconType);
+		void LunaLuaSetWindowPosition(int x, int y);
+		void LunaLuaToggleWindowFocus(bool enable);
 	]])
 	local LunaDLL = ffi.load("LunaDll.dll")
 
@@ -310,5 +312,17 @@ do
 		end
 
 		LunaDLL.LunaLuaSetWindowIcon(smallImageRef,bigImageRef)]]
+	end
+	--Spencer Everly was here lol
+	function Misc.setWindowPosition(x, y)
+		LunaDLL.LunaLuaSetWindowPosition(x, y)
+	end
+	function Misc.toggleWindowFocus(enable)
+		if enable then
+			enable = true
+		else
+			enable = false
+		end
+		LunaDLL.LunaLuaToggleWindowFocus(enable)
 	end
 end
