@@ -268,6 +268,7 @@ do
 		void LunaLuaSetWindowPosition(int x, int y);
 		void LunaLuaToggleWindowFocus(bool enable);
 		void LunaLuaCenterWindow();
+		void LunaLuaToggleFullscreen(bool enable);
 	]])
 	local LunaDLL = ffi.load("LunaDll.dll")
 
@@ -328,5 +329,13 @@ do
 	end
 	function Misc.centerWindow()
 		LunaDLL.LunaLuaCenterWindow()
+	end
+	function Misc.toggleFullscreen(enable)
+		if enable then
+			enable = true
+		else
+			enable = false
+		end
+		LunaDLL.LunaLuaToggleFullscreen(enable)
 	end
 end

@@ -32,27 +32,6 @@ VER_SEE_MOD - This is the SMBX version that's being used. Use `if SMBX_VERSION =
 Misc.setWindowTitle("string") - Sets the window title of the SMBX game into any title.
 Misc.setWindowIcon("string/to/file.extension") - Loads an image as an icon in the episode folder and replaces it with the window icon. loadImageResolved is recommended.
 Misc.setWindowPosition(x, y) - Sets the main game window position to any position on the screen.
-Misc.toggleWindowFocus(bool) - Whenever to focus or unfocus the window when not focused on the game, setting bool as true or false.
-Misc.centerWindow() - Centers the window to the center of the screen after execution. (This is next to be added)
-
-
-
-
-
-
-
---Unfinished--
-Misc.saveDataManage(slot, destination..optional, action, booltocountext, booloverwrite..optional) - A stripped down version of os.remove/os.rename that manages save files.
-- slot: The slot of the save file to manage
-- destination: Optional argument when using the move command.
-- action: Action to call. Either create, move, or delete can be called.
-- booltocountext: Whenever it's true or false to count the save slot's -ext.dat with the action.
-- booloverwrite: Whenever it's true to overwrite the save when moving saves. Default is false.
-Misc.episodeFileManage(file, destination, action, booloverwrite..optional) - saveFileManage, but os.remove/os.rename is locked down to only your files in the episode folder, and the "userdir" folder located before data (For things like PFP managing if you add one).
-- file: The file to manage.
-- destination: Optional argument when using the move command.
-- action: Action to call. Either create, move, or delete can be called.
-- booloverwrite: Whenever it's true to overwrite the file when moving. Default is false.
-
---Loadscreen--
-Misc.loadScreenSound(bool) - Whenever to enable a loadscreen sound during loading. The sound can be specified in the episode folder under "loadscreen.(musicextension)". Currently, only OGGs are supported. (If not specified, a loadsound will not be loaded)
+Misc.runWhenUnfocused(bool) - Whenever to focus or unfocus the window when not focused on the game, setting bool as true or false.
+Misc.centerWindow() - Centers the window to the center of the screen after execution.
+Misc.toggleFullscreen(bool) - Whenever to set the game into fullscreen mode (true) or not (false).
