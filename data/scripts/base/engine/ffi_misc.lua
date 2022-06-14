@@ -356,13 +356,4 @@ do
 	function Misc.getCenterWindowYPosition()
 		return LunaDLL.LunaLuaGetYWindowPositionCenter()
 	end
-	function Misc.setWindowSize(width, height)
-		LunaDLL.LunaLuaSetWindowSize(width, height)
-	end
-	function Misc.getWindowWidth()
-		return LunaDLL.LunaLuaGetWindowWidth()
-	end
-	function Misc.getWindowHeight()
-		return LunaDLL.LunaLuaGetWindowHeight()
-	end
 end

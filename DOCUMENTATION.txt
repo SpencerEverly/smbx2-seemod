@@ -39,6 +39,3 @@ Misc.getWindowXPosition() - This will get the X position of the window in it's c
 Misc.getWindowYPosition() - This will get the Y position of the window in it's current state.
 Misc.getCenterWindowXPosition() - This will get the X position of the window when it's centered.
 Misc.getCenterWindowYPosition() - This will get the Y position of the window when it's centered.
-Misc.setWindowSize(width, height) - Sets the window size of the game.
-Misc.getWindowWidth() - Retrives the window width of the game.
-Misc.getWindowHeight() - Retrives the window height of the game.
