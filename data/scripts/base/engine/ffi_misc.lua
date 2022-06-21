@@ -273,7 +273,6 @@ do
 		double LunaLuaGetYWindowPosition();
 		double LunaLuaGetXWindowPositionCenter();
 		double LunaLuaGetYWindowPositionCenter();
-		bool LunaLuaDetectFullscreen();
 		void LunaLuaSetWindowSize(int width, int height);
 		int LunaLuaGetWindowWidth();
 		int LunaLuaGetWindowHeight();
@@ -340,9 +339,6 @@ do
 	end
 	function Misc.toggleFullscreen()
 		LunaDLL.LunaLuaToggleFullscreen()
-	end
-	function Misc.isFullscreen()
-		LunaDLL.LunaLuaDetectFullscreen()
 	end
 	function Misc.getWindowXPosition()
 		return LunaDLL.LunaLuaGetXWindowPosition()
