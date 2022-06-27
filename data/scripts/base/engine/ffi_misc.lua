@@ -276,6 +276,7 @@ do
 		void LunaLuaSetWindowSize(int width, int height);
 		int LunaLuaGetWindowWidth();
 		int LunaLuaGetWindowHeight();
+		bool LunaLuaIsFullscreen();
 	]])
 	local LunaDLL = ffi.load("LunaDll.dll")
 
@@ -356,5 +357,8 @@ do
 	end
 	function Misc.getCenterWindowYPosition()
 		return LunaDLL.LunaLuaGetYWindowPositionCenter()
+	end
+	function Misc.isFullscreen()
+		return LunaDLL.LunaLuaIsFullscreen()
 	end
 end
