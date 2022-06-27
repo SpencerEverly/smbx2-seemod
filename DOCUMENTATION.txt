@@ -34,7 +34,7 @@ Misc.setWindowIcon("string/to/file.extension") - Loads an image as an icon in th
 Misc.setWindowPosition(x, y) - Sets the main game window position to any position on the screen.
 Misc.runWhenUnfocused(bool) - Whenever to focus or unfocus the window when not focused on the game, setting bool as true or false.
 Misc.centerWindow() - Centers the window to the center of the screen after execution.
-Misc.toggleFullscreen() - Whenever to set the game into fullscreen mode or not.
+Misc.setFullscreen(bool) - Whenever to set the game into fullscreen mode or not, setting bool as true or false.
 Misc.getWindowXPosition() - This will get the X position of the window in it's current state.
 Misc.getWindowYPosition() - This will get the Y position of the window in it's current state.
 Misc.getCenterWindowXPosition() - This will get the X position of the window when it's centered.
