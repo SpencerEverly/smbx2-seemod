@@ -214,6 +214,7 @@ local PlayerFields = {
 		frame                   = {0x114, FIELD_WORD},
 		forcedState             = {0x122, FIELD_WORD},
 		forcedTimer             = {0x124, FIELD_DFLOAT},
+        warpIndex               = {0x05A, FIELD_WORD},
 
 		----------------------------------
 		-- LEGACY AUTO-GENERATED FIELDS --
@@ -749,7 +750,21 @@ end
 --------------------
 
 function Player.count()
-	return mem(GM_PLAYERS_COUNT_ADDR, FIELD_WORD)
+    return mem(GM_PLAYERS_COUNT_ADDR, FIELD_WORD)
+end
+
+function Player.setCount(count)
+    if count == nil then
+        return mem(GM_PLAYERS_COUNT_ADDR, FIELD_WORD)
+    elseif count == 0 then
+        error("You can't set the count to 0")
+        return
+    elseif count >= 201 then
+        error("You can't set the count higher than 201")
+        return
+    elseif count then
+        return mem(GM_PLAYERS_COUNT_ADDR, FIELD_WORD, count)
+    end
 end
 
 local getMT = {__pairs = ipairs}

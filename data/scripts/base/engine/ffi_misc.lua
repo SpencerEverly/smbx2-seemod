@@ -325,9 +325,18 @@ do
 		LunaDLL.LunaLuaSetWindowIcon(smallImageRef,bigImageRef)]]
 	end
 	function Misc.setWindowPosition(x, y)
+        if x == nil then
+            return
+        end
+        if y == nil then
+            return
+        end
 		LunaDLL.LunaLuaSetWindowPosition(x, y)
 	end
 	function Misc.runWhenUnfocused(enable)
+        if enable == nil then
+            error("Value has not been set")
+        end
 		if enable then
 			enable = true
 		else
@@ -339,6 +348,9 @@ do
 		LunaDLL.LunaLuaCenterWindow()
 	end
 	function Misc.setFullscreen(enable)
+        if enable == nil then
+            error("Value has not been set")
+        end
 		if enable then
 			enable = true
 		else
