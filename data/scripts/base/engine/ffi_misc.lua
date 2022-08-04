@@ -277,6 +277,8 @@ do
 		int LunaLuaGetWindowWidth();
 		int LunaLuaGetWindowHeight();
 		bool LunaLuaIsFullscreen();
+        bool LunaLuaIsRecordingGIF();
+        bool LunaLuaIsFocused();
 	]])
 	local LunaDLL = ffi.load("LunaDll.dll")
 
@@ -335,7 +337,8 @@ do
 	end
 	function Misc.runWhenUnfocused(enable)
         if enable == nil then
-            error("Value has not been set")
+            Misc.warn("Value has not been set.")
+            return
         end
 		if enable then
 			enable = true
@@ -349,7 +352,8 @@ do
 	end
 	function Misc.setFullscreen(enable)
         if enable == nil then
-            error("Value has not been set")
+            Misc.warn("Value has not been set.")
+            return
         end
 		if enable then
 			enable = true
@@ -373,4 +377,10 @@ do
 	function Misc.isFullscreen()
 		return LunaDLL.LunaLuaIsFullscreen()
 	end
+    function Misc.toggleGIFRecording()
+		return LunaDLL.LunaLuaIsRecordingGIF()
+	end
+    function Misc.isWindowFocused()
+        return LunaDLL.LunaLuaIsFocused()
+    end
 end
