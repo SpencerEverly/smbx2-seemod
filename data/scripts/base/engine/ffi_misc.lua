@@ -262,7 +262,12 @@ do
 	--Spencer Everly lol
 	ffi.cdef([[
 		typedef struct _LunaImageRef LunaImageRef;
-
+        
+        void LunaLuaTestModeExit(void);
+        void LunaLuaTestModeRestart(void);
+        void LunaLuaTestModeContinue(void);
+        void LunaLuaTestModeSkip(void);
+        
 		void LunaLuaSetWindowTitle(const char* newName);
 		void LunaLuaSetWindowIcon(LunaImageRef* img, int iconType);
 		void LunaLuaSetWindowPosition(int x, int y);
@@ -382,5 +387,11 @@ do
 	end
     function Misc.isWindowFocused()
         return LunaDLL.LunaLuaIsFocused()
+    end
+    function Misc.exitEditorMode()
+        LunaDLL.LunaLuaTestModeExit()
+    end
+    function Misc.restartEditorMode()
+        LunaDLL.LunaLuaTestModeRestart()
     end
 end
