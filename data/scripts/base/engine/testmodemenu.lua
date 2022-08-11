@@ -112,7 +112,7 @@ local playerpos
 local selectedSetting = nil
 local showRespawnLoc = false
 
-GameData._____enableTestModeMenu = false
+GameData._____enableTestModeMenu = true
 testModeMenu.active = false
 
 local skipActive = false
@@ -136,6 +136,7 @@ local continueItem = {
 	activate=function()
 		Audio.playSFX(30)
 		resetPosition()
+        Misc.unpause()
 		LunaDLL.LunaLuaTestModeContinue()
 		testModeMenu.active = false
 		
@@ -458,7 +459,7 @@ function testModeMenu.onStartTestModeMenu(newAllowContinue, skipEnded)
         allowContinue = true
         testModeMenu.active = false
         LunaDLL.LunaLuaTestModeContinue()
-    elseif  GameData._____enableTestModeMenu then
+    elseif GameData._____enableTestModeMenu then
         camerapos = {x = camera.x, y = camera.y}
         playerpos = {x = player.x, y = player.y, section = player.section}
         showRespawnLoc = false
@@ -467,6 +468,9 @@ function testModeMenu.onStartTestModeMenu(newAllowContinue, skipEnded)
         GameData.__testMenu.colorfilter = GameData.__testMenu.colorfilter or 0
         allowContinue = newAllowContinue
         testModeMenu.active = true
+        if testModeMenu.active then
+            Misc.pause()
+        end
         escPressedState = false
 
         -- If returning from end of skip, old menu state is mostly fine, but update camerapos/playerpos above and such
@@ -813,11 +817,11 @@ end
 
 local lockSelect = false
 
-function testModeMenu.onTestModeMenu()
+function testModeMenu.onDraw()
     if not GameData._____enableTestModeMenu then
         LunaDLL.LunaLuaTestModeContinue()
         testModeMenu.active = false
-    elseif GameData._____enableTestModeMenu then
+    elseif GameData._____enableTestModeMenu and testModeMenu.active then
         if controlConfigOpen then
             
             local w = 400
@@ -849,6 +853,7 @@ function testModeMenu.onTestModeMenu()
             textPrintCentered("Any Key - Advance      Pause - Back", 400, 18)
             if player.keys.pause == KEYS_PRESSED then
                 Audio.playSFX(30)
+                Misc.pause()
                 skipActive = false
             else
                 for _,v in pairs(player.keys) do
@@ -921,6 +926,7 @@ function testModeMenu.onTestModeMenu()
                 showRespawnLoc = false
                 Audio.playSFX(30)
                 resetPosition()
+                Misc.unpause()
                 LunaDLL.LunaLuaTestModeContinue()
                 testModeMenu.active = false
             elseif selectedSetting == nil then
@@ -1164,7 +1170,7 @@ if GameData._____enableTestModeMenu then
     registerEvent(testModeMenu, "onCameraDraw", "onCameraDraw", false)
     registerEvent(testModeMenu, "onCameraUpdate", "onCameraUpdate", false)
     registerEvent(testModeMenu, "onStartTestModeMenu", "onStartTestModeMenu", false)
-    registerEvent(testModeMenu, "onTestModeMenu", "onTestModeMenu", false)
+    registerEvent(testModeMenu, "onDraw", "onDraw", false)
     registerEvent(testModeMenu, "onKeyboardPressDirect", "onKeyboardPressDirect", false)
     registerEvent(testModeMenu, "onControllerButtonPress", "onControllerButtonPress", false)
 end
