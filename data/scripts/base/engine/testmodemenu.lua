@@ -112,7 +112,7 @@ local playerpos
 local selectedSetting = nil
 local showRespawnLoc = false
 
-testModeMenu.enable = false
+GameData._____enableTestModeMenu = false
 testModeMenu.active = false
 
 local skipActive = false
@@ -347,13 +347,15 @@ local hasVanillaMidpoint = nil
 local vanillamppos
 
 function testModeMenu.onStart()
-	local n = NPC.get(192)
-    hasVanillaMidpoint = startingViaCheckpoint or (#n > 0)
-	if #n > 0 then
-		vanillamppos = {x = n[1].x + n[1].width * 0.5, y = n[1].y + n[1].height * 0.5, section = n[1]:mem(0x146, FIELD_WORD)}
-	elseif startingViaCheckpoint then
-		vanillamppos = {x = player.x + player.width*0.5, y = player.y - 32, section = player.section}
-	end
+    if GameData._____enableTestModeMenu then
+        local n = NPC.get(192)
+        hasVanillaMidpoint = startingViaCheckpoint or (#n > 0)
+        if #n > 0 then
+            vanillamppos = {x = n[1].x + n[1].width * 0.5, y = n[1].y + n[1].height * 0.5, section = n[1]:mem(0x146, FIELD_WORD)}
+        elseif startingViaCheckpoint then
+            vanillamppos = {x = player.x + player.width*0.5, y = player.y - 32, section = player.section}
+        end
+    end
 end
 
 local function getEntranceListIndexBySettings(settings)
@@ -452,97 +454,103 @@ local controlConfigItem = {
 					
 						
 function testModeMenu.onStartTestModeMenu(newAllowContinue, skipEnded)
-	camerapos = {x = camera.x, y = camera.y}
-	playerpos = {x = player.x, y = player.y, section = player.section}
-	showRespawnLoc = false
-	
-	GameData.__testMenu = GameData.__testMenu or {}
-	GameData.__testMenu.colorfilter = GameData.__testMenu.colorfilter or 0
-	allowContinue = newAllowContinue
-	testModeMenu.active = true
-	escPressedState = false
+    if not GameData._____enableTestModeMenu then
+        allowContinue = true
+        testModeMenu.active = false
+        LunaDLL.LunaLuaTestModeContinue()
+    elseif  GameData._____enableTestModeMenu then
+        camerapos = {x = camera.x, y = camera.y}
+        playerpos = {x = player.x, y = player.y, section = player.section}
+        showRespawnLoc = false
+        
+        GameData.__testMenu = GameData.__testMenu or {}
+        GameData.__testMenu.colorfilter = GameData.__testMenu.colorfilter or 0
+        allowContinue = newAllowContinue
+        testModeMenu.active = true
+        escPressedState = false
 
-	-- If returning from end of skip, old menu state is mostly fine, but update camerapos/playerpos above and such
-	if (skipEnded) then
-		return
-	end
+        -- If returning from end of skip, old menu state is mostly fine, but update camerapos/playerpos above and such
+        if (skipEnded) then
+            return
+        end
 
-	-- Check entrances
-	entrances = {}
-	entrances[#entrances+1] = {warp=0, name="Start"} -- Default
-	
-	
-	if checkpoints == nil then
-		checkpoints = require("base/checkpoints")
-	end
-	
-	local cpcount = 0
-	for i,v in ipairs(checkpoints.get()) do
-		entrances[#entrances+1] = {checkpoint=v, name="Checkpoint "..i}
-		cpcount = cpcount + 1
-	end
-	
-	--1.3 checkpoints are only valid if there are no Lua checkpoints 
-	if cpcount == 0 then
-		if hasVanillaMidpoint then
-			entrances[#entrances+1] = {checkpoint=0, name="Midpoint"}
-		end
-	end
-	
-	for i,v in ipairs(Warp.get()) do
-		local warpType = v.warpType
-		 
-		 -- Only warp types 1 & 2 are valid to enter the level via (not 0)
-		 if (warpType == 1) or (warpType == 2) then
-			entrances[#entrances+1] = {warp=i, name="Warp "..i}
-		 end
-	end
-	-- TODO: Detect midpoints/multipoints and add to 'entrances' table, with appropriate logic added to entranceIndexItem
-	
-	-- Build menu lines
-	local main = { width = 250, settingsIdx = nil }
-	
-	if (allowContinue) then
-		main[#main+1] = continueItem
-	end
-	main[#main+1] = restartItem
-	main[#main+1] = playerCountItem
-	if (#entrances > 1) then
-		-- Only show "Start at" when there are more than one option
-		main[#main+1] = entranceIndexItem
-	end
-	main[#main+1] = colorFilterItem
-	if (allowContinue) then
-		main[#main+1] = skipItem
-	end
-	main[#main+1] = controlConfigItem
-	main[#main+1] = exitItem
-	
-	
-	local p1 = { width = 100, settingsIdx = 0 }
-	
-	p1[#p1+1] = idItem
-	p1[#p1+1] = powerupItem
-	p1[#p1+1] = mountItem
-	
-	
-	local p2 = { width = 110, settingsIdx = 1 }
-	
-	p2[#p2+1] = table.clone(idItem)
-	p2[#p2+1] = table.clone(powerupItem)
-	p2[#p2+1] = table.clone(mountItem)
-	
-	
-	menus[1] = main
-	menus[2] = p1
-	menus[3] = p2
-	
-	-- Set state
-	selectedMenu = 1
-	selectedLine = 1
-	returnPressedState = false
-	
-	Audio.playSFX(30)
+        -- Check entrances
+        entrances = {}
+        entrances[#entrances+1] = {warp=0, name="Start"} -- Default
+        
+        
+        if checkpoints == nil then
+            checkpoints = require("base/checkpoints")
+        end
+        
+        local cpcount = 0
+        for i,v in ipairs(checkpoints.get()) do
+            entrances[#entrances+1] = {checkpoint=v, name="Checkpoint "..i}
+            cpcount = cpcount + 1
+        end
+        
+        --1.3 checkpoints are only valid if there are no Lua checkpoints 
+        if cpcount == 0 then
+            if hasVanillaMidpoint then
+                entrances[#entrances+1] = {checkpoint=0, name="Midpoint"}
+            end
+        end
+        
+        for i,v in ipairs(Warp.get()) do
+            local warpType = v.warpType
+             
+             -- Only warp types 1 & 2 are valid to enter the level via (not 0)
+             if (warpType == 1) or (warpType == 2) then
+                entrances[#entrances+1] = {warp=i, name="Warp "..i}
+             end
+        end
+        -- TODO: Detect midpoints/multipoints and add to 'entrances' table, with appropriate logic added to entranceIndexItem
+        
+        -- Build menu lines
+        local main = { width = 250, settingsIdx = nil }
+        
+        if (allowContinue) then
+            main[#main+1] = continueItem
+        end
+        main[#main+1] = restartItem
+        main[#main+1] = playerCountItem
+        if (#entrances > 1) then
+            -- Only show "Start at" when there are more than one option
+            main[#main+1] = entranceIndexItem
+        end
+        main[#main+1] = colorFilterItem
+        if (allowContinue) then
+            main[#main+1] = skipItem
+        end
+        main[#main+1] = controlConfigItem
+        main[#main+1] = exitItem
+        
+        
+        local p1 = { width = 100, settingsIdx = 0 }
+        
+        p1[#p1+1] = idItem
+        p1[#p1+1] = powerupItem
+        p1[#p1+1] = mountItem
+        
+        
+        local p2 = { width = 110, settingsIdx = 1 }
+        
+        p2[#p2+1] = table.clone(idItem)
+        p2[#p2+1] = table.clone(powerupItem)
+        p2[#p2+1] = table.clone(mountItem)
+        
+        
+        menus[1] = main
+        menus[2] = p1
+        menus[3] = p2
+        
+        -- Set state
+        selectedMenu = 1
+        selectedLine = 1
+        returnPressedState = false
+        
+        Audio.playSFX(30)
+    end
 end
 
 local playerManager
@@ -806,251 +814,258 @@ end
 local lockSelect = false
 
 function testModeMenu.onTestModeMenu()
-	if controlConfigOpen then
-		
-		local w = 400
-		local h = 256
-		
-		local xPos = 400 - w*0.5
-		local yPos = 300 - h*0.5
-		
-		Graphics.drawBox{x = xPos, y = yPos - 20, width = w, height = h, color={0,0,0,0.5}, priority = 10}
-		Graphics.drawImageWP(Graphics.sprites.hardcoded["57-0"].img, 400 - 128, 300 - 64 - 40, 10)
-		
-		textPrintCentered("Calibrate Controller", 400, yPos + 10)
-		
-		textPrintCentered(controlConfigs[controlConfigCount], 400, yPos + 160)
-		
-		if configButtons[controlConfigCount] then
-			local v = configButtons[controlConfigCount]
-			Graphics.drawImageWP(Graphics.sprites.hardcoded["57-1"].img, 400 + v.pos.x, 300-40 + v.pos.y, 0, 20*v.img, 20, 20, 10)
-		end
-		
-		textPrintCentered("Press ESC to cancel", 400, yPos + 210)
-		
-		if escPressedState then
-			controlConfigOpen = false
-			Audio.playSFX(30)
-		end
-	elseif skipActive then
-		Graphics.drawBox{x = 0, y = 0, width = 800, height = 32, color={0,0,0,0.5}, priority = 10}
-		textPrintCentered("Any Key - Advance      Pause - Back", 400, 18)
-		if player.keys.pause == KEYS_PRESSED then
-            if testModeMenu.enable then
+    if not GameData._____enableTestModeMenu then
+        LunaDLL.LunaLuaTestModeContinue()
+        testModeMenu.active = false
+    elseif GameData._____enableTestModeMenu then
+        if controlConfigOpen then
+            
+            local w = 400
+            local h = 256
+            
+            local xPos = 400 - w*0.5
+            local yPos = 300 - h*0.5
+            
+            Graphics.drawBox{x = xPos, y = yPos - 20, width = w, height = h, color={0,0,0,0.5}, priority = 10}
+            Graphics.drawImageWP(Graphics.sprites.hardcoded["57-0"].img, 400 - 128, 300 - 64 - 40, 10)
+            
+            textPrintCentered("Calibrate Controller", 400, yPos + 10)
+            
+            textPrintCentered(controlConfigs[controlConfigCount], 400, yPos + 160)
+            
+            if configButtons[controlConfigCount] then
+                local v = configButtons[controlConfigCount]
+                Graphics.drawImageWP(Graphics.sprites.hardcoded["57-1"].img, 400 + v.pos.x, 300-40 + v.pos.y, 0, 20*v.img, 20, 20, 10)
+            end
+            
+            textPrintCentered("Press ESC to cancel", 400, yPos + 210)
+            
+            if escPressedState then
+                controlConfigOpen = false
+                Audio.playSFX(30)
+            end
+        elseif skipActive then
+            Graphics.drawBox{x = 0, y = 0, width = 800, height = 32, color={0,0,0,0.5}, priority = 10}
+            textPrintCentered("Any Key - Advance      Pause - Back", 400, 18)
+            if player.keys.pause == KEYS_PRESSED then
                 Audio.playSFX(30)
                 skipActive = false
+            else
+                for _,v in pairs(player.keys) do
+                    if v == KEYS_PRESSED then
+                        Audio.playSFX(71)
+                        LunaDLL.LunaLuaTestModeSkip()
+                        break
+                    end
+                end
             end
-		else
-			for _,v in pairs(player.keys) do
-				if v == KEYS_PRESSED then
-					Audio.playSFX(71)
-					LunaDLL.LunaLuaTestModeSkip()
-					break
-				end
-			end
-		end
-	else
-		
-		populateMountslist()
-		
-		local testModeSettings = LunaDLL.LunaLuaGetTestModeSettings()
-		
-		local w = 0
-		local h = 0
-		
-		local menuCount = 0
-		
-		for k,v in ipairs(menus) do
-			if v.settingsIdx == nil then
-				v.settings = testModeSettings
-			else
-				v.settings = testModeSettings.players[v.settingsIdx]
-			end
-			w = w + v.width
-			h = math.max(h, #v)
-			
-			if v.settingsIdx == nil or v.settingsIdx+1 <= testModeSettings.playerCount then
-				menuCount = menuCount + 1
-			end
-		end
-		
-		h = h*18 + 64 + 60
-		w = w + 40
-		
-		local xPos = 400 - w*0.5
-		local yPos = 300 - h*0.5
-		
-		Graphics.drawBox{x = xPos, y = yPos - 20, width = w, height = h, color={0,0,0,0.5}, priority = 10}
-		
-		
-		xPos = xPos + 20
-		yPos = yPos + 8
-		
-		for i=1,testModeSettings.playerCount do
-			drawPlayer(xPos + 300 + (i-1)*menus[2].width, yPos, testModeSettings.players[i-1])
-		end
-		
-		textPrint("Testing Menu", xPos + 20, yPos + 10)
-		
-		yPos = yPos + 64
+        else
+            
+            populateMountslist()
+            
+            local testModeSettings = LunaDLL.LunaLuaGetTestModeSettings()
+            
+            local w = 0
+            local h = 0
+            
+            local menuCount = 0
+            
+            for k,v in ipairs(menus) do
+                if v.settingsIdx == nil then
+                    v.settings = testModeSettings
+                else
+                    v.settings = testModeSettings.players[v.settingsIdx]
+                end
+                w = w + v.width
+                h = math.max(h, #v)
+                
+                if v.settingsIdx == nil or v.settingsIdx+1 <= testModeSettings.playerCount then
+                    menuCount = menuCount + 1
+                end
+            end
+            
+            h = h*18 + 64 + 60
+            w = w + 40
+            
+            local xPos = 400 - w*0.5
+            local yPos = 300 - h*0.5
+            
+            Graphics.drawBox{x = xPos, y = yPos - 20, width = w, height = h, color={0,0,0,0.5}, priority = 10}
+            
+            
+            xPos = xPos + 20
+            yPos = yPos + 8
+            
+            for i=1,testModeSettings.playerCount do
+                drawPlayer(xPos + 300 + (i-1)*menus[2].width, yPos, testModeSettings.players[i-1])
+            end
+            
+            textPrint("Testing Menu", xPos + 20, yPos + 10)
+            
+            yPos = yPos + 64
 
-		local returnPressed = returnPressedState
-		returnPressedState = false
-		
-		local dirtySettings = false
-		
-		local maxLine = #menus[selectedMenu]
-		
-		if menus[selectedMenu].settingsIdx ~= nil and noboots[menus[selectedMenu].settings.identity] then
-			maxLine = maxLine-1
-		end
-		
-		if testModeMenu.enable and allowContinue and (escPressedState or ((player.keys.pause == KEYS_PRESSED) and not ((inputConfig1.inputType == 0) and (inputConfig1.pause == VK_RETURN)))) then
-			selectedSetting = nil
-			skipActive = false
-			showRespawnLoc = false
-			Audio.playSFX(30)
-			resetPosition()
-			LunaDLL.LunaLuaTestModeContinue()
-			testModeMenu.active = false
-		elseif selectedSetting == nil then
-			if not lockSelect and ((player.keys.jump == KEYS_PRESSED) or (player.keys.altJump == KEYS_PRESSED) or (returnPressed)) then
-				local item = menus[selectedMenu][selectedLine]
-				if (item) and (item.activate) then
-					item:activate()
-					Audio.playSFX(71)
-				end
-			elseif (player.keys.up == KEYS_PRESSED) then
-				selectedLine = selectedLine - 1
-				if (selectedLine < 1) then
-					selectedLine = maxLine
-				end
-				Audio.playSFX(71)
-			elseif (player.keys.down == KEYS_PRESSED) then
-				selectedLine = selectedLine + 1
-				if (selectedLine > maxLine) then
-					selectedLine = 1
-				end
-				Audio.playSFX(71)
-			elseif player.keys.right == KEYS_PRESSED then
-				if (selectedMenu < menuCount) then
-					selectedMenu = math.min(selectedMenu + 1, menuCount)
-					maxLine = #menus[selectedMenu]
-					if (selectedLine > maxLine) then
-						selectedLine = maxLine
-					end
-					Audio.playSFX(71)
-				end
-			elseif player.keys.left == KEYS_PRESSED then
-				if (selectedMenu > 1) then
-					selectedMenu = math.max(selectedMenu - 1, 1)	
-					maxLine = #menus[selectedMenu]
-					if (selectedLine > maxLine) then
-						selectedLine = maxLine
-					end
-					Audio.playSFX(71)
-				end
-			end
-			
-			if not allowContinue then
-				showRespawnLoc = true
-			elseif selectedMenu == 1 and selectedLine == 1 then
-				showRespawnLoc = false
-			end
-			
-		else
-			
-			if (selectedMenu == 1 and selectedLine == 4) or not allowContinue then
-				showRespawnLoc = true
-			end
-			
-			if not lockSelect and ((player.keys.jump == KEYS_PRESSED) or (player.keys.altJump == KEYS_PRESSED) or (returnPressed)) then
-				selectedSetting = nil
-				Audio.playSFX(71)
-			elseif player.keys.right == KEYS_PRESSED then
-				selectedSetting.set(menus[selectedMenu].settings, selectedSetting.get(menus[selectedMenu].settings)+1)
-				dirtySettings = true
-				Audio.playSFX(71)
-			elseif player.keys.left == KEYS_PRESSED then
-				selectedSetting.set(menus[selectedMenu].settings, selectedSetting.get(menus[selectedMenu].settings)-1)
-				dirtySettings = true
-				Audio.playSFX(71)
-			end
-		end
-			
-		
-		if lockSelect and ((player.keys.jump == KEYS_RELEASED and not player.keys.altJump) or (player.keys.altJump == KEYS_RELEASED and not player.keys.jump)) then	
-			lockSelect = false
-		end
-		
-		local x = xPos
-		local y = yPos
+            local returnPressed = returnPressedState
+            returnPressedState = false
+            
+            local dirtySettings = false
+            
+            local maxLine = #menus[selectedMenu]
+            
+            if menus[selectedMenu].settingsIdx ~= nil and noboots[menus[selectedMenu].settings.identity] then
+                maxLine = maxLine-1
+            end
+            
+            if allowContinue and (escPressedState or ((player.keys.pause == KEYS_PRESSED) and not ((inputConfig1.inputType == 0) and (inputConfig1.pause == VK_RETURN)))) then
+                selectedSetting = nil
+                skipActive = false
+                showRespawnLoc = false
+                Audio.playSFX(30)
+                resetPosition()
+                LunaDLL.LunaLuaTestModeContinue()
+                testModeMenu.active = false
+            elseif selectedSetting == nil then
+                if not lockSelect and ((player.keys.jump == KEYS_PRESSED) or (player.keys.altJump == KEYS_PRESSED) or (returnPressed)) then
+                    local item = menus[selectedMenu][selectedLine]
+                    if (item) and (item.activate) then
+                        item:activate()
+                        Audio.playSFX(71)
+                    end
+                elseif (player.keys.up == KEYS_PRESSED) then
+                    selectedLine = selectedLine - 1
+                    if (selectedLine < 1) then
+                        selectedLine = maxLine
+                    end
+                    Audio.playSFX(71)
+                elseif (player.keys.down == KEYS_PRESSED) then
+                    selectedLine = selectedLine + 1
+                    if (selectedLine > maxLine) then
+                        selectedLine = 1
+                    end
+                    Audio.playSFX(71)
+                elseif player.keys.right == KEYS_PRESSED then
+                    if (selectedMenu < menuCount) then
+                        selectedMenu = math.min(selectedMenu + 1, menuCount)
+                        maxLine = #menus[selectedMenu]
+                        if (selectedLine > maxLine) then
+                            selectedLine = maxLine
+                        end
+                        Audio.playSFX(71)
+                    end
+                elseif player.keys.left == KEYS_PRESSED then
+                    if (selectedMenu > 1) then
+                        selectedMenu = math.max(selectedMenu - 1, 1)	
+                        maxLine = #menus[selectedMenu]
+                        if (selectedLine > maxLine) then
+                            selectedLine = maxLine
+                        end
+                        Audio.playSFX(71)
+                    end
+                end
+                
+                if not allowContinue then
+                    showRespawnLoc = true
+                elseif selectedMenu == 1 and selectedLine == 1 then
+                    showRespawnLoc = false
+                end
+                
+            else
+                
+                if (selectedMenu == 1 and selectedLine == 4) or not allowContinue then
+                    showRespawnLoc = true
+                end
+                
+                if not lockSelect and ((player.keys.jump == KEYS_PRESSED) or (player.keys.altJump == KEYS_PRESSED) or (returnPressed)) then
+                    selectedSetting = nil
+                    Audio.playSFX(71)
+                elseif player.keys.right == KEYS_PRESSED then
+                    selectedSetting.set(menus[selectedMenu].settings, selectedSetting.get(menus[selectedMenu].settings)+1)
+                    dirtySettings = true
+                    Audio.playSFX(71)
+                elseif player.keys.left == KEYS_PRESSED then
+                    selectedSetting.set(menus[selectedMenu].settings, selectedSetting.get(menus[selectedMenu].settings)-1)
+                    dirtySettings = true
+                    Audio.playSFX(71)
+                end
+            end
+                
+            
+            if lockSelect and ((player.keys.jump == KEYS_RELEASED and not player.keys.altJump) or (player.keys.altJump == KEYS_RELEASED and not player.keys.jump)) then	
+                lockSelect = false
+            end
+            
+            local x = xPos
+            local y = yPos
 
-		for k,v in ipairs(menus) do
-			y = yPos
-			if v.settingsIdx == nil or v.settingsIdx+1 <= testModeSettings.playerCount then
-				for idx,text in ipairs(v) do
-					
-					if k == selectedMenu and idx == selectedLine and (selectedSetting or blink()) then
-						local color = nil
-						if (selectedSetting) then
-							color = {1, 1, 0, 1}
-						end
-						textPrint(">", x, y, color)
-					end
-					if type(text.draw) == "string" then
-						textPrint(text.draw, x+20, y)
-					else
-						text:draw(x+20, y, v.settings)
-					end
-					
-					y = y + 20
-				end
-				x = x + v.width
-			end
-		end
-		
-		if dirtySettings then
-			LunaDLL.LunaLuaSetTestModeSettings(testModeSettings)
-		end
-	end
-	
-	returnPressedState = false
-	escPressedState = false
+            for k,v in ipairs(menus) do
+                y = yPos
+                if v.settingsIdx == nil or v.settingsIdx+1 <= testModeSettings.playerCount then
+                    for idx,text in ipairs(v) do
+                        
+                        if k == selectedMenu and idx == selectedLine and (selectedSetting or blink()) then
+                            local color = nil
+                            if (selectedSetting) then
+                                color = {1, 1, 0, 1}
+                            end
+                            textPrint(">", x, y, color)
+                        end
+                        if type(text.draw) == "string" then
+                            textPrint(text.draw, x+20, y)
+                        else
+                            text:draw(x+20, y, v.settings)
+                        end
+                        
+                        y = y + 20
+                    end
+                    x = x + v.width
+                end
+            end
+            
+            if dirtySettings then
+                LunaDLL.LunaLuaSetTestModeSettings(testModeSettings)
+            end
+        end
+        
+        returnPressedState = false
+        escPressedState = false
+    end
 end
 
 function testModeMenu.onKeyboardPressDirect(k, repeated)
-	if repeated then return end
-	
-	if (k == VK_RETURN) then
-		returnPressedState = true
-	elseif (k == VK_ESCAPE) then
-		escPressedState = true
-	end
+    if GameData._____enableTestModeMenu then
+        if repeated then return end
+        
+        if (k == VK_RETURN) then
+            returnPressedState = true
+        elseif (k == VK_ESCAPE) then
+            escPressedState = true
+        end
+    end
 end
 
 function testModeMenu.onControllerButtonPress(btn, pnum, controller)
-	if controlConfigOpen then
-		if controlConfigCount == 0 then
-			currentController = { controller, pnum }
-			controlConfigCount = 1
-			return
-		elseif currentController == nil then
-			currentController = { controller, pnum }
-		end
-		
-		if currentController[1] == controller and currentController[2] == pnum then
-			if controlConfigCount < #controlConfigs then
-				currentConfig[controlConfigCount] = btn
-				controlConfigCount = controlConfigCount + 1
-			else
-				controlConfigOpen = false
-				Audio.playSFX(20)
-				writeButtonConfigs()
-				lockSelect = true
-			end
-		end
-	end
+    if GameData._____enableTestModeMenu then
+        if controlConfigOpen then
+            if controlConfigCount == 0 then
+                currentController = { controller, pnum }
+                controlConfigCount = 1
+                return
+            elseif currentController == nil then
+                currentController = { controller, pnum }
+            end
+            
+            if currentController[1] == controller and currentController[2] == pnum then
+                if controlConfigCount < #controlConfigs then
+                    currentConfig[controlConfigCount] = btn
+                    controlConfigCount = controlConfigCount + 1
+                else
+                    controlConfigOpen = false
+                    Audio.playSFX(20)
+                    writeButtonConfigs()
+                    lockSelect = true
+                end
+            end
+        end
+    end
 end
 
 local function getStartingPosition(idx)
@@ -1063,88 +1078,95 @@ local function getStartingPosition(idx)
 end
 
 function testModeMenu.onCameraUpdate(idx)
-	if idx == 1 then
-		if testModeMenu.active then
-			local s
-			
-			if showRespawnLoc then
-				local cp = checkpoints.getActive()
-				if cp then
-					camera.x = cp.x
-					camera.y = cp.y
-					
-					s = cp.section
-				else
-					local settings = LunaDLL.LunaLuaGetTestModeSettings()
-					
-					if settings.entranceIndex > 0 then
-						local w = Warp.get()[settings.entranceIndex]
-						if w ~= nil and w.isValid then
-							camera.x = w.exitX + 16
-							camera.y = w.exitY + 16
-						
-							s = Section.getIdxFromCoords(w.exitX,w.exitY,32,32)
-						else
-							local px,py,pw,ph = getStartingPosition(0)
-							camera.x = px + pw*0.5
-							camera.y = py + ph*0.5
-						
-							s = Section.getIdxFromCoords(px,py,pw,ph)
-						end
-					elseif mem(0x00B250B0, FIELD_STRING) == mem(0x00B2C618, FIELD_STRING) then
-						if vanillamppos then
-							camera.x = vanillamppos.x
-							camera.y = vanillamppos.y
-							
-							s = vanillamppos.section
-						end
-					else
-						local px,py,pw,ph = getStartingPosition(0)
-						camera.x = px + pw*0.5
-						camera.y = py + ph*0.5
-					
-						s = Section.getIdxFromCoords(px,py,pw,ph)
-					end
-				end
-			else
-				if skipActive then
-					camerapos.x = camera.x
-					camerapos.y = camera.y
-				end
-				camera.x = camerapos.x + camera.width*0.5
-				camera.y = camerapos.y + camera.height*0.5
-				
-				s = playerpos.section
-			end
-				
-			if s then
-				player.section = s
-				local b = Section(s).boundary
-				camera.x = math.clamp(camera.x - camera.width*0.5, b.left, b.right-camera.width)
-				camera.y = math.clamp(camera.y - camera.height*0.5, b.top, b.bottom-camera.height)
-			end
-		end
-	end
+    if GameData._____enableTestModeMenu then
+        if idx == 1 then
+            if testModeMenu.active then
+                local s
+                
+                if showRespawnLoc then
+                    local cp = checkpoints.getActive()
+                    if cp then
+                        camera.x = cp.x
+                        camera.y = cp.y
+                        
+                        s = cp.section
+                    else
+                        local settings = LunaDLL.LunaLuaGetTestModeSettings()
+                        
+                        if settings.entranceIndex > 0 then
+                            local w = Warp.get()[settings.entranceIndex]
+                            if w ~= nil and w.isValid then
+                                camera.x = w.exitX + 16
+                                camera.y = w.exitY + 16
+                            
+                                s = Section.getIdxFromCoords(w.exitX,w.exitY,32,32)
+                            else
+                                local px,py,pw,ph = getStartingPosition(0)
+                                camera.x = px + pw*0.5
+                                camera.y = py + ph*0.5
+                            
+                                s = Section.getIdxFromCoords(px,py,pw,ph)
+                            end
+                        elseif mem(0x00B250B0, FIELD_STRING) == mem(0x00B2C618, FIELD_STRING) then
+                            if vanillamppos then
+                                camera.x = vanillamppos.x
+                                camera.y = vanillamppos.y
+                                
+                                s = vanillamppos.section
+                            end
+                        else
+                            local px,py,pw,ph = getStartingPosition(0)
+                            camera.x = px + pw*0.5
+                            camera.y = py + ph*0.5
+                        
+                            s = Section.getIdxFromCoords(px,py,pw,ph)
+                        end
+                    end
+                else
+                    if skipActive then
+                        camerapos.x = camera.x
+                        camerapos.y = camera.y
+                    end
+                    camera.x = camerapos.x + camera.width*0.5
+                    camera.y = camerapos.y + camera.height*0.5
+                    
+                    s = playerpos.section
+                end
+                    
+                if s then
+                    player.section = s
+                    local b = Section(s).boundary
+                    camera.x = math.clamp(camera.x - camera.width*0.5, b.left, b.right-camera.width)
+                    camera.y = math.clamp(camera.y - camera.height*0.5, b.top, b.bottom-camera.height)
+                end
+            end
+        end
+    end
 end
 
 function testModeMenu.onCameraDraw(idx)
-	if idx == 1 then
-		if GameData.__testMenu ~= nil and GameData.__testMenu.colorfilter ~= nil and GameData.__testMenu.colorfilter > 0 then
-			if not colorfilter._isCompiled then
-				colorfilter:compileFromFile(nil, "shaders/colormatrix.frag")
-			end
-			filterBuffer:captureAt(10)
-			Graphics.drawScreen{texture = filterBuffer, shader = colorfilter, uniforms = { matrix = colorFilters[GameData.__testMenu.colorfilter+1].matrix }, priority = 10 }
-		end
-	end
+    if GameData._____enableTestModeMenu then
+        if idx == 1 then
+            if GameData.__testMenu ~= nil and GameData.__testMenu.colorfilter ~= nil and GameData.__testMenu.colorfilter > 0 then
+                if not colorfilter._isCompiled then
+                    colorfilter:compileFromFile(nil, "shaders/colormatrix.frag")
+                end
+                filterBuffer:captureAt(10)
+                Graphics.drawScreen{texture = filterBuffer, shader = colorfilter, uniforms = { matrix = colorFilters[GameData.__testMenu.colorfilter+1].matrix }, priority = 10 }
+            end
+        end
+    end
 end
 
-registerEvent(testModeMenu, "onStart", "onStart", true)
-registerEvent(testModeMenu, "onTick", "onTick", true)
-registerEvent(testModeMenu, "onCameraDraw", "onCameraDraw", false)
-registerEvent(testModeMenu, "onCameraUpdate", "onCameraUpdate", false)
-registerEvent(testModeMenu, "onStartTestModeMenu", "onStartTestModeMenu", false)
-registerEvent(testModeMenu, "onTestModeMenu", "onTestModeMenu", false)
-registerEvent(testModeMenu, "onKeyboardPressDirect", "onKeyboardPressDirect", false)
-registerEvent(testModeMenu, "onControllerButtonPress", "onControllerButtonPress", false)
+if GameData._____enableTestModeMenu then
+    registerEvent(testModeMenu, "onStart", "onStart", true)
+    registerEvent(testModeMenu, "onTick", "onTick", true)
+    registerEvent(testModeMenu, "onCameraDraw", "onCameraDraw", false)
+    registerEvent(testModeMenu, "onCameraUpdate", "onCameraUpdate", false)
+    registerEvent(testModeMenu, "onStartTestModeMenu", "onStartTestModeMenu", false)
+    registerEvent(testModeMenu, "onTestModeMenu", "onTestModeMenu", false)
+    registerEvent(testModeMenu, "onKeyboardPressDirect", "onKeyboardPressDirect", false)
+    registerEvent(testModeMenu, "onControllerButtonPress", "onControllerButtonPress", false)
+end
+
 return testModeMenu
