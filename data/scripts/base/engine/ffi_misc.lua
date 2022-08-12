@@ -279,11 +279,6 @@ do
 		bool LunaLuaIsFullscreen();
         bool LunaLuaIsRecordingGIF();
         bool LunaLuaIsFocused();
-        
-        void LunaLuaTestModeExit(void);
-        void LunaLuaTestModeRestart(void);
-        void LunaLuaTestModeContinue(void);
-        void LunaLuaTestModeSkip(void);
 	]])
 	local LunaDLL = ffi.load("LunaDll.dll")
 
@@ -387,11 +382,5 @@ do
 	end
     function Misc.isWindowFocused()
         return LunaDLL.LunaLuaIsFocused()
-    end
-    function Misc.exitEditorMode()
-        return LunaDLL.LunaLuaTestModeExit()
-    end
-    function Misc.restartEditorMode()
-        return LunaDLL.LunaLuaTestModeRestart()
     end
 end
