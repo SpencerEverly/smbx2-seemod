@@ -248,7 +248,7 @@ end
 -------------------------------
 
 -- Keep access to FFI local to here
-local ffi = require("ffi")
+_G.ffi = require("ffi")
 
 -- Function to load low level libraries that require access to FFI
 lowLevelLibraryContext = require_utils.makeGlobalContext(_G, {ffi=ffi, _G=_G})
@@ -263,8 +263,8 @@ local requireLowLevelLibrary = require_utils.makeRequire(
 -- Preload/Loaded cleanup --
 ---------------------
 
-package.preload['ffi'] = nil
-package.loaded['ffi'] = nil
+--package.preload['ffi'] = nil
+--package.loaded['ffi'] = nil
 
 
 -- We want the JIT running, so it's initially loadeded, but disable access to it

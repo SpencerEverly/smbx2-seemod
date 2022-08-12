@@ -3,18 +3,18 @@
 ----------------------
 ffi.cdef[[
 typedef struct _FFITestModePlayerSettings {
-	short identity;
-	short powerup;
-	short mountType;
-	short mountColor;
+    short identity;
+    short powerup;
+    short mountType;
+    short mountColor;
 } FFITestModePlayerSettings;
 
 typedef struct _FFITestModeSettings {
-	int playerCount;
-	bool showFPS;
-	bool godMode;
-	FFITestModePlayerSettings players[2];
-	unsigned int entranceIndex;
+    int playerCount;
+    bool showFPS;
+    bool godMode;
+    FFITestModePlayerSettings players[2];
+    unsigned int entranceIndex;
 } FFITestModeSettings;
 
 FFITestModeSettings* LunaLuaGetTestModeSettings(void);
@@ -819,8 +819,8 @@ local lockSelect = false
 
 function testModeMenu.onDraw()
     if not GameData._____enableTestModeMenu then
-        LunaDLL.LunaLuaTestModeContinue()
         testModeMenu.active = false
+        LunaDLL.LunaLuaTestModeContinue()
     elseif GameData._____enableTestModeMenu and testModeMenu.active then
         if controlConfigOpen then
             

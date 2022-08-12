@@ -263,11 +263,6 @@ do
 	ffi.cdef([[
 		typedef struct _LunaImageRef LunaImageRef;
         
-        void LunaLuaTestModeExit(void);
-        void LunaLuaTestModeRestart(void);
-        void LunaLuaTestModeContinue(void);
-        void LunaLuaTestModeSkip(void);
-        
 		void LunaLuaSetWindowTitle(const char* newName);
 		void LunaLuaSetWindowIcon(LunaImageRef* img, int iconType);
 		void LunaLuaSetWindowPosition(int x, int y);
@@ -284,6 +279,11 @@ do
 		bool LunaLuaIsFullscreen();
         bool LunaLuaIsRecordingGIF();
         bool LunaLuaIsFocused();
+        
+        void LunaLuaTestModeExit(void);
+        void LunaLuaTestModeRestart(void);
+        void LunaLuaTestModeContinue(void);
+        void LunaLuaTestModeSkip(void);
 	]])
 	local LunaDLL = ffi.load("LunaDll.dll")
 
@@ -389,9 +389,9 @@ do
         return LunaDLL.LunaLuaIsFocused()
     end
     function Misc.exitEditorMode()
-        LunaDLL.LunaLuaTestModeExit()
+        return LunaDLL.LunaLuaTestModeExit()
     end
     function Misc.restartEditorMode()
-        LunaDLL.LunaLuaTestModeRestart()
+        return LunaDLL.LunaLuaTestModeRestart()
     end
 end
