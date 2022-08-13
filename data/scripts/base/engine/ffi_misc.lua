@@ -279,6 +279,8 @@ do
 		bool LunaLuaIsFullscreen();
         bool LunaLuaIsRecordingGIF();
         bool LunaLuaIsFocused();
+        double LunaLuaGetScreenResolutionWidth();
+        double LunaLuaGetScreenResolutionHeight();
 	]])
 	local LunaDLL = ffi.load("LunaDll.dll")
 
@@ -382,5 +384,11 @@ do
 	end
     function Misc.isWindowFocused()
         return LunaDLL.LunaLuaIsFocused()
+    end
+    function Misc.getWidthScreenResolution()
+        return LunaDLL.LunaLuaGetScreenResolutionWidth()
+    end
+    function Misc.getHeightScreenResolution()
+        return LunaDLL.LunaLuaGetScreenResolutionHeight()
     end
 end
