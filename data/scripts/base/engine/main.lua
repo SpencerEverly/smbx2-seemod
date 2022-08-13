@@ -797,9 +797,11 @@ function __onInit(episodePath, lvlName)
 			lvlName = lvlName:sub(1,(i-2))
 		end
 		local customFolderPath = episodePath .. lvlName .. "\\"
+        local rootPath = getSMBXPath()
 		
 		basegameContext._G.__episodePath = episodePath
 		basegameContext._G.__customFolderPath = customFolderPath
+        basegameContext._G.__rootPath = rootPath
 	
 		-- Set path for custom resource loading
 		customPackage.path = (
