@@ -26,6 +26,15 @@ float: Timing and speed, I think
 
 VER_SEE_MOD - This is the SMBX version that's being used. Use `if SMBX_VERSION == VER_SEE_MOD then` to seperate the version from other codes. Useful for breaking SEE Mod-only commands and SMBX2's commands apart.
 
+----Audio----
+
+Audio.MusicRewind() - Starts the current music from the beginning.
+Audio.MusicGetTempo() - Returns the tempo of the currently played music.
+Audio.MusicGetPitch() - Returns the pitch of the currently played music.
+Audio.MusicSetTempo(tempo) - Changes the tempo of the song to the tempo specified.
+Audio.MusicSetPitch(pitch) - Changes the pitch of the song to the pitch specified.
+Audio.MusicSetSpeed(speed) - Changes the speed of the song to the speed specified.
+
 ----Misc----
 
 --Level/Overworld--
