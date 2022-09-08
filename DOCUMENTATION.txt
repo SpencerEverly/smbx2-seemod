@@ -28,7 +28,7 @@ VER_SEE_MOD - This is the SMBX version that's being used. Use `if SMBX_VERSION =
 
 ----Audio----
 
-Audio.MusicRewind() - Starts the current music from the beginning.
+Audio.MusicReset() - Starts the current music from the beginning.
 Audio.MusicGetTempo() - Returns the tempo of the currently played music.
 Audio.MusicGetPitch() - Returns the pitch of the currently played music.
 Audio.MusicSetTempo(tempo) - Changes the tempo of the song to the tempo specified.
