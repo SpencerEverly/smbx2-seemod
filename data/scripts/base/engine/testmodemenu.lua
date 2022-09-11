@@ -15,6 +15,8 @@ typedef struct _FFITestModeSettings {
 	bool godMode;
 	FFITestModePlayerSettings players[2];
 	unsigned int entranceIndex;
+    bool enabled;
+    wchar_t* levelPath;
 } FFITestModeSettings;
 
 FFITestModeSettings* LunaLuaGetTestModeSettings(void);
