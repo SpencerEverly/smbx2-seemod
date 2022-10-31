@@ -385,7 +385,7 @@ do
     function Misc.isFullscreen()
         return LunaDLL.LunaLuaIsFullscreen()
     end
-    function Misc.toggleGIFRecording()
+    function Misc.isGIFRecording()
         return LunaDLL.LunaLuaIsRecordingGIF()
     end
     function Misc.isWindowFocused()
