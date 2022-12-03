@@ -283,8 +283,10 @@ do
         double LunaLuaGetScreenResolutionWidth();
         double LunaLuaGetScreenResolutionHeight();
         bool LunaLuaIsSetToRunWhenUnfocused();
+        void LunaLuaSetThreePlayerInputs(bool enable);
         
         void LunaLuaTestModeDisable(void);
+        void LunaLuaTestModeEditLevel(const char* filename);
 	]])
 	local LunaDLL = ffi.load("LunaDll.dll")
 
@@ -407,4 +409,28 @@ do
     function Misc.isSetToRunWhenUnfocused()
         return LunaDLL.LunaLuaIsSetToRunWhenUnfocused()
     end
+    function Misc.disable1stPlayerInputsOn3rdPlayerAndMore(enable)
+        if enable == nil then
+            Misc.warn("Value has not been set.")
+            return
+        end
+        if enable then
+            enable = true
+        else
+            enable = false
+        end
+        LunaDLL.LunaLuaSetThreePlayerInputs(enable)
+    end
+    
+    function Misc.setNewTestModeLevelData(newLevel)
+        if not Misc.inEditor() then
+            return
+        end
+        
+		if type(newLevel) ~= "string" then
+			error("Invalid type for level name.")
+		end
+        
+		LunaDLL.LunaLuaTestModeEditLevel(Misc.episodePath()..newLevel)
+	end
 end

@@ -37,7 +37,6 @@ Audio.MusicSetSpeed(speed) - Changes the speed of the song to the speed specifie
 
 ----Misc----
 
---Level/Overworld--
 Misc.setWindowTitle("string") - Sets the window title of the SMBX game into any title.
 Misc.setWindowIcon("string/to/file.extension") - Loads an image as an icon in the episode folder and replaces it with the window icon. loadImageResolved is recommended.
 Misc.setWindowPosition(x, y) - Sets the main game window position to any position on the screen.
@@ -49,5 +48,5 @@ Misc.getWindowXPosition() - This will get the X position of the window in it's c
 Misc.getWindowYPosition() - This will get the Y position of the window in it's current state.
 Misc.getCenterWindowXPosition() - This will get the X position of the window when it's centered.
 Misc.getCenterWindowYPosition() - This will get the Y position of the window when it's centered.
-Misc.toggleGIFRecording() - Toggles GIF recording after execution (And is set to true or false after execution). It toggles from on to off.
+Misc.isGIFRecording() - Checks to see if GIF recording is enabled or not.
 Misc.isWindowFocused() - Returns true when the window is focused. Useful for pausing certain sounds when the window isn't focused.
