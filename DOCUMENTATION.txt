@@ -50,3 +50,9 @@ Misc.getCenterWindowXPosition() - This will get the X position of the window whe
 Misc.getCenterWindowYPosition() - This will get the Y position of the window when it's centered.
 Misc.isGIFRecording() - Checks to see if GIF recording is enabled or not.
 Misc.isWindowFocused() - Returns true when the window is focused. Useful for pausing certain sounds when the window isn't focused.
+Misc.getWidthScreenResolution() - Gets the current monitor width based on where the window is.
+Misc.getHeightScreenResolution() - Gets the current monitor height based on where the window is.
+Misc.disableTestMode() - Disables test mode while on the editor. Used ONLY for debugging purposes, and will be removed in the future.
+Misc.isSetToRunWhenUnfocused() - Checks to see if the "run when unfocused" option is on. Returns true if so, else it's false.
+Misc.disable1stPlayerInputsOn3rdPlayerAndMore(bool) - WIP feature. This will disable 1st player inputs on players above 2. This will be used for 3 player and more multiplayer.
+Misc.setNewTestModeLevelData(Level.filename()) - Sets new level data to load to when calling restart or an error occurs during level testing. Useful for custom map testing, or when you want your episode fully playable when only using levels (Misc.episodePath() is automatically done, so you'll just need the level filename and that's it).
