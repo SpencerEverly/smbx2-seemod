@@ -9,6 +9,8 @@ springs.TYPE = {
 --Index is type of tick function
 springs.ids = {}
 
+springs.boing = false
+
 --- custom NPC config flags:
 -- force (force applied on bounce)
 
@@ -55,6 +57,13 @@ function springs.horizontalSpringValidityCheck(v, w)
             or (whitelists[springs.TYPE.SIDE][w.id]))
 		and w.speedX ~= 0
 	)
+end
+
+function springs.isBouncingAPlayer(v)
+    local data = v.data._basegame
+    return (data.timeTillBouncingIsFalse > 0
+        and data.isBouncingPlayer
+    )
 end
 
 function springs.bounceAI_up(v, data)
@@ -118,11 +127,7 @@ function springs.bounceAI_up(v, data)
                 w:mem(0x00, FIELD_BOOL, w.character == CHARACTER_TOAD and (w.powerup == 5 or w.powerup == 6)) -- Toad Doublejump
                 w:mem(0x0E, FIELD_BOOL, false) -- Fairy already used?
                 w:mem(0x18, FIELD_BOOL, w.character == CHARACTER_PEACH) -- Peach hover
-                if data.timeTillBouncingIsFalse == 2 then
-                    data.isBouncingPlayer = true
-                elseif data.timeTillBouncingIsFalse <= 0 then
-                    data.isBouncingPlayer = false
-                end
+                data.isBouncingPlayer = true
             end
             SFX.play(24)
             data.previousX[w] = nil
@@ -130,6 +135,9 @@ function springs.bounceAI_up(v, data)
         end
         if (data.state == 1.5 and data.timer >= 4) or data.state ~= 1.5 then
             data.state = math.floor(data.state + 1)
+        end
+        if data.state == 0 then
+            data.isBouncingPlayer = false
         end
     end
     return collisions
@@ -310,6 +318,12 @@ function springs.onTickEndNPC(v)
     
     if data.timeTillBouncingIsFalse > 0 then
         data.timeTillBouncingIsFalse = data.timeTillBouncingIsFalse - 1
+    end
+    
+    if springs.isBouncingAPlayer(v) then
+        springs.boing = true
+    else
+        springs.boing = false
     end
     
 	v.animationTimer = 0
