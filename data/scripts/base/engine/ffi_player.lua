@@ -635,8 +635,8 @@ function Player:teleport(x, y, bottomCenterAligned)
 
 	-- If using bottom center aligned coordinates, handle that sensibly
 	if bottomCenterAligned then
-		x = x - (player.width * 0.5)
-		y = y - player.height
+		x = x - (self.width * 0.5)
+		y = y - self.height
 	end
 
 	-- Move the player and update section, including music
