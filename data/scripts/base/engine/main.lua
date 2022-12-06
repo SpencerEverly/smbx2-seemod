@@ -926,3 +926,15 @@ function __onInit(episodePath, lvlName)
 	end)}
 	__xpcallCheck(pcallReturns)
 end
+
+do
+    customPackage.loaded["socket.ftp"] = require("socket.ftp")
+    customPackage.loaded["socket.smtp"] = require("socket.smtp")
+    customPackage.loaded["socket.url"] = require("socket.url")
+
+    socket.sourcet = {}
+    socket.sinkt = {}
+
+    customPackage.loaded["socket.http"] = require("socket.http")
+    customPackage.loaded["ltn12"] = require("ltn12")
+end
