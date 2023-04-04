@@ -879,7 +879,7 @@ function __onInit(episodePath, lvlName)
 
 		
 		--SEGMENT TO ADD GLOBAL PRELOADED APIS END
-		
+        
 		-- Load core-npcconfig as shared (not exposed to global namespace by
 		-- default, but we want to load anyway)
 		basegameRequire("base\\engine\\npcconfig_core")

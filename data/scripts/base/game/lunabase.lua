@@ -4,8 +4,10 @@ require("base/game/pluginManager");
 require("animDefaults");
 local ed = require("expandedDefines");
 require("HUDOverride");
-require("base/xmem");
 require("base/audiomaster");
+require("base/game/newcheats");
+require("playerManager");
+require("base/xmem");
 
 --Register Graphics.sprites (done here to ensure they're available early)
 do
@@ -39,7 +41,6 @@ if(not isOverworld) then
 end
 
 require("progress");
-require("base/game/newcheats");
 require("base/game/marioChallenge");
 require("base/game/repl");
 require("base/editorevents");
@@ -217,8 +218,6 @@ else
 	require("base/game/switchpalace");
 	require("maplevelanimator");
 end
-
-require("playerManager"); --Required below to make sure everything is already loaded
 
 --Do stuff that has to be done extremely early in execution here
 if (isOverworld or Section(player.section).musicID == 0) then
