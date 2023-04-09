@@ -30,6 +30,7 @@ Misc.LUNALUA_EVENTS = {
 	"onPlayerKill", "onPlayerHarm", "onPostPlayerKill", "onPostPlayerHarm",
 	-- CUSTOM events below
 	"onCollide", -- Defined for block collisions
+    "onControllerButtonEvent",
 }
 
 local postCancellableMap = {
