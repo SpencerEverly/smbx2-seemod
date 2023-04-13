@@ -135,7 +135,7 @@ if os ~= nil then
                         return
                     end
                 else
-                    error("Removing with this file extension is not allowed.")
+                    error("Renaming with this file extension is not allowed.")
                     return
                 end
             end
