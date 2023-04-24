@@ -22,7 +22,7 @@ float: Timing and speed, I think
 "string": A string, which is a word or a sentence in quotes ("")
 ..optional: Optional argument, specific for something
 
-----Functions----
+----Variables----
 
 VER_SEE_MOD - This is the SMBX version that's being used. Use `if SMBX_VERSION == VER_SEE_MOD then` to seperate the version from other codes. Useful for breaking SEE Mod-only commands and SMBX2's commands apart.
 
@@ -31,9 +31,10 @@ VER_SEE_MOD - This is the SMBX version that's being used. Use `if SMBX_VERSION =
 Audio.MusicReset() - Starts the current music from the beginning.
 Audio.MusicGetTempo() - Returns the tempo of the currently played music.
 Audio.MusicGetPitch() - Returns the pitch of the currently played music.
+Audio.MusicGetSpeed() - Returns the speed of the currently played music.
 Audio.MusicSetTempo(tempo) - Changes the tempo of the song to the tempo specified.
 Audio.MusicSetPitch(pitch) - Changes the pitch of the song to the pitch specified.
-Audio.MusicSetSpeed(speed) - Changes the speed of the song to the speed specified.
+Audio.MusicSetSpeed(speed) - Changes the speed of the song to the speed specified. OGGs are now supported as of 4/23/2023.
 
 ----Misc----
 
@@ -54,5 +55,5 @@ Misc.getWidthScreenResolution() - Gets the current monitor width based on where 
 Misc.getHeightScreenResolution() - Gets the current monitor height based on where the window is.
 Misc.disableTestMode() - Disables test mode while on the editor. Used ONLY for debugging purposes, and will be removed in the future.
 Misc.isSetToRunWhenUnfocused() - Checks to see if the "run when unfocused" option is on. Returns true if so, else it's false.
-Misc.disable1stPlayerInputsOn3rdPlayerAndMore(bool) - WIP feature. This will disable 1st player inputs on players above 2. This will be used for 3 player and more multiplayer.
+Misc.disable1stPlayerInputsOn3rdPlayerAndMore(bool) - WIP feature. This will disable 1st player inputs on players above 2. This will be used for 3 player and more multiplayer on SMAS++.
 Misc.setNewTestModeLevelData(Level.filename()) - Sets new level data to load to when calling restart or an error occurs during level testing. Useful for custom map testing, or when you want your episode fully playable when only using levels (Misc.episodePath() is automatically done, so you'll just need the level filename and that's it).
