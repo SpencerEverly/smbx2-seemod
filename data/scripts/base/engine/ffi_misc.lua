@@ -287,6 +287,8 @@ do
         
         void LunaLuaTestModeDisable(void);
         void LunaLuaTestModeEditLevel(const char* filename);
+        bool LunaLuaInSMASPlusPlus();
+        void LunaLuaSetSMASPlusPlusEpisodeName();
 	]])
 	local LunaDLL = ffi.load("LunaDll.dll")
 
@@ -432,5 +434,13 @@ do
 		end
         
 		LunaDLL.LunaLuaTestModeEditLevel(Misc.episodePath()..newLevel)
+	end
+    
+    function Misc.inSuperMarioAllStarsPlusPlus()
+		LunaDLL.LunaLuaInSMASPlusPlus()
+	end
+    
+    function Misc.setSuperMarioAllStarsPlusPlusEpisodeName()
+		LunaDLL.LunaLuaSetSMASPlusPlusEpisodeName()
 	end
 end
