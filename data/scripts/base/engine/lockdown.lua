@@ -96,48 +96,32 @@ if os ~= nil then
 	
     local osRemove = nativeOS.remove
     local osRename = nativeOS.rename
-    
-    local noNoFileExtensions = {".lvl",".lvlx",".wld",".wldx",".lua"}
 
     do
         newOS.remove = (function(filePath)
-            for k,v in ipairs(noNoFileExtensions) do
-                if not string_match(filePath, ".*%"..v) then
-                    local canWrite
-                    filePath, canWrite = makeSafeAbsolutePath(filePath)
-                    if canWrite then
-                        osRemove(filePath)
-                    else
-                        error("Removing at '" .. filePath .. "' is not allowed.")
-                        return
-                    end
-                elseif string_match(filePath, ".*%"..v) then
-                    error("Removing with this file extension is not allowed.")
-                    return
-                end
+            local canWrite
+            filePath, canWrite = makeSafeAbsolutePath(filePath)
+            if canWrite then
+                osRemove(filePath)
+            else
+                error("Removing at '" .. filePath .. "' is not allowed.")
+                return
             end
         end)
         
-        newOS.rename = (function(oldFilePath, newFilePath)
-            for k,v in ipairs(noNoFileExtensions) do
-                if not string_match(oldFilePath, ".*%"..v) and not string_match(newFilePath, ".*%"..v) then
-                    local canWrite1
-                    oldFilePath, canWrite1 = makeSafeAbsolutePath(oldFilePath)
-                    local canWrite2
-                    newFilePath, canWrite2 = makeSafeAbsolutePath(newFilePath)
-                    if canWrite1 and canWrite2 then
-                        osRename(oldFilePath, newFilePath)
-                    elseif not canWrite1 and canWrite2 then
-                        error("Renaming at '" .. oldFilePath .. "' is not allowed.")
-                        return
-                    elseif canWrite1 and not canWrite2 then
-                        error("Renaming at '" .. newFilePath .. "' is not allowed.")
-                        return
-                    end
-                else
-                    error("Renaming with this file extension is not allowed.")
-                    return
-                end
+        newOS.rename = (function(oldFilePath, newFilePath)  
+            local canWrite1
+            oldFilePath, canWrite1 = makeSafeAbsolutePath(oldFilePath)
+            local canWrite2
+            newFilePath, canWrite2 = makeSafeAbsolutePath(newFilePath)
+            if canWrite1 and canWrite2 then
+                osRename(oldFilePath, newFilePath)
+            elseif not canWrite1 and canWrite2 then
+                error("Renaming at '" .. oldFilePath .. "' is not allowed.")
+                return
+            elseif canWrite1 and not canWrite2 then
+                error("Renaming at '" .. newFilePath .. "' is not allowed.")
+                return
             end
         end)
     end
