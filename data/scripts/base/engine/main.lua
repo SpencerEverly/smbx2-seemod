@@ -282,7 +282,7 @@ local soundIniData = {}
 local soundIniCount = 0
 
 local function testSoundIdx(soundIdx)
-	return type(soundIdx) == "number" and math.floor(soundIdx) == soundIdx and soundIdx >= 1 and soundIdx <= 91
+	return type(soundIdx) == "number" and math.floor(soundIdx) == soundIdx and soundIdx >= 1
 end
 do	
 	--Contains ini-read sound data
