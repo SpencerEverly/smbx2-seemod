@@ -55,3 +55,8 @@ Misc.getWidthScreenResolution() - Gets the current monitor width based on where 
 Misc.getHeightScreenResolution() - Gets the current monitor height based on where the window is.
 Misc.isSetToRunWhenUnfocused() - Checks to see if the "run when unfocused" option is on. Returns true if so, else it's false.
 Misc.setNewTestModeLevelData(Level.filename()) - Sets new level data to load to when calling restart or an error occurs during level testing. Useful for custom map testing, or when you want your episode fully playable when only using levels (Misc.episodePath() is automatically done, so you'll just need the level filename and that's it).
+
+----LegacyRNG----
+
+LegacyRNG.generateNumber() - Generates a legacy RNG number based off the SMBX RNG system.
+LegacyRNG.getLastGeneratedNumber() - Generates the last legacy RNG number that was generated previously, based off the SMBX RNG system.
