@@ -283,12 +283,11 @@ do
         double LunaLuaGetScreenResolutionWidth();
         double LunaLuaGetScreenResolutionHeight();
         bool LunaLuaIsSetToRunWhenUnfocused();
-        void LunaLuaSetThreePlayerInputs(bool enable);
         
         void LunaLuaTestModeDisable(void);
         void LunaLuaTestModeEditLevel(const char* filename);
         bool LunaLuaInSMASPlusPlus();
-        void LunaLuaSetSMASPlusPlusEpisodeName();
+        void LunaLuaSetEpisodeName(const char* name);
 	]])
 	local LunaDLL = ffi.load("LunaDll.dll")
 
@@ -401,27 +400,8 @@ do
     function Misc.getHeightScreenResolution()
         return LunaDLL.LunaLuaGetScreenResolutionHeight()
     end
-    function Misc.disableTestMode()
-        if not Misc.inEditor() then
-            return
-        else
-            return LunaDLL.LunaLuaTestModeDisable()
-        end
-    end
     function Misc.isSetToRunWhenUnfocused()
         return LunaDLL.LunaLuaIsSetToRunWhenUnfocused()
-    end
-    function Misc.disable1stPlayerInputsOn3rdPlayerAndMore(enable)
-        if enable == nil then
-            Misc.warn("Value has not been set.")
-            return
-        end
-        if enable then
-            enable = true
-        else
-            enable = false
-        end
-        LunaDLL.LunaLuaSetThreePlayerInputs(enable)
     end
     
     function Misc.setNewTestModeLevelData(newLevel)
@@ -440,7 +420,7 @@ do
 		LunaDLL.LunaLuaInSMASPlusPlus()
 	end
     
-    function Misc.setSuperMarioAllStarsPlusPlusEpisodeName()
-		LunaDLL.LunaLuaSetSMASPlusPlusEpisodeName()
+    function Misc.setEpisodeName(newName)
+		LunaDLL.LunaLuaSetEpisodeName(newName)
 	end
 end

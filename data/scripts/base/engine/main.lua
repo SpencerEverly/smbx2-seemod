@@ -390,6 +390,7 @@ do
 	requireLowLevelLibrary("ffi_mem")
 	requireLowLevelLibrary("ffi_misc")
 	requireLowLevelLibrary("ffi_graphics")
+    requireLowLevelLibrary("ffi_legacyrng")
 
 	requireLowLevelLibrary("ffi_player")
 	requireLowLevelLibrary("ffi_camera")
