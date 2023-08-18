@@ -288,6 +288,20 @@ do
         void LunaLuaTestModeEditLevel(const char* filename);
         bool LunaLuaInSMASPlusPlus();
         void LunaLuaSetEpisodeName(const char* name);
+        
+        void LunaLuaSetWeakLava(bool value);
+        bool LunaLuaGetWeakLava();
+        
+        void LunaLuaSetCursor(LunaImageRef* img, uint32_t xHotspot, uint32_t yHotspot);
+        void LunaLuaSetCursorHide(void);
+        
+        typedef struct
+		{
+			double x;
+            double y;
+		} MousePos;
+        
+        MousePos LunaLuaGetMousePosition();
 	]])
 	local LunaDLL = ffi.load("LunaDll.dll")
 
@@ -410,7 +424,8 @@ do
         end
         
 		if type(newLevel) ~= "string" then
-			error("Invalid type for level name.")
+            error("Invalid type for level name.")
+            return
 		end
         
 		LunaDLL.LunaLuaTestModeEditLevel(Misc.episodePath()..newLevel)
@@ -423,4 +438,48 @@ do
     function Misc.setEpisodeName(newName)
 		LunaDLL.LunaLuaSetEpisodeName(newName)
 	end
+    
+    function Misc.setWeakLava(boole)
+        if type(newLevel) ~= "boolean" then
+			error("Invalid type for weak lava setting.")
+            return
+		end
+        
+        LunaDLL.LunaLuaSetWeakLava(boole)
+    end
+    
+    function Misc.getWeakLava()
+        return LunaDLL.LunaLuaGetWeakLava()
+    end
+    
+    function Misc.setCursor(cursor,xHotspot,yHotspot)
+        if xHotspot == nil then
+            xHotspot = 0
+        end
+        if yHotspot == nil then
+            yHotspot = 0
+        end
+        if cursor == nil then
+            return LunaDLL.LunaLuaSetCursor(nil,xHotspot,yHotspot)
+        end
+        
+        if type(cursor) == "boolean" and cursor == false then
+            return LunaDLL.LunaLuaSetCursorHide()
+        end
+        
+        if type(cursor) ~= "LuaImageResource" then
+			error("Invalid type for cursor image.")
+            return
+		end
+        
+        LunaDLL.LunaLuaSetCursor(cursor,xHotspot,yHotspot)
+    end
+    
+    function Misc.getCursorPosition()
+        local data = LunaDLL.LunaLuaGetMousePosition()
+        return {
+            data.x,
+            data.y,
+        }
+    end
 end
