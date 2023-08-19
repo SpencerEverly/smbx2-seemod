@@ -1725,7 +1725,7 @@ do	--Cameras and drawing
 		if key == "flength" then
 			return getFocalLength(tbl)
 		elseif key == "renderscale" then
-			return tbl.target.width/camera.width
+			return tbl.target.width/800
 		end
 	end
 	
@@ -1733,7 +1733,7 @@ do	--Cameras and drawing
 		if key == "flength" then
 			tbl.fov = 2*deg(atan(400/val))
 		elseif key == "renderscale" then
-			tbl.target = Graphics.CaptureBuffer(floor(camera.width*val),floor(camera.height*val))
+			tbl.target = Graphics.CaptureBuffer(floor(800*val),floor(600*val))
 		end
 	end
 
@@ -1741,7 +1741,7 @@ do	--Cameras and drawing
 	--Create a new camera - objects will be drawn to camera.target when camera:draw is called
 	function lib3d.Camera(args)
 		local c = 	{ 
-						fov = args.fov or 45, orthosize = args.orthosize or vector.v2(camera.width,camera.height), 
+						fov = args.fov or 45, orthosize = args.orthosize or vector.v2(800,600), 
 						projection = args.projection or projection.PERSP, 
 						farclip = args.farclip or 10000, nearclip = args.nearclip or 100, 
 						transform = Transform(args.position or vector.zero3, args.rotation or vector.quatid, vector.one3), 
@@ -1749,7 +1749,7 @@ do	--Cameras and drawing
 					}
 				
 		local renderscale = args.renderscale or 1
-		c.target = Graphics.CaptureBuffer(floor(camera.width*renderscale),floor(camera.height*renderscale))
+		c.target = Graphics.CaptureBuffer(floor(800*renderscale),floor(600*renderscale))
 		
 		c.getFocalLength = getFocalLength
 		c.draw = doDraw
@@ -1760,7 +1760,7 @@ do	--Cameras and drawing
 	end
 
 	--Automatic main camera - can be disabled by setting it to inactive
-	lib3d.camera = lib3d.Camera{ fov = 45, orthosize = vector(camera.width,camera.height), projection = projection.PERSP, farclip = 10000, nearclip = 100, renderscale = 2 }
+	lib3d.camera = lib3d.Camera{ fov = 45, orthosize = vector(800,600), projection = projection.PERSP, farclip = 10000, nearclip = 100, renderscale = 2 }
 	
 	lib3d.dualCamera = true
 

@@ -9,7 +9,7 @@ Misc.LUNALUA_EVENTS = {
 	"onLoadSection5", "onLoadSection6", "onLoadSection7", "onLoadSection8", "onLoadSection9",
 	"onLoadSection10", "onLoadSection11", "onLoadSection12", "onLoadSection13", "onLoadSection14",
 	"onLoadSection15", "onLoadSection16", "onLoadSection17", "onLoadSection18", "onLoadSection19", "onLoadSection20",
-    "onChangeSection", "onMouseButtonEvent", "onMouseWheelEvent",
+    "onSectionChange", "onMouseButtonEvent", "onMouseWheelEvent",
 	"onJump", "onJumpEnd",
 	"onKeyDown", "onKeyUp",
 	"onEvent", "onEventDirect", "onExitLevel", "onInputUpdate", "onMessageBox", "onColorSwitch", "onSyncSwitch", "onBeatStateChange",
