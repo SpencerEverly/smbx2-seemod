@@ -216,6 +216,14 @@ bool __fastcall FFI_GraphicsIsSoftwareGL();
 void __fastcall FFI_GraphicsGetFrameStats(FrameStatStruct* frameStats);
 const GLConstants* __fastcall FFI_GraphicsGetConstants();
 void FFI_GraphicsSetMainFramebufferSize(int width, int height);
+
+typedef struct
+{
+    int w;
+    int h;
+} FBSize;
+
+FBSize FFI_GraphicsGetMainFramebufferSize();
 ]]
 local LunaDLL = ffi.load("LunaDll.dll")
 
@@ -2306,6 +2314,14 @@ end
 
 function Graphics.setFramebufferSize(width,height)
     return LunaDLL.FFI_GraphicsSetMainFramebufferSize(width,height)
+end
+
+function Graphics.getFramebufferSize()
+    local data = LunaDLL.FFI_GraphicsGetMainFramebufferSize()
+    return {
+        data.w,
+        data.h,
+    }
 end
 
 ----------------------------
