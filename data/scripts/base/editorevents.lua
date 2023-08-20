@@ -6,6 +6,7 @@ function events.onInitAPI()
 	registerEvent(events, "onStart", "onStart", true)
 	registerEvent(events, "onCameraDraw")
 	registerEvent(events, "onTick")
+    registerEvent(events, "onDraw")
 	registerEvent(events, "onLoadSection")
 end
 
@@ -72,7 +73,7 @@ _G["SEFFECT_DITHERED_GAMEBOY"] = 10
 
 
 
-local screeneffectbuffer
+events.screeneffectbuffer = Graphics.CaptureBuffer(800,600)
 
 --Values for level-only settings
 local shadowmap
@@ -101,10 +102,6 @@ local function compileScreenEffect(shd)
 			end
 		end
 		shd.compiled = true
-	end
-					
-	if screeneffectbuffer == nil then
-		screeneffectbuffer = Graphics.CaptureBuffer(800,600)
 	end
 	
 	return shd
@@ -317,8 +314,8 @@ local function drawScreenEffect(section, index, c)
 			u.tex1 = loadGraphic(w[3].tex1)
 		end
 	
-		screeneffectbuffer:captureAt(w[1])
-		Graphics.drawScreen{texture=screeneffectbuffer, shader = w[2], priority = w[1], uniforms = u, camera = c}
+		events.screeneffectbuffer:captureAt(w[1])
+		Graphics.drawScreen{texture=events.screeneffectbuffer, shader = w[2], priority = w[1], uniforms = u, camera = c}
 		
 	end
 end
@@ -462,6 +459,13 @@ local function useInstantWarp(v,w)
 	EventManager.callEvent("onWarp",v.idx + 1,w.idx)
 end
 
+function events.onDraw()
+    if not isOverworld then
+        if (events.screeneffectbuffer.width ~= camera.width or events.screeneffectbuffer.height ~= camera.height) then
+            events.screeneffectbuffer = Graphics.CaptureBuffer(camera.width,camera.height)
+        end
+    end
+end
 
 function events.onTick()
 	if not isOverworld then

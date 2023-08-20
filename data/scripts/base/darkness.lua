@@ -622,10 +622,10 @@ do
 		return list,count
 	end
 	
-	local scenecapture = Graphics.CaptureBuffer(800,600)
+    darkness.scenecapture = Graphics.CaptureBuffer(800,600)
 	
-	local screendraw = {vertexCoords = {0,0,800,0,800,600,0,600}, textureCoords = {0,0,1,0,1,1,0,1}, primitive = Graphics.GL_TRIANGLE_FAN, texture = scenecapture, sceneCoords = false }
-	local fielddraw = 	{ vertexCoords = {}, textureCoords = {}, primitive = Graphics.GL_TRIANGLE_FAN, texture = scenecapture, sceneCoords = false }
+	local screendraw = {vertexCoords = {0,0,800,0,800,600,0,600}, textureCoords = {0,0,1,0,1,1,0,1}, primitive = Graphics.GL_TRIANGLE_FAN, texture = darkness.scenecapture, sceneCoords = false }
+	local fielddraw = 	{ vertexCoords = {}, textureCoords = {}, primitive = Graphics.GL_TRIANGLE_FAN, texture = darkness.scenecapture, sceneCoords = false }
 	
 	local function hasLight(tbl)
 		local radius = tbl.lightradius
@@ -893,10 +893,14 @@ end
 	end
 	
 	function darkness.onDraw()
+        if (darkness.scenecapture.width ~= camera.width or darkness.scenecapture.height ~= camera.height) then
+            darkness.scenecapture = Graphics.CaptureBuffer(camera.width,camera.height)
+        end
+        
 		anyFieldsValid = anyValidFields()
-		
+        
 		if anyFieldsValid then
-		
+            
 			--updateBGOIDMap()
 			for _,v in BGOIterateByFilterMap(bgoIDMap) do
 				local data = v.data._basegame
@@ -1000,7 +1004,7 @@ end
 					end
 					if field.priority >= p then
 						p = field.priority
-						scenecapture:captureAt(p)
+						darkness.scenecapture:captureAt(p)
 					end
 					
 					local lights,lightCount = chooseLights(field, cam)
