@@ -15,7 +15,7 @@ Misc.LUNALUA_EVENTS = {
 	"onEvent", "onEventDirect", "onExitLevel", "onInputUpdate", "onMessageBox", "onColorSwitch", "onSyncSwitch", "onBeatStateChange",
 	"onBlockHit", "onBlockRemove",
 	"onHUDDraw", "onNPCKill", "onCameraUpdate", "onCameraDraw",
-	"onKeyboardPress", "onPause", "onExit",
+	"onKeyboardPress", "onPause", "onExit", "onPauseSEEMod", "onMessageBoxSEEMod",
 	"onNPCHarm","onNPCCollect",
 	"onCheckpoint",
 	"onExplosion",
@@ -36,16 +36,18 @@ Misc.LUNALUA_EVENTS = {
 }
 
 local postCancellableMap = {
-	onNPCKill=     "onPostNPCKill",
-	onNPCHarm=     "onPostNPCHarm",
-	onNPCCollect=  "onPostNPCCollect",
-	onPlayerKill=  "onPostPlayerKill",
-	onPlayerHarm=  "onPostPlayerHarm",
-	onExplosion=   "onPostExplosion",
-	onEventDirect= "onPostEventDirect",
-	onBlockHit=    "onPostBlockHit",
-	onBlockRemove= "onPostBlockRemove",
-	onWarpEnter=   "onPostWarpEnter",
+	onNPCKill           =     "onPostNPCKill",
+	onNPCHarm           =     "onPostNPCHarm",
+	onNPCCollect        =  "onPostNPCCollect",
+	onPlayerKill        =  "onPostPlayerKill",
+	onPlayerHarm        =  "onPostPlayerHarm",
+	onExplosion         =   "onPostExplosion",
+	onEventDirect       = "onPostEventDirect",
+	onBlockHit          =    "onPostBlockHit",
+	onBlockRemove       = "onPostBlockRemove",
+	onWarpEnter         =   "onPostWarpEnter",
+    onPauseSEEMod       = "onPostPauseSEEMod",
+    onMessageBoxSEEMod  = "onPostMessageBoxSEEMod",
 }
 
 
@@ -180,7 +182,7 @@ function EventManager.callEventInternal(name, args)
 	end
 	
 	-- Special case for converting onMessageBox arguments
-	if (name == "onMessageBox") then
+	if (name == "onMessageBox") or (name == "onMessageBoxSEEMod") then
 		args[3] = Player(args[3])
 		if (args[4] ~= nil) then
 			args[4] = NPC(args[4]-1)
@@ -188,7 +190,7 @@ function EventManager.callEventInternal(name, args)
 	end
 	
 	-- Special case for converting onPause/onPlayerKill/onPlayerHarm arguments
-	if (name == "onPause") or (name == "onPlayerKill") or (name == "onPlayerHarm") then
+	if (name == "onPause") or (name == "onPlayerKill") or (name == "onPlayerHarm") or (name == "onPauseSEEMod") then
 		args[2] = Player(args[2])
 	end
 	

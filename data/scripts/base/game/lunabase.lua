@@ -214,10 +214,13 @@ if (not isOverworld) then
 	require("paralX2");
 	require("orbits");
 	require("base/game/sizable");
+    _G.messageBox13 = require("base/game/messageBox13/messageBox13")
 else
 	require("base/game/switchpalace");
 	require("maplevelanimator");
 end
+
+_G.pauseMenu13 = require("base/game/pausemenu13/pausemenu13")
 
 --Do stuff that has to be done extremely early in execution here
 if (isOverworld or Section(player.section).musicID == 0) then

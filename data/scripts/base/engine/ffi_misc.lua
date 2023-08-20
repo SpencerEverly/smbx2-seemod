@@ -302,6 +302,9 @@ do
 		} MousePos;
         
         MousePos LunaLuaGetMousePosition();
+        
+        void LunaLuaSetSEEModFeatureBool(bool enable);
+        bool LunaLuaGetSEEModFeatureBool();
 	]])
 	local LunaDLL = ffi.load("LunaDll.dll")
 
@@ -481,5 +484,18 @@ do
             data.x,
             data.y,
         }
+    end
+    
+    function Misc.SEEModFeaturesSetBool(enable)
+        if type(enable) == "boolean" then
+            LunaDLL.LunaLuaSetSEEModFeatureBool(enable)
+        else
+            error("Invalid type for toggle.")
+            return
+        end
+    end
+    
+    function Misc.SEEModFeaturesGetBool()
+        return LunaDLL.LunaLuaGetSEEModFeatureBool()
     end
 end
