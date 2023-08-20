@@ -16,7 +16,7 @@ messageBox13.priority = 5
 --The box image for the message box.
 messageBox13.boxImage = Graphics.sprites.hardcoded[46].img
 --The font used for the message box.
-messageBox13.font = textplus.loadFont("messageBox13/hardcoded-45-3-textplus.ini")
+messageBox13.font = textplus.loadFont("base/game/messageBox13/hardcoded-45-3-textplus.ini")
 
 local isCancelled = false
 

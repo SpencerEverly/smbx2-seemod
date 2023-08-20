@@ -21,8 +21,8 @@ pausemenu13.addExitLevelOption = true --Adds a level exit option to the pause me
 pausemenu13.disableSounds = false --This is only true when saving and quitting or exiting a level, but you can set this to true and not play a single sound what-so-ever
 pausemenu13.disableTheDisablingOfSavingWhileCheating = true --This is true to make sure the menu still saves while cheating. If false, the game won't save at all when cheating.
 
-pausemenu13.pauseFont = textplus.loadFont("pausemenu13/font.ini") --The font used for the pause menu.
-pausemenu13.pauseCursor = Graphics.loadImageResolved("pausemenu13/pausemenu13-arrow.png") --The arrow image used for the pause menu.
+pausemenu13.pauseFont = textplus.loadFont("base/game/pausemenu13/font.ini") --The font used for the pause menu.
+pausemenu13.pauseCursor = Graphics.loadImage(getSMBXPath().."scripts/base/game/pausemenu13/pausemenu13-arrow.png") --The arrow image used for the pause menu.
 
 pausemenu13.saveAndQuitSFX = 14 --The sound that plays when saving and quitting the game.
 pausemenu13.saveSFX = 58 --The sound that plays when saving and continuing the game.
