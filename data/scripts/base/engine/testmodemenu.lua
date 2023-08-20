@@ -806,36 +806,76 @@ end
 
 local lockSelect = false
 
+function testModeMenu.getScreenSize()
+    if SMBX_VERSION == VER_SEE_MOD then
+        return Graphics.getFramebufferSize()
+    else
+        return {800, 600}
+    end
+end
+
+function testModeMenu.calculateCameraDimensions(value, isWidthOrHeight)
+    if value == nil then
+        error("Must have a value for Screen.calculateCameraDimensions!")
+        return
+    else
+        if isWidthOrHeight == nil then
+            error("Must have a width or height for Screen.calculateCameraDimensions! You must use a string value for this (Or a number), like e.g. \"width\" or \"height\", or 1 or 2.")
+            return
+        end
+        local originalWidth = 800
+        local originalHeight = 600
+        
+        local pixelDifferenceWidth = originalWidth / testModeMenu.getScreenSize()[1]
+        local pixelDifferenceHeight = originalHeight / testModeMenu.getScreenSize()[2]
+        
+        local additionalWidth = testModeMenu.getScreenSize()[1] - originalWidth
+        local additionalHeight = testModeMenu.getScreenSize()[2] - originalHeight
+        
+        local extendedWidth = additionalWidth / 2
+        local extendedHeight = additionalHeight / 2
+        
+        if (isWidthOrHeight == "width" or isWidthOrHeight == 1) then
+            return value + extendedWidth
+        elseif (isWidthOrHeight == "height" or isWidthOrHeight == 2) then
+            return value + extendedHeight
+        else
+            error("This is not a valid value for isWidthOrHeight. You must use a string value for this (Or a number), like e.g. \"width\" or \"height\", or 1 or 2.")
+            return
+        end
+    end
+end
+
 function testModeMenu.onTestModeMenu()
 	if controlConfigOpen then
 		
 		local w = 400
 		local h = 256
 		
-		local xPos = 400 - w*0.5
-		local yPos = 300 - h*0.5
+		local xPos = testModeMenu.calculateCameraDimensions(400 - w*0.5, 1)
+		local yPos = testModeMenu.calculateCameraDimensions(300 - h*0.5, 2)
 		
 		Graphics.drawBox{x = xPos, y = yPos - 20, width = w, height = h, color={0,0,0,0.5}, priority = 10}
 		Graphics.drawImageWP(Graphics.sprites.hardcoded["57-0"].img, 400 - 128, 300 - 64 - 40, 10)
 		
-		textPrintCentered("Calibrate Controller", 400, yPos + 10)
+		textPrintCentered("Calibrate Controller", testModeMenu.calculateCameraDimensions(400, 1), yPos + 10)
 		
-		textPrintCentered(controlConfigs[controlConfigCount], 400, yPos + 160)
+		textPrintCentered(controlConfigs[controlConfigCount], testModeMenu.calculateCameraDimensions(400, 1), yPos + 160)
 		
 		if configButtons[controlConfigCount] then
 			local v = configButtons[controlConfigCount]
-			Graphics.drawImageWP(Graphics.sprites.hardcoded["57-1"].img, 400 + v.pos.x, 300-40 + v.pos.y, 0, 20*v.img, 20, 20, 10)
+			Graphics.drawImageWP(Graphics.sprites.hardcoded["57-1"].img, testModeMenu.calculateCameraDimensions(400 + v.pos.x, 1), testModeMenu.calculateCameraDimensions(300-40 + v.pos.y, 2), 0, 20*v.img, 20, 20, 10)
 		end
 		
-		textPrintCentered("Press ESC to cancel", 400, yPos + 210)
+		textPrintCentered("Press ESC to cancel", testModeMenu.calculateCameraDimensions(400, 1), yPos + 210)
 		
 		if escPressedState then
 			controlConfigOpen = false
 			Audio.playSFX(30)
 		end
 	elseif skipActive then
-		Graphics.drawBox{x = 0, y = 0, width = 800, height = 32, color={0,0,0,0.5}, priority = 10}
-		textPrintCentered("Any Key - Advance      Pause - Back", 400, 18)
+		Graphics.drawBox{x = 0, y = 0, width = Graphics.getFramebufferSize()[1], height = 32, color={0,0,0,0.5}, priority = 10}
+		textPrintCentered("Any Key - Advance      Pause - Back", testModeMenu.calculateCameraDimensions(400, 1), testModeMenu.calculateCameraDimensions(18, 2))
 		if player.rawKeys.pause == KEYS_PRESSED then
 			Audio.playSFX(30)
 			skipActive = false
@@ -876,8 +916,8 @@ function testModeMenu.onTestModeMenu()
 		h = h*18 + 64 + 60
 		w = w + 40
 		
-		local xPos = 400 - w*0.5
-		local yPos = 300 - h*0.5
+		local xPos = testModeMenu.calculateCameraDimensions(400 - w*0.5, 1)
+		local yPos = testModeMenu.calculateCameraDimensions(300 - h*0.5, 2)
 		
 		Graphics.drawBox{x = xPos, y = yPos - 20, width = w, height = h, color={0,0,0,0.5}, priority = 10}
 		
@@ -1129,6 +1169,9 @@ end
 function testModeMenu.onCameraDraw(idx)
 	if idx == 1 then
 		if GameData.__testMenu ~= nil and GameData.__testMenu.colorfilter ~= nil and GameData.__testMenu.colorfilter > 0 then
+            if filterBuffer.width ~= Graphics.getFramebufferSize()[1] or filterBuffer.height ~= Graphics.getFramebufferSize()[2] then
+                filterBuffer = Graphics.CaptureBuffer(Graphics.getFramebufferSize()[1],Graphics.getFramebufferSize()[2])
+            end
 			if not colorfilter._isCompiled then
 				colorfilter:compileFromFile(nil, "shaders/colormatrix.frag")
 			end
