@@ -241,6 +241,12 @@ function compareLunaVersion(...)
 	return 0
 end
 
+_G.npcGlobalVariables = {}
+
+function addNPCToGlobalTable(id, value)
+    table.insert(npcGlobalVariables, id, value)
+end
+
 -------------------------------
 -- Low Level Library Loading --
 -------------------------------
