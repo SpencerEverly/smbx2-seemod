@@ -17,7 +17,8 @@ firebros.config = npcManager.setNpcSettings{
 	nogravity=0,
 	speed = 1,
 	projectileid = 390,
-	friendlyProjectileid = 13
+	friendlyProjectileid = 13,
+    soundID = 18,
 }
 
 npcManager.registerHarmTypes(
@@ -43,8 +44,6 @@ npcManager.registerHarmTypes(
 	}
 )
 
-firebros.soundID = 18
-
 local function randDir()
 	return rng.irandomEntry{-1,1}
 end
@@ -63,7 +62,7 @@ local function spawnFireballs(v, data, heldPlayer)
 	spawn.direction = data.lockDirection
 	spawn.speedX = 3 * spawn.direction
 	spawn.layerName = "Spawned NPCs"
-	SFX.play(firebros.soundID)
+	SFX.play(NPC.config[v.id].soundID)
 	data.count = 0
 	data.shottimer = 0
 	if heldPlayer and heldPlayer.upKeyPressing then
@@ -179,7 +178,5 @@ function firebros.onInitAPI()
 	npcManager.registerEvent(npcID, firebros, "onTickEndNPC")
 	npcManager.registerEvent(npcID, firebros, "onDrawNPC")
 end
-
-addNPCToGlobalTable(npcID, firebros)
 
 return firebros
