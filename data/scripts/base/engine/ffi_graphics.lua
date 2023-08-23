@@ -1954,17 +1954,17 @@ end
     end
     
     if (type(priority1) ~= "number") then
-        error("The priority must be a number.")
+        error("The 1st priority must be a number.")
         return
     end
     
-    if priority2 == nil then
-        priority2 = priority1
+    if (type(priority2) ~= "number") then
+        error("The 2nd priority must be a number.")
+        return
     end
     
-    local priorityTable = {priority1,priority2}
-    
-    LunaDLL.FFI_RedirectCameraFB(ref, nil_or(priority1, 1))
+    LunaDLL.FFI_RedirectCameraFB(ref, priority1)
+    LunaDLL.FFI_RedirectCameraFB(ref, nil)
 end]]
 
 -----------------------
