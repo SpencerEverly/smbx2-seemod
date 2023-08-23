@@ -203,6 +203,7 @@ CaptureBufferRef* __fastcall FFI_CaptureBuffer(uint32_t w, uint32_t h, bool nons
 void __fastcall FFI_CaptureBufferFree(CaptureBufferRef* img);
 void __cdecl FFI_CaptureBufferCaptureAt(CaptureBufferRef* img, double priority);
 void __cdecl FFI_CaptureBufferClear(CaptureBufferRef* img, double priority);
+void __fastcall FFI_RedirectCameraFB(CaptureBufferRef* fb, double priority);
 
 // HUD Control
 void __fastcall FFI_GraphicsActivateHud(bool activate);
@@ -1943,6 +1944,28 @@ function Graphics.CaptureBuffer(w, h, nonskippable)
 
 	return setmetatable({_ref=ref, width = w, height = h}, CaptureBufferMT)
 end
+
+--[[function Graphics.redirectCameraFB(captureBuffer, priority1, priority2)
+    local ref = nil
+    if (type(captureBuffer) == "CaptureBuffer") then
+        ref = captureBuffer._ref
+    else
+        error("Invalid type for capture buffer.")
+    end
+    
+    if (type(priority1) ~= "number") then
+        error("The priority must be a number.")
+        return
+    end
+    
+    if priority2 == nil then
+        priority2 = priority1
+    end
+    
+    local priorityTable = {priority1,priority2}
+    
+    LunaDLL.FFI_RedirectCameraFB(ref, nil_or(priority1, 1))
+end]]
 
 -----------------------
 -- Level HUD Control --
