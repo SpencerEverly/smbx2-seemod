@@ -60,3 +60,9 @@ Misc.setNewTestModeLevelData(Level.filename()) - Sets new level data to load to 
 
 LegacyRNG.generateNumber() - Generates a legacy RNG number based off the SMBX RNG system.
 LegacyRNG.getLastGeneratedNumber() - Generates the last legacy RNG number that was generated previously, based off the SMBX RNG system.
+
+----Graphics----
+
+Graphics.redirectCameraFB(captureBuffer, startPriority, endPriority) - A priority range sensitive capture buffer.
+Graphics.setFramebufferSize(width, height) - Sets the framebuffer size to any size you want. Useful for setting up a resolution system (Call camera.width/height for any size you set it to afterward!)
+Graphics.getFramebufferSize() - Gets the current framebuffer size in a table value.
