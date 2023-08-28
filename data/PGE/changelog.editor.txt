@@ -29,6 +29,14 @@
 - Fixed an appearance of a junk slash at begin of the opened directory path
 - The level/world data directory will be auto-created if it doesn't exist on an attempt to open it via the "Open level directory" menu item.
 - Fixed the problem where invisible objects get ignored when performing a section cloning/deleting/rotating operation using the "Level" menu
+beta2
+- Fixed the deadlock happening on config initial loading errors
+- Fixed processing of paths while reading/writing INI files
+- Added two new command line arguments: the "--config" to specify the location of the configuration package; and the "--app-path" to specify the root directory that will being used instead of the application path when configuration package has the `application-dir` parameter being enabled.
+- Added an opacity for the locked items (Thanks to @Emral)
+- Added "Select all items" context menu options at the layers list (Thanks to @Emral)
+- Added an ability to place items with overlapping while holding the CTRL key (Thanks to @Emral)
+- Added the indicator of random direction for NPCs
 
 ﻿Editor 0.3.2
 - Added support for an element (Block, BGO, NPC), section, and level-wide Extra Settings
