@@ -26,7 +26,7 @@ Misc.LUNALUA_EVENTS = {
 	"onChangeController", "onControllerButtonPress",
 	"onPostNPCKill", "onPostNPCHarm", "onPostNPCCollect", "onPostExplosion", "onPostEventDirect", "onPostWarpEnter",
 	"onPostBlockHit", "onPostBlockRemove",
-	"onNPCGenerated",
+	"onNPCGenerated", "onNPCTransform",
 	"onNPCConfigChange", "onBlockConfigChange", "onBGOConfigChange",
 	"onPlayerKill", "onPlayerHarm", "onPostPlayerKill", "onPostPlayerHarm",
 	-- CUSTOM events below
@@ -146,13 +146,19 @@ function EventManager.callEventInternal(name, args)
 		args[1] = NPC(args[1]-1)
 		args[2] = NPC(args[2]-1)
 	end
+    
+    -- Special case for converting onNPCTransform arguments
+    if (name == "onNPCTransform") then
+		args[1] = NPC(args[1]-1)
+		args[2] = NPC(args[2]-1)
+	end
 	
 	-- Special case for converting onBlockHit arguments
 	if (name == "onBlockHit") then
 		args[2] = Block(args[2])
 		
 		if (args[4] > 0) then
-			args[4] = Player(args[4]) 
+			args[4] = Player(args[4])
 		else
 			args[4] = nil
 		end
