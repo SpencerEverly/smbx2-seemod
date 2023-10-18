@@ -150,7 +150,6 @@ function EventManager.callEventInternal(name, args)
     -- Special case for converting onNPCTransform arguments
     if (name == "onNPCTransform") then
 		args[1] = NPC(args[1]-1)
-		args[2] = NPC(args[2]-1)
 	end
 	
 	-- Special case for converting onBlockHit arguments
