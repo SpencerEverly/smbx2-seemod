@@ -462,6 +462,9 @@ do
         if yHotspot == nil then
             yHotspot = 0
         end
+        
+        local imgRef
+        
         if cursor == nil then
             return LunaDLL.LunaLuaSetCursor(nil,xHotspot,yHotspot)
         end
@@ -475,7 +478,12 @@ do
             return
 		end
         
-        LunaDLL.LunaLuaSetCursor(cursor,xHotspot,yHotspot)
+        if type(cursor) == "LuaImageResource" then
+            imgRef = cursor._ref
+        end
+        
+        
+        LunaDLL.LunaLuaSetCursor(imgRef,xHotspot,yHotspot)
     end
     
     function Misc.getCursorPosition()
