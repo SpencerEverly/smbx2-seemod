@@ -220,7 +220,10 @@ else
 	require("maplevelanimator");
 end
 
+--SEE Mod-related libraries
 _G.pauseMenu13 = require("base/game/pausemenu13/pausemenu13")
+_G.newBGOSystem = require("see/newBGOSystem")
+_G.magicHand = require("see/magicHand")
 
 --Do stuff that has to be done extremely early in execution here
 if (isOverworld or Section(player.section).musicID == 0) then
