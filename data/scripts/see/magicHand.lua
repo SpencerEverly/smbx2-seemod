@@ -139,6 +139,7 @@ local playerEasterEggTimer = 0
 --For seeing what NPCs exist in X2.
 local validNPCs = {}
 local validBlocks = {}
+local validBGOs = {}
 
 --Values to replace with new values, when getting properties.
 local editorValues = {
@@ -700,14 +701,19 @@ _G.MAX_BLOCKS = 2000
 
 function magicHand.onStart()
     --We need to generate valid NPCs/Blocks for us to get everything in order
-    for i = 1,MAX_NPCS do
+    for i = 1, NPC_MAX_ID do
         if Graphics.sprites.npc[i].img ~= nil then
             table.insert(validNPCs, i, -1)
         end
     end
-    for i = 1,MAX_BLOCKS do
+    for i = 1, BLOCK_MAX_ID do
         if Graphics.sprites.block[i].img ~= nil then
-            table.insert(validNPCs, i, -1)
+            table.insert(validBlocks, i, -1)
+        end
+    end
+    for i = 1, BGO_MAX_ID do
+        if Graphics.sprites.background[i].img ~= nil then
+            table.insert(validBGOs, i, -1)
         end
     end
 end
@@ -838,7 +844,7 @@ local function LeftClickStuff()
                 elseif entityMode == 2 and validBlocks[magicHand.selectedID] ~= nil and validBlocks[magicHand.selectedID] == -1 then --Block
                     local spawnedBlock = Block.spawn(magicHand.selectedID, magicHand.gridCoordinates.x, magicHand.gridCoordinates.y)
                     setSpawnedSettings(spawnedBlock, savedEditorEntity)
-                elseif entityMode == 3 and newBGOSystem then --BGO, only supported on newBGOSystem
+                elseif entityMode == 3 and validBGOs[magicHand.selectedID] ~= nil and validBGOs[magicHand.selectedID] == -1 and newBGOSystem then --BGO, only supported on newBGOSystem
                     newBGOSystem.spawn(magicHand.selectedID, magicHand.gridCoordinates.x, magicHand.gridCoordinates.y)
                 end
             end
@@ -900,11 +906,20 @@ function magicHand.onDraw()
         --these are used for erasing entities
         checkEraseStatusForCursor()
         
-        if entityMode > 2 then
-            entityMode = 1
-        end
-        if entityMode < 1 then
-            entityMode = 1
+        if newBGOSystem == nil then
+            if entityMode > 2 then
+                entityMode = 1
+            end
+            if entityMode < 1 then
+                entityMode = 1
+            end
+        else
+            if entityMode > 3 then
+                entityMode = 1
+            end
+            if entityMode < 1 then
+                entityMode = 1
+            end
         end
 
         --these are used for the magic hand main menu
@@ -935,6 +950,8 @@ function magicHand.onDraw()
                 Graphics.drawImageWP(Graphics.sprites.npc[1].img, 92, camera.height - 38, 0, 0, NPC.config[1].width, NPC.config[1].height, magicHand.drawingPriority + 0.6)
             elseif entityMode == 2 then
                 Graphics.drawImageWP(Graphics.sprites.block[1].img, 92, camera.height - 38, 0, 0, Block.config[1].width, Block.config[1].height, magicHand.drawingPriority + 0.6)
+            elseif entityMode == 3 and newBGOSystem then
+                Graphics.drawImageWP(Graphics.sprites.background[1].img, 92, camera.height - 38, 0, 0, BGO.config[1].width, BGO.config[1].height, magicHand.drawingPriority + 0.6)
             end
 
             --ID selector
@@ -983,6 +1000,20 @@ function magicHand.onDraw()
                             
                             if blockImg ~= nil then
                                 Graphics.drawImageWP(blockImg, (camera.width / 2) - 40, (camera.height / 2) - 70, 0, 0, Block.config[tempIDValueNum].width, Block.config[tempIDValueNum].height, 0.5, magicHand.drawingPriority + 1)
+                                dontSpawn = false
+                            else
+                                dontSpawn = true
+                            end
+                        else
+                            dontSpawn = false
+                            Graphics.drawImageWP(magicHand.invalidIDSymbol, (camera.width / 2) - 40, (camera.height / 2) - 70, 0, 0, magicHand.invalidIDSymbol.width, magicHand.invalidIDSymbol.height, 0.5, magicHand.drawingPriority + 1)
+                        end
+                    elseif entityMode == 3 and newBGOSystem then
+                        if validBGOs[tempIDValueNum] ~= nil and validBGOs[tempIDValueNum] == -1 then
+                            local bgoImg = Graphics.sprites.background[tempIDValueNum].img
+                            
+                            if bgoImg ~= nil then
+                                Graphics.drawImageWP(bgoImg, (camera.width / 2) - 40, (camera.height / 2) - 70, 0, 0, BGO.config[tempIDValueNum].width, BGO.config[tempIDValueNum].height, 0.5, magicHand.drawingPriority + 1)
                                 dontSpawn = false
                             else
                                 dontSpawn = true
@@ -1083,6 +1114,13 @@ function magicHand.onTick()
                     if validBlocks[magicHand.selectedID] == nil then
                         magicHand.selectedID = magicHand.selectedID + 1
                         if magicHand.selectedID > #validBlocks then
+                            magicHand.selectedID = 0
+                        end
+                    end
+                elseif entityMode == 3 and newBGOSystem then
+                    if validBGOs[magicHand.selectedID] == nil then
+                        magicHand.selectedID = magicHand.selectedID + 1
+                        if magicHand.selectedID > #validBGOs then
                             magicHand.selectedID = 0
                         end
                     end
