@@ -106,6 +106,9 @@ local redirectorBGOsNonMapped = {191,192,193,194,195,196,197,198,199,221,222}
 local placedItem = Misc.getEditorPlacedItem()
 local prePlacedItem
 
+--To prevent spawning more than 996 effects when sparks appear with the eraser
+local sparkTimer = 0
+
 --For toggling on the magicHand via F1.
 local toggleBool = false
 
@@ -880,8 +883,8 @@ function magicHand.onMouseButtonEvent(button, state)
                         end
                     end
                 end
+                LeftClickStuff()
             end
-            LeftClickStuff()
         elseif button == 0 and state == 0 then --Not clicking the leftclicker on the mouse
             holdingLeftClick = false
             timer = 0
@@ -955,7 +958,7 @@ function magicHand.onDraw()
             end
 
             --ID selector
-            drawBoxChoice(4, 130, camera.height - 40, 36, 36, Color.darkgray, entityIDList, magicHand.currentMenuID)
+            drawBoxChoice(4, 130, camera.height - 40, 36, 36, Color.darkgray, enterEntityID, magicHand.currentMenuID)
             textplus.print{x = 139, y = camera.height - 31, text = "ID", xscale = 2, yscale = 2, priority = magicHand.drawingPriority + 0.6}
 
             --Hide menu button
@@ -1159,13 +1162,16 @@ function magicHand.onTick()
                         end
                     elseif entityMode == 3 then --BGO, only supported on newBGOSystem
                         if newBGOSystem then
-                            for k,v in ipairs(newBGOSystem.get()) do
-                                local mouseCollision = Colliders.Box(magicHand.screenCoordinates.x, magicHand.screenCoordinates.y, 10, 10)
-                                local bgoCollision = Colliders.Box(v.x, v.y, v.width, v.height)
-                                if Colliders.collide(mouseCollision, bgoCollision) then
-                                    Effect.spawn(10, v.x - (BGO.config[v.id].width * 0.5), v.y - (BGO.config[v.id].height))
-                                    newBGOSystem.remove(v.idx)
-                                    SFX.play(36)
+                            if newBGOSystem.bgosSpawned ~= {} then
+                                for k,v in ipairs(newBGOSystem.bgosSpawned) do
+                                    local mouseCollision = Colliders.Box(magicHand.screenCoordinates.x, magicHand.screenCoordinates.y, 10, 10)
+                                    local bgoCollision = Colliders.Box(v.x, v.y, v.width, v.height)
+                                    if Colliders.collide(mouseCollision, bgoCollision) then
+                                        Effect.spawn(10, v.x, v.y)
+                                        SFX.play(36)
+                                        table.remove(newBGOSystem.bgosSpawned, k)
+                                        newBGOSystem.countRaw = newBGOSystem.countRaw - 1
+                                    end
                                 end
                             end
                         end

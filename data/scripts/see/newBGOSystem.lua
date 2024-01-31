@@ -9,18 +9,22 @@ unregisterEvent(betterbgo,"onCameraDraw")
 
 BGO._SetVanillaBGORenderFlag(false)
 
+--BGO count.
+newBGOSystem.countRaw = 0
 --BGO spawned information.
-local bgosSpawned = {}
+newBGOSystem.bgosSpawned = {}
+--Original BGO count.
+local originalCount = 0
 --BGO saved information.
 local bgosSaved = {}
---BGO count.
-local count = 0
 --Whenever the BGO system has started.
 local bgoSystemStarted = false
 --The speed var of BGOs. Used for speedX/Y.
 local speedVar = 0.25
 --For making the opacity for these 0
 local redirectorBGOs = table.map{191,192,193,194,195,196,197,198,199,221,222}
+--Making sure that BGOs get removed with a delay timer
+local removeFailsafeTimer = 0
 
 --A function that gets a BGO sourceY value, used for animating BGOs.
 local function getBGOSourceYFrameValue(v)
@@ -98,75 +102,85 @@ local function setAllBGOs()
     end
     --Save all old BGO values
     for idx = 0, BGO.count() - 1 do
-        count = count + 1
-        bgosSpawned[count] = {}
+        newBGOSystem.countRaw = newBGOSystem.countRaw + 1
+        originalCount = originalCount + 1
 
-        bgosSpawned[count].idx = idx + 1
-        bgosSpawned[count].isValid = true
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw] = {}
 
-        bgosSpawned[count].layerName = BGO(idx).layerName
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].idx = idx + 1
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].isValid = true
 
-        bgosSpawned[count].isHidden = BGO(idx).isHidden
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].layerName = BGO(idx).layerName
 
-        bgosSpawned[count].id = BGO(idx).id
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].isHidden = BGO(idx).isHidden
 
-        bgosSpawned[count].x = BGO(idx).x
-        bgosSpawned[count].y = BGO(idx).y
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].id = BGO(idx).id
 
-        bgosSpawned[count].width = BGO(idx).width
-        bgosSpawned[count].height = BGO(idx).height
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].x = BGO(idx).x
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].y = BGO(idx).y
 
-        bgosSpawned[count].speedX = BGO(idx).speedX
-        bgosSpawned[count].speedY = BGO(idx).speedY
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].width = BGO(idx).width
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].height = BGO(idx).height
+
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].speedX = BGO(idx).speedX
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].speedY = BGO(idx).speedY
 
         --extra values below
-        bgosSpawned[count].priority = BGO.config[BGO(idx).id].priority
-        bgosSpawned[count].opacity = 1
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].priority = BGO.config[BGO(idx).id].priority
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].opacity = 1
 
-        bgosSpawned[count].color = Color.white
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].color = Color.white
         
-        bgosSpawned[count].rotation = 0
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].rotation = 0
     end
     bgoSystemStarted = true
 end
 
 function newBGOSystem.count()
-    return count
+    return newBGOSystem.countRaw
 end
 
 function newBGOSystem.getIdx(idx)
-    return bgosSpawned[idx]
+    return newBGOSystem.bgosSpawned[idx]
 end
+
+local getMT = {__pairs = ipairs}
 
 function newBGOSystem.get(idOrTable)
     local ret = {}
-    if idOrTable == nil then
-        for i = 1,#bgosSpawned do
-            ret[#ret + 1] = bgosSpawned[i]
-        end
-    elseif (type(idOrTable) == "number") then
-        for i = 1,#bgosSpawned do
-            if idOrTable == bgosSpawned[i].id then
-                ret[#ret + 1] = bgosSpawned[i]
+    if newBGOSystem.bgosSpawned[idOrTable] ~= nil or newBGOSystem.bgosSpawned[idOrTable] ~= {} then
+        if idOrTable == nil then
+            for i = 1,#newBGOSystem.bgosSpawned do
+                ret[#ret + 1] = newBGOSystem.bgosSpawned[i]
             end
-        end
-    elseif (type(idOrTable) == "table") then
-        local lookup = {}
-        for _,id in ipairs(idOrTable) do
-            lookup[id] = true
-        end
-        for _,id in ipairs(idOrTable) do
-            if bgosSpawned[i] ~= nil then
-                local id = bgosSpawned[i].id
-                if lookup[id] then
-                    ret[#ret + 1] = bgosSpawned[i]
+        elseif (type(idOrTable) == "number") then
+            for i = 1,#newBGOSystem.bgosSpawned do
+                if idOrTable == newBGOSystem.bgosSpawned[i].id then
+                    ret[#ret + 1] = newBGOSystem.bgosSpawned[i]
                 end
-            else
-                ret[#ret + 1] = {}
+            end
+        elseif (type(idOrTable) == "table") then
+            local lookup = {}
+            for _,id in ipairs(idOrTable) do
+                lookup[id] = true
+            end
+            for _,id in ipairs(idOrTable) do
+                if newBGOSystem.bgosSpawned[i] ~= nil then
+                    local id = newBGOSystem.bgosSpawned[i].id
+                    if lookup[id] then
+                        ret[#ret + 1] = newBGOSystem.bgosSpawned[i]
+                    end
+                else
+                    ret[#ret + 1] = {}
+                end
             end
         end
+        setmetatable(ret, getMT)
+        return ret
+    else
+        ret[#ret + 1] = {}
+        return ret
     end
-    return ret
 end
 
 function newBGOSystem.getIntersecting(x1, y1, x2, y2)
@@ -176,22 +190,28 @@ function newBGOSystem.getIntersecting(x1, y1, x2, y2)
     end
 
     local ret = {}
-    for k,v in ipairs(newBGOSystem.get()) do
-        local bx = v.x
-        if (x2 > bx) then
-            local by = v.y
-            if (y2 > by) then
-                local bw = v.width
-                if (bx + bw > x1) then
-                    local bh = v.height
-                    if (by + bh > y1) then
-                        ret[#ret + 1] = v
+    if newBGOSystem.bgosSpawned[idOrTable] ~= nil or newBGOSystem.bgosSpawned[idOrTable] ~= {} then
+        for k,v in ipairs(newBGOSystem.get()) do
+            local bx = v.x
+            if (x2 > bx) then
+                local by = v.y
+                if (y2 > by) then
+                    local bw = v.width
+                    if (bx + bw > x1) then
+                        local bh = v.height
+                        if (by + bh > y1) then
+                            ret[#ret + 1] = v
+                        end
                     end
                 end
             end
         end
+        setmetatable(ret, getMT)
+        return ret
+    else
+        ret[#ret + 1] = {}
+        return ret
     end
-    return ret
 end
 
 function newBGOSystem.getConfig(id)
@@ -199,33 +219,35 @@ function newBGOSystem.getConfig(id)
 end
 
 function newBGOSystem.spawn(id, x, y)
-    if id > 0 and id < BGO_MAX_ID then
-        for k,v in ipairs(newBGOSystem.get()) do
-            count = count + 1
-            bgosSpawned[count] = {}
+    if id > 0 then
+        newBGOSystem.countRaw = newBGOSystem.countRaw + 1
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw] = {}
 
-            bgosSpawned[count].id = id
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].id = id
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].idx = newBGOSystem.countRaw
 
-            bgosSpawned[count].x = x
-            bgosSpawned[count].y = y
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].x = x
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].y = y
 
-            bgosSpawned[count].width = BGO.config[id].width
-            bgosSpawned[count].height = BGO.config[id].height
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].width = BGO.config[id].width
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].height = BGO.config[id].height
 
-            bgosSpawned[count].speedX = 0
-            bgosSpawned[count].speedY = 0
-            
-            bgosSpawned[count].layerName = "Default"
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].speedX = 0
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].speedY = 0
+        
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].layerName = "Default"
 
-            bgosSpawned[count].isHidden = false
-            
-            bgosSpawned[idx].priority = BGO.config[id].priority
-            if redirectorBGOs[id] then
-                bgosSpawned[idx].opacity = 0
-            else
-                bgosSpawned[idx].opacity = 1
-            end
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].isHidden = false
+        
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].priority = BGO.config[id].priority
+
+        if redirectorBGOs[newBGOSystem.countRaw] then
+            newBGOSystem.bgosSpawned[newBGOSystem.countRaw].opacity = 0
+        else
+            newBGOSystem.bgosSpawned[newBGOSystem.countRaw].opacity = 1
         end
+        
+        newBGOSystem.bgosSpawned[newBGOSystem.countRaw].color = Color.white
         
         return true
     else
@@ -235,9 +257,15 @@ end
 
 --This doesn't fully remove the BGO (code-wise), but it makes sure the original isn't visible
 function newBGOSystem.remove(idx)
-    BGO(idx - 1).width = 0
-    BGO(idx - 1).height = 0
-    return table.remove(bgosSpawned, idx)
+    if removeFailsafeTimer == 0 then
+        if BGO(originalCount - 1).isValid and BGO(idx - 1).isValid then
+            BGO(originalCount - 1).width = 0
+            BGO(originalCount - 1).height = 0
+        end
+        table.remove(newBGOSystem.bgosSpawned, idx)
+        newBGOSystem.countRaw = newBGOSystem.countRaw - 1
+        removeFailsafeTimer = 15
+    end
 end
 
 function newBGOSystem.onInitAPI()
@@ -251,6 +279,10 @@ end
 
 function newBGOSystem.onDraw()
     if bgoSystemStarted then
+        if removeFailsafeTimer > 0 then
+            removeFailsafeTimer = removeFailsafeTimer - 1
+        end
+
         --BGO animation system
         animateBGO()
         for k,v in ipairs(newBGOSystem.get()) do
