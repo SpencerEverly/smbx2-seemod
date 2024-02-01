@@ -290,7 +290,8 @@ local soundIniCount = 0
 local function testSoundIdx(soundIdx)
 	return type(soundIdx) == "number" and math.floor(soundIdx) == soundIdx and soundIdx >= 1
 end
-do	
+
+do
 	--Contains ini-read sound data
 	
 	local tableinsert = table.insert
@@ -347,6 +348,136 @@ do
 			setmusvol(volume)
 		end
 	end
+end
+
+-----------------
+-- Music table --
+-----------------
+
+_G.AUDIO_MUSIC_SPECIAL = 1
+_G.AUDIO_MUSIC_OVERWORLD = 2
+_G.AUDIO_MUSIC_LEVEL = 3
+
+local testMusicIdxLimits = {
+    [AUDIO_MUSIC_SPECIAL] = 3,
+    [AUDIO_MUSIC_OVERWORLD] = 16,
+    [AUDIO_MUSIC_LEVEL] = 56,
+}
+
+local function testMusicIdx(soundIdx, category)
+    return type(soundIdx) == "number" and math.floor(soundIdx) == soundIdx and soundIdx >= 1 and soundIdx <= testMusicIdxLimits[category]
+end
+
+local musicIniData = {}
+local musicIniCountSpecial = 0
+local musicIniCountOverworld = 0
+local musicIniCountLevel = 0
+
+musicIniData[AUDIO_MUSIC_SPECIAL] = {}
+musicIniData[AUDIO_MUSIC_OVERWORLD] = {}
+musicIniData[AUDIO_MUSIC_LEVEL] = {}
+
+local musicSpecialTable = {
+    [1] = "smusic",
+    [2] = "stmusic",
+    [3] = "tmusic",
+}
+
+do
+    -- This function creates the "virtual" attributes for the music table.
+    local function makeMusicTable(musicIdx, musicCategory)
+        if not testMusicIdx(musicIdx, musicCategory) then
+            error("Audio.music" .. "[" .. tostring(musicCategory) .. "]".."[" .. tostring(musicIdx) .. "] does not exist")
+        end
+        local soundAlias
+        if musicCategory == AUDIO_MUSIC_SPECIAL then
+            soundAlias = musicSpecialTable[musicIdx]
+        elseif musicCategory == AUDIO_MUSIC_OVERWORLD then
+            soundAlias = "wmusic" .. tostring(musicIdx)
+        elseif musicCategory == AUDIO_MUSIC_LEVEL then
+            soundAlias = "music" .. tostring(musicIdx)
+        end
+        local spriteMT = {
+            __index = function(tbl, key)
+                if musicCategory == AUDIO_MUSIC_LEVEL then
+                    if musicIdx ~= 24 then
+                        if (key == "music") then
+                            return Audio.__getMusicForAlias(soundAlias, musicCategory)
+                        end
+                        error("Audio.music" .. "[" .. tostring(musicCategory) .. "]".."[" .. tostring(musicIdx) .. "] does not exist")
+                    end
+                elseif musicCategory == AUDIO_MUSIC_LEVEL then
+                    if musicIdx == 24 then
+                        error("Cannot get the custom music ID with this system. Set the custom music ID with Audio.MusicChange instead.")
+                    elseif musicCategory == AUDIO_MUSIC_OVERWORLD and musicIdx ~= 17 then
+                        if (key == "music") then
+                            return Audio.__getMusicForAlias(soundAlias, musicCategory)
+                        end
+                        error("Audio.music" .. "[" .. tostring(musicCategory) .. "]".."[" .. tostring(musicIdx) .. "] does not exist")
+                    end
+                else
+                    if (key == "music") then
+                        return Audio.__getMusicForAlias(soundAlias, musicCategory)
+                    end
+                    error("Audio.music" .. "[" .. tostring(musicCategory) .. "]".."[" .. tostring(musicIdx) .. "] does not exist")
+                end
+            end,
+            __newindex = function(tbl, key, val)
+                if musicCategory == AUDIO_MUSIC_LEVEL then
+                    if musicIdx ~= 24 then
+                        if (key == "music") then
+                            val = val or musicIniData[musicCategory][musicIdx]
+                            Audio.__setOverrideForMusicAlias(soundAlias, val)
+                            return
+                        end
+                    elseif musicIdx == 24 then
+                        error("Cannot get the custom music ID with this system. Set the custom music ID with Audio.MusicChange instead.")
+                    end
+                else
+                    if (key == "music") then
+                        val = val or musicIniData[musicCategory][musicIdx]
+                        Audio.__setOverrideForMusicAlias(soundAlias, val)
+                        return
+                    end
+                end
+            end
+        }
+        return setmetatable({}, spriteMT)
+    end
+    
+    local musicMetatableSpecial = {
+        __index = function(tbl, val)
+            return makeMusicTable(val, AUDIO_MUSIC_SPECIAL)
+        end,
+        __newindex = function(tbl, key, val)
+            error("Cannot write to Audio.music table")
+        end
+    }
+    local musicMetatableOverworld = {
+        __index = function(tbl, val)
+            return makeMusicTable(val, AUDIO_MUSIC_OVERWORLD)
+        end,
+        __newindex = function(tbl, key, val)
+            error("Cannot write to Audio.music table")
+        end
+    }
+    local musicMetatableLevel = {
+        __index = function(tbl, val)
+            return makeMusicTable(val, AUDIO_MUSIC_LEVEL)
+        end,
+        __newindex = function(tbl, key, val)
+            error("Cannot write to Audio.music table")
+        end
+    }
+    --Make the tables
+    Audio.music = {}
+    Audio.music[AUDIO_MUSIC_SPECIAL] = {} --special music
+    Audio.music[AUDIO_MUSIC_OVERWORLD] = {} --overworld music
+    Audio.music[AUDIO_MUSIC_LEVEL] = {} --level music
+    --Finally add the metatables
+    setmetatable(Audio.music[AUDIO_MUSIC_SPECIAL], musicMetatableSpecial)
+    setmetatable(Audio.music[AUDIO_MUSIC_OVERWORLD], musicMetatableOverworld)
+    setmetatable(Audio.music[AUDIO_MUSIC_LEVEL], musicMetatableLevel)
 end
 
 ---------------
@@ -657,8 +788,7 @@ do
 			end
 		end
 		soundIniCount = math.max(soundIniCount, maxId)
-	end	
-
+	end
 	function loadSoundsIni()
 		parseSoundsIni(getSMBXPath().."/")
 			
@@ -693,6 +823,197 @@ do
 	end
 end
 
+-----------------------
+-- Music.ini Parsing --
+-----------------------
+
+local loadMusicIni
+
+do
+    local tableinsert = table.insert
+    local iniparse = basegameRequire("configFileReader")
+    function parseMusicIni(path)
+        local data = {}
+        local headers = {}
+        local index = nil
+        local folderpath = path
+        path = path.."music.ini"
+        
+        local check=io.open(path, "r")      
+      
+        if check == nil then
+            return
+        else
+            check:close()
+        end
+        
+        local maxId = {}
+        maxId[1] = 0
+        maxId[2] = 0
+        maxId[3] = 0
+        
+        local finalId = {}
+        finalId[1] = 0
+        finalId[2] = 0
+        finalId[3] = 0
+        
+        local id1
+        local id2
+        local id3
+        
+        local inilines = io.readFileLines(path)
+        assert(inilines ~= nil, "Error loading music.ini")
+        for _,v in ipairs(inilines) do
+            if v ~= nil then
+                local header = v:match("^%s*%[%s*(%S+)%s*%]%s*$")
+                if header then
+                    if data[header] == nil then
+                        data[header] = {}
+                        tableinsert(headers, header)
+                    end
+                    index = header
+                elseif index ~= nil and data[index] ~= nil then
+                    tableinsert(data[index], v)
+                end
+            end
+        end
+        
+        for idxNum,h in ipairs(headers) do
+            id1 = h:lower():match("special%s*%-%s*music%s*%-%s*(%d+)")
+
+            --special
+            if id1 ~= nil then
+                id1 = tonumber(id1)
+                if id1 ~= nil and testMusicIdx(id1, AUDIO_MUSIC_SPECIAL) then
+                    local l = iniparse.dataParse(data[h], enums, allowranges)
+                    if l.file[1] == "/" or l.file[1] == "\\" then
+                        l.file = l.file:sub(2,-1)
+                    end
+                    local file = Misc.resolveMusicFile(l.file)
+                    if file then
+                        --really dumb fix for special music
+                        Audio.__setOverrideForMusicAlias(musicSpecialTable[id1], file)
+                        musicIniData[AUDIO_MUSIC_SPECIAL][id1] = file
+                        maxId[1] = math.max(id1, maxId[1])
+                    else
+                        Misc.warn("Could not load special song from music.ini: "..l.file)
+                    end
+                else
+                    Misc.warn("Invalid music ID "..id1.." found in music.ini (Special music)")
+                end
+            end
+
+            --overworld
+            id2 = h:lower():match("world%s*%-%s*music%s*%-%s*(%d+)")
+            
+            if id2 ~= nil then
+                id2 = tonumber(id2)
+                if id2 ~= 17 then
+                    if testMusicIdx(id2, AUDIO_MUSIC_OVERWORLD) then
+                        local l = iniparse.dataParse(data[h], enums, allowranges)
+                        if l.file[1] == "/" or l.file[1] == "\\" then
+                            l.file = l.file:sub(2,-1)
+                        end
+                        local file = Misc.resolveMusicFile(l.file)
+                        if file then
+                            musicIniData[AUDIO_MUSIC_OVERWORLD][id2] = file
+                            maxId[2] = math.max(id2, maxId[2])
+                        else
+                            Misc.warn("Could not load overworld song from music.ini: "..l.file)
+                        end
+                    else
+                        Misc.warn("Invalid music ID "..id2.." found in music.ini (World music)")
+                    end
+                end
+            end
+
+            --level
+            id3 = h:lower():match("level%s*%-%s*music%s*%-%s*(%d+)")
+            
+            if id3 ~= nil then
+                id3 = tonumber(id3)
+                if id3 ~= 24 then
+                    if testMusicIdx(id3, AUDIO_MUSIC_LEVEL) then
+                        local l = iniparse.dataParse(data[h], enums, allowranges)
+                        if l.file[1] == "/" or l.file[1] == "\\" then
+                            l.file = l.file:sub(2,-1)
+                        end
+                        local file = Misc.resolveMusicFile(l.file)
+                        if file then
+                            musicIniData[AUDIO_MUSIC_LEVEL][id3] = file
+                            maxId[3] = math.max(id3, maxId[3])
+                        else
+                            Misc.warn("Could not load level song from music.ini: "..l.file)
+                        end
+                    else
+                        Misc.warn("Invalid music ID "..id3.." found in music.ini (Level music)")
+                    end
+                end
+            end
+        end
+        musicIniCountSpecial = math.max(musicIniCountSpecial, maxId[1])
+        musicIniCountOverworld = math.max(musicIniCountOverworld, maxId[2])
+        musicIniCountLevel = math.max(musicIniCountLevel, maxId[3])
+    end
+    function loadMusicIni()
+        parseMusicIni(getSMBXPath().."/")
+            
+        local EP_LIST_PTR = mem(0x00B250FC, FIELD_DWORD);
+        local epidx = mem(0x00B2C628, FIELD_WORD) - 1;
+        
+        if epidx >= 0 then
+            local eppath = tostring(mem(EP_LIST_PTR + (epidx * 0x18) + 0x4, FIELD_STRING))
+            parseMusicIni(eppath)
+        
+            if not isOverworld then
+                local f = Level.filename()
+                local i = f:match(".*%.()")
+                if i ~= nil then
+                    parseMusicIni(eppath..f:sub(1,(i-2)).."/")
+                end
+            end
+        end
+        
+        --Makes music a drop-in replace
+
+        --Special
+        for k = 1,musicIniCountSpecial do
+            local v = musicIniData[AUDIO_MUSIC_SPECIAL][k]
+            if v then
+                if pcall(function() musicIniData[AUDIO_MUSIC_SPECIAL][k] = Audio.MusicOpen(v) end) then
+                    local d = Audio.music[AUDIO_MUSIC_SPECIAL][k]
+                    d.sfx = musicIniData[AUDIO_MUSIC_SPECIAL][k]
+                else
+                    Misc.warn("Could not load special song from music.ini: "..v)
+                end
+            end
+        end
+        --Overworld
+        for k = 1,musicIniCountOverworld do
+            local v = musicIniData[AUDIO_MUSIC_OVERWORLD][k]
+            if v then
+                if pcall(function() musicIniData[AUDIO_MUSIC_OVERWORLD][k] = Audio.MusicOpen(v) end) then
+                    local d = Audio.music[AUDIO_MUSIC_OVERWORLD][k]
+                    d.sfx = musicIniData[AUDIO_MUSIC_OVERWORLD][k]
+                else
+                    Misc.warn("Could not load overworld song from music.ini: "..v)
+                end
+            end
+        end
+        --Level
+        for k = 1,musicIniCountLevel do
+            local v = musicIniData[AUDIO_MUSIC_LEVEL][k]
+            if v then
+                if pcall(function() musicIniData[AUDIO_MUSIC_LEVEL][k] = Audio.MusicOpen(v) end) then
+                    local d = Audio.music[AUDIO_MUSIC_LEVEL][k]
+                    d.sfx = musicIniData[AUDIO_MUSIC_LEVEL][k]
+                else
+                    Misc.warn("Could not load level song from music.ini: "..v)
+                end
+            end
+        end
+    end
+end
 
 
 ---------------------------------------------------------------------------
@@ -853,8 +1174,9 @@ function __onInit(episodePath, lvlName)
 			lowLevelLibraryContext._G.vector = basegameContext._G.vector
 		end
 		
-		-- Parse and load sounds.ini files (this can throw warnings, which is why we need it here)
+		-- Parse and load sounds.ini and music.ini files (this can throw warnings, which is why we need it here)
 		loadSoundsIni()
+        loadMusicIni()
 		
 		-- Core libraries
 		-- Libraries which provide core functionality, but do not affect the global
