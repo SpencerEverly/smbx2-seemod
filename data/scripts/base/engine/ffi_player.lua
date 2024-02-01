@@ -11,6 +11,14 @@ void LunaLuaHarmPlayer(short playerIndex);
 short* LunaLuaGetValidCharacterIDArray();
 unsigned int LunaLuaGetTemplateAddressForCharacter(int id);
 
+typedef struct ExtendedPlayerFields
+{
+    bool noblockcollision;
+    bool nonpcinteraction;
+    bool noplayerinteraction;
+    unsigned int collisionGroup;
+} ExtendedPlayerFields;
+ExtendedPlayerFields* LunaLuaGetPlayerExtendedFieldsArray();
 
 typedef struct _LunaLuaKeyMap {
     short    up; //Up
