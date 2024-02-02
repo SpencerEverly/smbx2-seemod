@@ -1,13 +1,15 @@
 local newBGOSystem = {}
 
 local betterbgo = require("base/game/betterbgo")
-local Sprite = require("base/sprite")
 
 --Unregister all the betterbgo events, because they are not needed for this system
 unregisterEvent(betterbgo,"onDraw")
 unregisterEvent(betterbgo,"onCameraDraw")
 
 BGO._SetVanillaBGORenderFlag(false)
+
+local oldBGOGet = BGO.get
+local oldBGOGetIntersecting = BGO.getIntersecting
 
 --BGO count.
 newBGOSystem.countRaw = 0
@@ -23,8 +25,6 @@ local bgoSystemStarted = false
 local speedVar = 0.25
 --For making the opacity for these 0
 local redirectorBGOs = table.map{191,192,193,194,195,196,197,198,199,221,222}
---Making sure that BGOs get removed with a delay timer
-local removeFailsafeTimer = 0
 
 --A function that gets a BGO sourceY value, used for animating BGOs.
 local function getBGOSourceYFrameValue(v)
@@ -257,15 +257,12 @@ end
 
 --This doesn't fully remove the BGO (code-wise), but it makes sure the original isn't visible
 function newBGOSystem.remove(idx)
-    if removeFailsafeTimer == 0 then
-        if BGO(originalCount - 1).isValid and BGO(idx - 1).isValid then
-            BGO(originalCount - 1).width = 0
-            BGO(originalCount - 1).height = 0
-        end
-        table.remove(newBGOSystem.bgosSpawned, idx)
-        newBGOSystem.countRaw = newBGOSystem.countRaw - 1
-        removeFailsafeTimer = 15
+    if BGO(originalCount - 1).isValid and BGO(idx - 1).isValid and BGO(originalCount - 1).width ~= 0 and BGO(originalCount - 1).height ~= 0 then
+        BGO(originalCount - 1).width = 0
+        BGO(originalCount - 1).height = 0
     end
+    table.remove(newBGOSystem.bgosSpawned, idx)
+    newBGOSystem.countRaw = newBGOSystem.countRaw - 1
 end
 
 function newBGOSystem.onInitAPI()
@@ -279,10 +276,6 @@ end
 
 function newBGOSystem.onDraw()
     if bgoSystemStarted then
-        if removeFailsafeTimer > 0 then
-            removeFailsafeTimer = removeFailsafeTimer - 1
-        end
-
         --BGO animation system
         animateBGO()
         for k,v in ipairs(newBGOSystem.get()) do
@@ -292,6 +285,14 @@ function newBGOSystem.onDraw()
             moveBGO(v)
         end
     end
+end
+
+function BGO.get(idOrTable)
+    return newBGOSystem.get(idOrTable)
+end
+
+function BGO.getIntersecting(idOrTable)
+    return newBGOSystem.getIntersecting(idOrTable)
 end
 
 return newBGOSystem
