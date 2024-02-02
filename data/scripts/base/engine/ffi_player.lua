@@ -1,6 +1,22 @@
 local mem = mem
 local ffi_utils = require("ffi_utils")
 
+local playerLavaFieldsArray = nil
+do
+	ffi.cdef([[
+		const char* LunaLuaGetPlayerLavaFieldsStruct();
+	]])
+    local LunaDLL = ffi.load("LunaDll.dll")
+
+	-- Define structure
+	ffi.cdef(ffi.string(LunaDLL.LunaLuaGetPlayerLavaFieldsStruct()))
+
+	ffi.cdef([[
+		PlayerLavaFields* LunaLuaGetPlayerLavaFieldsArray();
+	]])
+	playerLavaFieldsArray = LunaDLL.LunaLuaGetPlayerLavaFieldsArray()
+end
+
 ----------------------
 -- FFI DECLARATIONS --
 ----------------------
@@ -33,10 +49,6 @@ typedef struct _LunaLuaKeyMap {
     short    pause; //Pause
 } LunaLuaKeyMap;
 LunaLuaKeyMap* LunaLuaGetRawKeymapArray(void);
-
-void LunaLuaSetLavaStatus(int playerIdx, int status);
-int LunaLuaGetLavaStatus(int playerIdx);
-
 ]]
 local LunaDLL = ffi.load("LunaDll.dll")
 
@@ -137,11 +149,19 @@ local function playerSetMegaPowerKeep(pl, v)
 end
 
 local function playerSetLavaStatus(pl, v)
-    LunaDLL.LunaLuaSetLavaStatus(pl.idx, v)
+    if not Misc.getWeakLava() then
+        if v < 1 and v > 3 then
+            v = 1
+        end
+        playerLavaFieldsArray[pl.idx].lavaTouchingStatus = v
+    else
+        return
+    end
+    
 end
 
 local function playerGetLavaStatus(pl)
-    return LunaDLL.LunaLuaGetLavaStatus(pl.idx)
+    return playerLavaFieldsArray[pl.idx].lavaTouchingStatus
 end
 
 ------------------------
