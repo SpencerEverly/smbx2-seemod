@@ -33,6 +33,10 @@ typedef struct _LunaLuaKeyMap {
     short    pause; //Pause
 } LunaLuaKeyMap;
 LunaLuaKeyMap* LunaLuaGetRawKeymapArray(void);
+
+void LunaLuaSetLavaStatus(int playerIdx, int status);
+int LunaLuaGetLavaStatus(int playerIdx);
+
 ]]
 local LunaDLL = ffi.load("LunaDll.dll")
 
@@ -132,6 +136,14 @@ local function playerSetMegaPowerKeep(pl, v)
 	playerKeepMegaPower[pl.idx] = v
 end
 
+local function playerSetLavaStatus(pl, v)
+    LunaDLL.LunaLuaSetLavaStatus(pl.idx, v)
+end
+
+local function playerGetLavaStatus(pl)
+    LunaDLL.LunaLuaGetLavaStatus(pl.idx)
+end
+
 ------------------------
 -- CONSTANTS          --
 ------------------------
@@ -223,6 +235,8 @@ local PlayerFields = {
 		forcedState             = {0x122, FIELD_WORD},
 		forcedTimer             = {0x124, FIELD_DFLOAT},
         warpIndex               = {0x05A, FIELD_WORD},
+
+        lavaStatus              = {get=playerGetLavaStatus, set=playerSetLavaStatus},
 
 		----------------------------------
 		-- LEGACY AUTO-GENERATED FIELDS --

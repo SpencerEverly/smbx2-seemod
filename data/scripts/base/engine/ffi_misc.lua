@@ -307,6 +307,12 @@ do
         
         void LunaLuaSetSEEModFeatureBool(bool enable);
         bool LunaLuaGetSEEModFeatureBool();
+        
+        void LunaLuaSetDisabledPlayerKeys(bool enable);
+        bool LunaLuaGetDisabledPlayerKeys();
+        
+        void LunaLuaSetDisabledPlayerCheatMovement(bool enable);
+        bool LunaLuaGetDisabledPlayerCheatMovement();
 	]])
 	local LunaDLL = ffi.load("LunaDll.dll")
 
@@ -457,17 +463,30 @@ do
         return LunaDLL.LunaLuaGetWeakLava()
     end
     
-    function Misc.setSafeLava(boole)
+    function Misc.disablePlayerControls(boole)
         if type(boole) ~= "boolean" then
-			error("Invalid type for weak lava setting.")
+			error("Invalid type for player control setting.")
             return
 		end
         
-        LunaDLL.LunaLuaSetSafeLava(boole)
+        LunaDLL.LunaLuaSetDisabledPlayerKeys(boole)
     end
     
-    function Misc.getSafeLava()
-        return LunaDLL.LunaLuaGetSafeLava()
+    function Misc.isPlayerControlsDisabled()
+        return LunaDLL.LunaLuaGetDisabledPlayerKeys()
+    end
+
+    function Misc.disablePlayerControlsAboveTwoPlayers(boole)
+        if type(boole) ~= "boolean" then
+			error("Invalid type for player control setting.")
+            return
+		end
+        
+        LunaDLL.LunaLuaSetDisabledPlayerCheatMovement(boole)
+    end
+    
+    function Misc.isPlayerControlsDisabledAboveTwoPlayers()
+        return LunaDLL.LunaLuaGetDisabledPlayerCheatMovement()
     end
     
     function Misc.setCursor(cursor,xHotspot,yHotspot)
