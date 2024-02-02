@@ -141,7 +141,7 @@ local function playerSetLavaStatus(pl, v)
 end
 
 local function playerGetLavaStatus(pl)
-    LunaDLL.LunaLuaGetLavaStatus(pl.idx)
+    return LunaDLL.LunaLuaGetLavaStatus(pl.idx)
 end
 
 ------------------------
