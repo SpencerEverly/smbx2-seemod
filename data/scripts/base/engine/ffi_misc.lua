@@ -291,6 +291,8 @@ do
         
         void LunaLuaSetWeakLava(bool value);
         bool LunaLuaGetWeakLava();
+        void LunaLuaSetSafeLava(bool value);
+        bool LunaLuaGetSafeLava();
         
         void LunaLuaSetCursor(LunaImageRef* img, uint32_t xHotspot, uint32_t yHotspot);
         void LunaLuaSetCursorHide(void);
@@ -443,7 +445,7 @@ do
 	end
     
     function Misc.setWeakLava(boole)
-        if type(newLevel) ~= "boolean" then
+        if type(boole) ~= "boolean" then
 			error("Invalid type for weak lava setting.")
             return
 		end
@@ -453,6 +455,19 @@ do
     
     function Misc.getWeakLava()
         return LunaDLL.LunaLuaGetWeakLava()
+    end
+    
+    function Misc.setSafeLava(boole)
+        if type(boole) ~= "boolean" then
+			error("Invalid type for weak lava setting.")
+            return
+		end
+        
+        LunaDLL.LunaLuaSetSafeLava(boole)
+    end
+    
+    function Misc.getSafeLava()
+        return LunaDLL.LunaLuaGetSafeLava()
     end
     
     function Misc.setCursor(cursor,xHotspot,yHotspot)
