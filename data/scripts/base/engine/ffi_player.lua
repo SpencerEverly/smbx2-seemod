@@ -49,6 +49,7 @@ typedef struct _LunaLuaKeyMap {
     short    pause; //Pause
 } LunaLuaKeyMap;
 LunaLuaKeyMap* LunaLuaGetRawKeymapArray(void);
+void LunaLuaSetPlayerRenderFlag(bool val);
 ]]
 local LunaDLL = ffi.load("LunaDll.dll")
 
@@ -149,15 +150,7 @@ local function playerSetMegaPowerKeep(pl, v)
 end
 
 local function playerSetLavaStatus(pl, v)
-    if not Misc.getWeakLava() then
-        if v < 1 and v > 3 then
-            v = 1
-        end
-        playerLavaFieldsArray[pl.idx].lavaTouchingStatus = v
-    else
-        return
-    end
-    
+    playerLavaFieldsArray[pl.idx].lavaTouchingStatus = v
 end
 
 local function playerGetLavaStatus(pl)
@@ -877,6 +870,10 @@ function Player.getTemplates()
 		idx = idx + 1
 	end
 	return ret
+end
+
+function Player._SetVanillaPlayerRenderFlag(val)
+	LunaDLL.LunaLuaSetPlayerRenderFlag(val)
 end
 
 ---------------------------

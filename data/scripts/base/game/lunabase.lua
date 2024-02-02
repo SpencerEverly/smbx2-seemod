@@ -214,16 +214,19 @@ if (not isOverworld) then
 	require("paralX2");
 	require("orbits");
 	require("base/game/sizable");
+
+    --SEE Mod-related libraries (Level)
     _G.messageBox13 = require("base/game/messageBox13/messageBox13")
+    _G.newBGOSystem = require("see/newBGOSystem")
+    _G.magicHand = require("see/magicHand")
+    _G.introMan = require("see/introMan")
 else
 	require("base/game/switchpalace");
 	require("maplevelanimator");
 end
 
---SEE Mod-related libraries
+--SEE Mod-related libraries (Global)
 _G.pauseMenu13 = require("base/game/pausemenu13/pausemenu13")
-_G.newBGOSystem = require("see/newBGOSystem")
-_G.magicHand = require("see/magicHand")
 
 --Do stuff that has to be done extremely early in execution here
 if (isOverworld or Section(player.section).musicID == 0) then
