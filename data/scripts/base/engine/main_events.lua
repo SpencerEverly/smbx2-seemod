@@ -16,9 +16,9 @@ Misc.LUNALUA_EVENTS = {
 	"onBlockHit", "onBlockRemove",
 	"onHUDDraw", "onNPCKill", "onCameraUpdate", "onCameraDraw",
 	"onKeyboardPress", "onPause", "onExit", "onPauseSEEMod", "onMessageBoxSEEMod",
-	"onNPCHarm","onNPCCollect",
-	"onCheckpoint",
-	"onExplosion",
+	"onNPCHarm", "onNPCCollect", "onKeyboardKeyPress", "onKeyboardKeyRelease",
+	"onCheckpoint", "onLetterboxToggle", "onGIFRecord", "onScreenshotTake",
+	"onExplosion", "onUnfocusWindow", "onFocusWindow",
 	"onRunEffectInternal", "onExplosionInternal",
 	"onPostNPCRearrangeInternal", "onBlockInvalidateForReuseInternal",
 	"onWarpEnter", "onWarp",
@@ -32,7 +32,7 @@ Misc.LUNALUA_EVENTS = {
 	-- CUSTOM events below
 	"onCollide", -- Defined for block collisions
     "onPOW",
-    "onControllerButtonEvent", "onKeyboardKeyPress",
+    "onControllerButtonEvent",
 }
 
 local postCancellableMap = {
