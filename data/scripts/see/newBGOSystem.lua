@@ -281,8 +281,8 @@ end
 
 function newBGOSystem.onInitAPI()
     registerEvent(newBGOSystem,"onStart")
-    registerEvent(newBGOSystem,"onDraw")
     registerEvent(newBGOSystem,"onTick")
+    registerEvent(newBGOSystem,"onDraw")
 end
 
 function newBGOSystem.onStart()
@@ -299,8 +299,8 @@ end
 
 function newBGOSystem.onTick()
     if bgoSystemStarted then
+        --Keyhole system
         for k,v in ipairs(newBGOSystem.get()) do
-            --Keyhole system
             if v.isHeyhole then
                 for _,p in ipairs(Player.get()) do
                     local bgoCollision = Colliders.Box(v.x, v.y, v.width, v.height)
@@ -308,7 +308,7 @@ function newBGOSystem.onTick()
                         Audio.SeizeStream(p.section)
                         Audio.MusicStop()
                         SFX.play(31)
-                        Level.endState(LEVEL_END_STATE_KEYHOLE)
+                        Level.finish(LEVEL_END_STATE_KEYHOLE, true)
                     end
                 end
             end
