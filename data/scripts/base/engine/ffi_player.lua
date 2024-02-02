@@ -249,7 +249,7 @@ local PlayerFields = {
 		forcedTimer             = {0x124, FIELD_DFLOAT},
         warpIndex               = {0x05A, FIELD_WORD},
 
-        lavaStatus              = {get=playerGetLavaStatus, set=playerSetLavaStatus},
+        lavaConfig              = {get=playerGetLavaStatus, set=playerSetLavaStatus},
 
 		----------------------------------
 		-- LEGACY AUTO-GENERATED FIELDS --
