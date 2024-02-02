@@ -25,6 +25,8 @@ local bgoSystemStarted = false
 local speedVar = 0.25
 --For making the opacity for these 0
 local redirectorBGOs = table.map{191,192,193,194,195,196,197,198,199,221,222}
+--For keyhole-related things
+local keyholeBGOs = table.map{35}
 
 --A function that gets a BGO sourceY value, used for animating BGOs.
 local function getBGOSourceYFrameValue(v)
@@ -132,6 +134,12 @@ local function setAllBGOs()
         newBGOSystem.bgosSpawned[newBGOSystem.countRaw].color = Color.white
         
         newBGOSystem.bgosSpawned[newBGOSystem.countRaw].rotation = 0
+
+        if keyholeBGOs[BGO(idx).id] then
+            newBGOSystem.bgosSpawned[newBGOSystem.countRaw].isHeyhole = true
+        else
+            newBGOSystem.bgosSpawned[newBGOSystem.countRaw].isHeyhole = false
+        end
     end
     bgoSystemStarted = true
 end
@@ -248,6 +256,12 @@ function newBGOSystem.spawn(id, x, y)
         end
         
         newBGOSystem.bgosSpawned[newBGOSystem.countRaw].color = Color.white
+
+        if keyholeBGOs[id] then
+            newBGOSystem.bgosSpawned[newBGOSystem.countRaw].isHeyhole = true
+        else
+            newBGOSystem.bgosSpawned[newBGOSystem.countRaw].isHeyhole = false
+        end
         
         return true
     else
@@ -268,6 +282,7 @@ end
 function newBGOSystem.onInitAPI()
     registerEvent(newBGOSystem,"onStart")
     registerEvent(newBGOSystem,"onDraw")
+    registerEvent(newBGOSystem,"onTick")
 end
 
 function newBGOSystem.onStart()
@@ -279,6 +294,25 @@ function newBGOSystem.onStart()
 
     function BGO.getIntersecting(idOrTable)
         return newBGOSystem.getIntersecting(idOrTable)
+    end
+end
+
+function newBGOSystem.onTick()
+    if bgoSystemStarted then
+        for k,v in ipairs(newBGOSystem.get()) do
+            --Keyhole system
+            if v.isHeyhole then
+                for _,p in ipairs(Player.get()) do
+                    local bgoCollision = Colliders.Box(v.x, v.y, v.width, v.height)
+                    if p.holdingNPC and p.holdingNPC.id == 31 and Colliders.collide(p.holdingNPC, bgoCollision) then
+                        Audio.SeizeStream(p.section)
+                        Audio.MusicStop()
+                        SFX.play(31)
+                        Level.endState(LEVEL_END_STATE_KEYHOLE)
+                    end
+                end
+            end
+        end
     end
 end
 

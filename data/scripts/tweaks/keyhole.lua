@@ -8,6 +8,7 @@ keyhole.lockOffsets = {}
 keyhole.roundPoints = 21
 keyhole.radius = 30
 keyhole.circleMidY = -25
+keyhole.animationEnabled = true
 
 
 local holdsHigh = { 
@@ -65,7 +66,6 @@ end
 
 -- Handle the rendering and stuff
 function keyhole.onCameraDraw(cameraIndex)
-    
     if frameBuffer.width ~= camera.width or frameBuffer.height ~= camera.height then
         frameBuffer = Graphics.CaptureBuffer(camera.width,camera.height)
     end
@@ -76,7 +76,7 @@ function keyhole.onCameraDraw(cameraIndex)
 			
 		-- If characters are particularly tall, then they might be unable to touch the keyhole, so do that manually.
 		if Level.winState() == 0 and holdsHigh[p.character] and p.holdingNPC and p.holdingNPC.id == 31 then
-			for  k,v in ipairs(BGO.getIntersecting(p.x, p.y, p.x + p.width, p.y + p.height)) do
+			for  k,v in ipairs(newBGOSystem.getIntersecting(p.x, p.y, p.x + p.width, p.y + p.height)) do
 				if v.id == 35 and not v.isHidden then
 					Level.winState(3)
 					Audio.SeizeStream(p.section)
@@ -99,7 +99,7 @@ function keyhole.onCameraDraw(cameraIndex)
 				nearbyObj = p
 			
 				-- Get all intersecting BGOs
-				for  k2,v2 in ipairs(BGO.getIntersecting(p.x - 32, p.y - 32, p.x + p.width + 32, p.y + p.height + 32)) do
+				for  k2,v2 in ipairs(newBGOSystem.getIntersecting(p.x - 32, p.y - 32, p.x + p.width + 32, p.y + p.height + 32)) do
 					
 					-- If the BGO is a lock and not hidden, then that's the lock object and we can skip everything else
 					if  v2.id == 35  and  not v2.isHidden  then
@@ -119,7 +119,7 @@ function keyhole.onCameraDraw(cameraIndex)
 					if  not v1:mem(0x40, FIELD_BOOL)  then
 						
 						-- Get all intersecting BGOs
-						for  k2,v2 in ipairs(BGO.getIntersecting(v1.x, v1.y, v1.x + v1.width, v1.y + v1.height)) do
+						for  k2,v2 in ipairs(newBGOSystem.getIntersecting(v1.x, v1.y, v1.x + v1.width, v1.y + v1.height)) do
 							
 							-- If the BGO is a lock and not hidden, then that's the lock object and we can skip everything else
 							if  v2.id == 35  and  not v2.isHidden  then
@@ -149,7 +149,7 @@ function keyhole.onCameraDraw(cameraIndex)
 			-- Get the lock from the reference instance
 			if doStep2 then
 				local minDist = mathhuge
-				for k,v in ipairs(BGO.getIntersecting(nearbyObj.x, nearbyObj.y, nearbyObj.x+nearbyObj.width, nearbyObj.y+nearbyObj.height)) do
+				for k,v in ipairs(newBGOSystem.getIntersecting(nearbyObj.x, nearbyObj.y, nearbyObj.x+nearbyObj.width, nearbyObj.y+nearbyObj.height)) do
 					local w1,h1 = v.x-nearbyObj.x, v.y-nearbyObj.y
 					local dist = mathsqrt(w1^2 + h1^2)
 					if dist < minDist and v.id == 35 and not v.isHidden then
@@ -161,7 +161,7 @@ function keyhole.onCameraDraw(cameraIndex)
 		end
 	end
 		
-	if  levelEnded  then
+	if levelEnded and keyhole.animationEnabled then
 		keyhole.counter = keyhole.counter + 1
 		
 		if      keyhole.counter < 60  then
