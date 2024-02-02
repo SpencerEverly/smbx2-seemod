@@ -272,6 +272,14 @@ end
 
 function newBGOSystem.onStart()
     setAllBGOs()
+
+    function BGO.get(idOrTable)
+        return newBGOSystem.get(idOrTable)
+    end
+
+    function BGO.getIntersecting(idOrTable)
+        return newBGOSystem.getIntersecting(idOrTable)
+    end
 end
 
 function newBGOSystem.onDraw()
@@ -285,14 +293,6 @@ function newBGOSystem.onDraw()
             moveBGO(v)
         end
     end
-end
-
-function BGO.get(idOrTable)
-    return newBGOSystem.get(idOrTable)
-end
-
-function BGO.getIntersecting(idOrTable)
-    return newBGOSystem.getIntersecting(idOrTable)
 end
 
 return newBGOSystem
