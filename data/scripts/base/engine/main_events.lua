@@ -32,7 +32,7 @@ Misc.LUNALUA_EVENTS = {
 	-- CUSTOM events below
 	"onCollide", -- Defined for block collisions
     "onPOW",
-    "onControllerButtonEvent",
+    "onControllerButtonEvent", "onKeyboardKeyPress",
 }
 
 local postCancellableMap = {
