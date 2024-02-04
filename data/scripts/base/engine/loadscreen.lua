@@ -112,29 +112,27 @@ do
 	end
 end
 
-_G.framesToAnimate = 7
-_G.timerOfAnimation = 8
-_G.fadeTime = 42
-_G.loaderDelay = 12
-
 local function initDefaultLoadScreen(showSplash)
 	local cnt = 0
+	local loaderDelay = 12
+	local fadeTime = 42
+	local animSpd = 8
 	
 	_G.onDraw = function()
 		if (showSplash) then
 			Graphics.drawImage(Graphics.sprites.hardcoded["30-4"].img, 0, 0)
 		end
 		if(cnt > loaderDelay) then
-            local timer = math.floor(cnt/timerOfAnimation)%framesToAnimate
-            
-			local alpha = math.min(1, (cnt - loaderDelay) / fadeTime)
-            local alpha2 = math.max(0, (cnt + loaderDelay) / fadeTime)
+			local f = math.floor(((cnt - loaderDelay) / animSpd)) % 7
+			local t1,t2 = f / 7, (f+1) / 7
+			local alpha = math.min(1.0, (cnt - loaderDelay) / fadeTime)
 			
 			local img = Graphics.sprites.hardcoded["30-5"].img
 			local imgw = img.width
-			local imgh = img.height/framesToAnimate
+			local imgh = img.height/7
 			
-            Graphics.drawImage(img, Graphics.getFramebufferSize()[1] - 128, Graphics.getFramebufferSize()[2] - 65, 0, timer * 64, imgw, imgh, alpha2)
+			Graphics.glDraw{vertexCoords={800-imgw,600-imgh,800,600-imgh,800-imgw,600,800,600}, texture=img, textureCoords={0,t1,1,t1,0,t2,1,t2},
+				primitive=Graphics.GL_TRIANGLE_STRIP, color={1.0, 1.0, 1.0, alpha}}
 		end
 		cnt = cnt + 1
 	end
@@ -163,7 +161,7 @@ function init()
 	else
 		-- TODO: Is there a nice way to only show the splash screen initially? When launching into
 		--       a level this will be called twice. For the heck of it I'm leaving this just always
-		--       true for right this moment --A quick moment, indeed ~Enjl
+		--       true for right this moment --A quick moment, indeed ~Emral
 		initDefaultLoadScreen(false)
 	end
 end

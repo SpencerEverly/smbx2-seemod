@@ -8,6 +8,7 @@ local max = math.max
 local min = math.min
 local cos = math.cos
 local floor = math.floor
+local atan2 = math.atan2
 local pi = math.pi
 local stringsub = string.sub
 local readmem = readmem
@@ -63,6 +64,8 @@ darkness.shadow.DEFAULT = darkness.shadow.NONE
 darkness.lighttype = {}
 darkness.lighttype.POINT = 0
 darkness.lighttype.SPOT = 1
+darkness.lighttype.BOX = 2
+darkness.lighttype.LINE = 3
 
 darkness.priority = {}
 darkness.priority.DISTANCE = 0
@@ -179,6 +182,7 @@ function darkness.Light(x,y,radius,brightness,colour,flicker)
 					x = x.x, 
 					y = x.y, 
 					radius = x.radius, 
+					minradius = x.minradius or 0,
 					brightness = x.brightness or 1, 
 					colour = x.colour or x.color or Color.white, 
 					enabled = true, 
@@ -186,7 +190,9 @@ function darkness.Light(x,y,radius,brightness,colour,flicker)
 					type = x.type or 0, 
 					dir = x.dir or x.direction or vector.down2, 
 					spotangle = x.spotangle or 45,
-					spotpower = x.spotpower or 8
+					spotpower = x.spotpower or 8,
+					width = x.width or 32,
+					height = x.height or 32
 				}
 		
 		setmetatable(l, Light)
@@ -194,7 +200,7 @@ function darkness.Light(x,y,radius,brightness,colour,flicker)
 	else
 		colour = colour or Color.white
 		brightness = brightness or 1
-		local l = {x=x,y=y,radius=radius,brightness=brightness,colour=colour,enabled=true,flicker=flicker or false, type = 0}
+		local l = {x=x,y=y,radius=radius,brightness=brightness,colour=colour,minradius=0,enabled=true,flicker=flicker or false, type = 0}
 		
 		setmetatable(l, Light)
 		return l
@@ -266,7 +272,7 @@ function darkness.Create(args)
 		
 	f:RebuildShader()
 	
-	tableinsert(fields, {field = f, uniforms = {cameraPos = {0, 0}}, lightdata = {}})
+	tableinsert(fields, {field = f, uniforms = {cameraPos = {0, 0}, screenSize = {800, 600}}, lightdata = {}})
 	return f
 end
 darkness.create = darkness.Create
@@ -488,7 +494,7 @@ do
 	local function getLights(obj, list, centre, priorityType, isglobal, rtrn)
 		local k = 1
 		
-		while k <= #list do
+		while list[k] ~= nil do
 			local v = list[k]
 			if v.enabled then
 				if lightUpdate(v) then
@@ -558,6 +564,7 @@ do
 			end
 			
 			local r = val.radius
+			local minr = val.minradius
 			if val.flicker then
 				local maxmult = 128
 				local fd = 0.03125
@@ -566,18 +573,62 @@ do
 				else
 					r = max(r + rand(-fd, fd)*128, 1)
 				end
+				
+				if minr > 0 then
+					ratio = minr/r
+					minr = max(minr * (1 + rand(-fd*ratio, fd*ratio)), 0)
+				end
 			end
-			--Don't add lights if the light is entirely offscreen
-			if val.x+r > cam.x and val.x-r < cam.x+cam.width and val.y+r > cam.y and val.y-r < cam.y+cam.height then
+			
+			--Don't add lights if the light is entirely offscreen (separate check for box lights)
+			if val.type == darkness.lighttype.BOX and val.x+val.width*0.5+r > cam.x and val.x-val.width*0.5-r < cam.x+cam.width and val.y+val.height*0.5+r > cam.y and val.y-val.height*0.5-r < cam.y+cam.height then
 				count = count + 1
 				
-				list[idx],list[idx+1],list[idx+2] = val.x, val.y, r
+				list[idx],list[idx+1],list[idx+2],list[idx+3] = val.x, val.y, r, minr
+
+				idx = idx + 4
 				
+				for j = 0,2 do
+					list[idx+j] = val.colour[j+1]
+				end
+				list[idx+3] = val.brightness
+				
+				idx = idx + 4
+				
+				list[idx],list[idx+1],list[idx+2],list[idx+3] = val.width, val.height, 0, 2
+
+				idx = idx + 4
+			elseif val.type == darkness.lighttype.LINE and max(val.x, val.x+val.dir.x) + r > cam.x and min(val.x, val.x+val.dir.x) - r < cam.x+cam.width and max(val.y, val.y+val.dir.y) + r > cam.y and min(val.y, val.y+val.dir.y) - r < cam.y+cam.height then
+				count = count + 1
+				
+				list[idx],list[idx+1],list[idx+2],list[idx+3] = val.x, val.y, r, minr
+
+				idx = idx + 4
+				
+				for j = 0,2 do
+					list[idx+j] = val.colour[j+1]
+				end
+				list[idx+3] = val.brightness
+				
+				idx = idx + 4
+			
+				list[idx],list[idx+1],list[idx+2],list[idx+3] = val.dir.x, val.dir.y, 0, 3
+				
+				idx = idx + 4
+			
+			--Don't add lights if the light is entirely offscreen
+			elseif val.x+r > cam.x and val.x-r < cam.x+cam.width and val.y+r > cam.y and val.y-r < cam.y+cam.height then
+				count = count + 1
+				
+				list[idx],list[idx+1],list[idx+2],list[idx+3] = val.x, val.y, r, minr
+				
+				--[[
 				if val.type == darkness.lighttype.SPOT then
 					list[idx+3] = val.spotpower
 				else
 					list[idx+3] = 0
 				end
+				]]
 				
 				idx = idx + 4
 				
@@ -600,7 +651,8 @@ do
 						local fd = 0.03125
 						a = max(min(a * (1 + rand(-fd, fd)), 180), 0)
 					end
-					list[idx],list[idx+1],list[idx+2],list[idx+3] = val.dir.x, val.dir.y, 1 - (cos(a*pi/180)+1)*0.5 + b, 1
+					local angle = atan2(val.dir.y, val.dir.x)
+					list[idx],list[idx+1],list[idx+2],list[idx+3] = val.spotpower, angle, 1 - (cos(a*pi/180)+1)*0.5 + b, 1
 				else
 					for j = 0,3 do
 						list[idx+j] = 0
@@ -622,10 +674,10 @@ do
 		return list,count
 	end
 	
-    darkness.scenecapture = Graphics.CaptureBuffer(800,600)
+	local scenecapture = Graphics.CaptureBuffer()
 	
-	local screendraw = {vertexCoords = {0,0,800,0,800,600,0,600}, textureCoords = {0,0,1,0,1,1,0,1}, primitive = Graphics.GL_TRIANGLE_FAN, texture = darkness.scenecapture, sceneCoords = false }
-	local fielddraw = 	{ vertexCoords = {}, textureCoords = {}, primitive = Graphics.GL_TRIANGLE_FAN, texture = darkness.scenecapture, sceneCoords = false }
+	local screendraw = {vertexCoords = {0,0,scenecapture.width,0,scenecapture.width,scenecapture.height,0,scenecapture.height}, textureCoords = {0,0,1,0,1,1,0,1}, primitive = Graphics.GL_TRIANGLE_FAN, texture = scenecapture, sceneCoords = false }
+	local fielddraw = 	{ vertexCoords = {}, textureCoords = {}, primitive = Graphics.GL_TRIANGLE_FAN, texture = scenecapture, sceneCoords = false }
 	
 	local function hasLight(tbl)
 		local radius = tbl.lightradius
@@ -659,8 +711,11 @@ do
 			[13] = {x=0, y=0, radius = 32, brightness = 1, color = Color.orange, flicker = true},
 			[85] = {x=8, y=0, radius = 32, brightness = 1, color = Color.orange, flicker = true},
 			[87] = {x=12, y=0, radius = 64, brightness = 1, color = Color.orange, flicker = true},
+			[97] = {x=0, y=0, radius = 96, brightness = 1, color = Color.white, flicker = true},
 			[108] = {x=0, y=0, radius = 64, brightness = 1, color = Color.orange, flicker = true},
 			[160] = {x=-96, y=0, radius = 64, brightness = 1, color = Color.orange, flicker = true},
+			[196] = {x=0, y=0, radius = 96, brightness = 1, color = Color.white, flicker = true},
+			[206] = {x=0, y=0, radius = 32, brightness = 1, color = Color.white, flicker = true},
 			[210] = {x=0, y=0, radius = 64, brightness = 1, color = Color.orange, flicker = false},
 			[211] = {x=0, y=0, radius = 64, brightness = 1, color = Color.red, flicker = false},
 			[246] = {x=0, y=0, radius = 32, brightness = 1, color = Color.orange, flicker = true},
@@ -695,6 +750,7 @@ end
 		registerEvent(darkness, "onNPCConfigChange")
 		registerEvent(darkness, "onBlockConfigChange")
 		registerEvent(darkness, "onBGOConfigChange")
+		registerEvent(darkness, "onFramebufferResize")
 	end
 	
 	local function updateIDMap(list, maxID, config)
@@ -852,8 +908,9 @@ end
 	local anyFieldsValid = false
 	local function anyValidFields()
 		sectionlist[1] = player.section
-		if Player(2) and Player(2).isValid then
-			sectionlist[2] = Player(2).section
+		
+		if player2 and player2.isValid then
+			sectionlist[2] = player2.section
 		else
 			sectionlist[2] = nil
 		end
@@ -893,14 +950,10 @@ end
 	end
 	
 	function darkness.onDraw()
-        if (darkness.scenecapture.width ~= camera.width or darkness.scenecapture.height ~= camera.height) then
-            darkness.scenecapture = Graphics.CaptureBuffer(camera.width,camera.height)
-        end
-        
 		anyFieldsValid = anyValidFields()
-        
+		
 		if anyFieldsValid then
-            
+		
 			--updateBGOIDMap()
 			for _,v in BGOIterateByFilterMap(bgoIDMap) do
 				local data = v.data._basegame
@@ -941,9 +994,18 @@ end
 			uni.bounds = b
 			uni.useBounds = useBounds
 			uni.boundBlend = v.field.boundBlendLength
+			uni.screenSize[1],uni.screenSize[2] = Graphics.getMainFramebufferSize()
 			
 			v.useBounds = useBounds==1
 		end
+	end
+
+	function darkness.onFramebufferResize(width, height)
+		scenecapture = Graphics.CaptureBuffer(width, height)
+
+		screendraw.vertexCoords = {0,0,width,0,width,height,0,height}
+		screendraw.texture = scenecapture
+		fielddraw.texture = scenecapture
 	end
 	
 	local function getBestShader(field, count)
@@ -1004,7 +1066,7 @@ end
 					end
 					if field.priority >= p then
 						p = field.priority
-						darkness.scenecapture:captureAt(p)
+						scenecapture:captureAt(p)
 					end
 					
 					local lights,lightCount = chooseLights(field, cam)
@@ -1024,13 +1086,13 @@ end
 						local b = uniforms.bounds
 						local b1x = max(b[1]-camx, 0)
 						local b1y = max(b[2]-camy, 0)
-						local b2x = min(b[3]-camx, 800)
-						local b2y = min(b[4]-camy, 600)
+						local b2x = min(b[3]-camx, scenecapture.width)
+						local b2y = min(b[4]-camy, scenecapture.height)
 						
 						if b2x > b1x and b2y > b1y then
 						
-							local t1x, t1y = b1x/800, b1y/600
-							local t2x, t2y = b2x/800, b2y/600
+							local t1x, t1y = b1x/scenecapture.width, b1y/scenecapture.height
+							local t2x, t2y = b2x/scenecapture.width, b2y/scenecapture.height
 							
 							
 							local vc = fielddraw.vertexCoords

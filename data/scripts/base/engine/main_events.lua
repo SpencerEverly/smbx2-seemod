@@ -9,45 +9,51 @@ Misc.LUNALUA_EVENTS = {
 	"onLoadSection5", "onLoadSection6", "onLoadSection7", "onLoadSection8", "onLoadSection9",
 	"onLoadSection10", "onLoadSection11", "onLoadSection12", "onLoadSection13", "onLoadSection14",
 	"onLoadSection15", "onLoadSection16", "onLoadSection17", "onLoadSection18", "onLoadSection19", "onLoadSection20",
-    "onSectionChange", "onMouseButtonEvent", "onMouseWheelEvent",
-	"onJump", "onJumpEnd", "onPlayerKillEnd",
+	"onSectionChange",
+	"onJump", "onJumpEnd",
 	"onKeyDown", "onKeyUp",
-	"onEvent", "onEventDirect", "onExitLevel", "onInputUpdate", "onMessageBox", "onColorSwitch", "onSyncSwitch", "onBeatStateChange",
+	"onFramebufferResize",
+	"onEvent", "onEventDirect", "onExitLevel", "onInputUpdate", "onMessageBox", "onColorSwitch", "onSyncSwitch", "onBeatWarn", "onBeatStateChange",
 	"onBlockHit", "onBlockRemove",
 	"onHUDDraw", "onNPCKill", "onCameraUpdate", "onCameraDraw",
-	"onKeyboardPress", "onPause", "onExit", "onPauseSEEMod", "onMessageBoxSEEMod",
-	"onNPCHarm", "onNPCCollect", "onKeyboardKeyPress", "onKeyboardKeyRelease",
-	"onCheckpoint", "onLetterboxToggle", "onGIFRecord", "onScreenshotTake",
-	"onExplosion", "onUnfocusWindow", "onFocusWindow",
+	"onKeyboardPress", "onKeyboardPressDirect", "onKeyboardKeyPress", "onKeyboardKeyRelease",
+	"onPause", "onExit",
+	"onNPCHarm","onNPCCollect",
+	"onCheckpoint",
+	"onExplosion",
 	"onRunEffectInternal", "onExplosionInternal",
 	"onPostNPCRearrangeInternal", "onBlockInvalidateForReuseInternal",
 	"onWarpEnter", "onWarp",
+	"onGroupDeallocationInternal",
 	"onPasteText",
-	"onChangeController", "onControllerButtonPress",
+	"onChangeController", "onControllerButtonPress", "onControllerButtonRelease",
 	"onPostNPCKill", "onPostNPCHarm", "onPostNPCCollect", "onPostExplosion", "onPostEventDirect", "onPostWarpEnter",
 	"onPostBlockHit", "onPostBlockRemove",
 	"onNPCGenerated", "onNPCTransform",
 	"onNPCConfigChange", "onBlockConfigChange", "onBGOConfigChange",
 	"onPlayerKill", "onPlayerHarm", "onPostPlayerKill", "onPostPlayerHarm",
+	"onPOW", "onPostPOW",
+	"onMouseButtonEvent", "onMouseWheelEvent",
 	-- CUSTOM events below
-	"onCollide", -- Defined for block collisions
-    "onPOW",
-    "onControllerButtonEvent",
+	"onCollide", "onIntersect", -- Defined for block collisions
+    -- SEE MOD events below
+    "onControllerButtonEvent", "onLetterboxToggle", "onGIFRecord", "onScreenshotTake",
+    "onSFXPlay", "onUnfocusWindow", "onFocusWindow",
+    "onPauseSEEMod", "onMessageBoxSEEMod", 
 }
 
 local postCancellableMap = {
-	onNPCKill           =     "onPostNPCKill",
-	onNPCHarm           =     "onPostNPCHarm",
-	onNPCCollect        =  "onPostNPCCollect",
-	onPlayerKill        =  "onPostPlayerKill",
-	onPlayerHarm        =  "onPostPlayerHarm",
-	onExplosion         =   "onPostExplosion",
-	onEventDirect       = "onPostEventDirect",
-	onBlockHit          =    "onPostBlockHit",
-	onBlockRemove       = "onPostBlockRemove",
-	onWarpEnter         =   "onPostWarpEnter",
-    onPauseSEEMod       = "onPostPauseSEEMod",
-    onMessageBoxSEEMod  = "onPostMessageBoxSEEMod",
+	onNPCKill=     "onPostNPCKill",
+	onNPCHarm=     "onPostNPCHarm",
+	onNPCCollect=  "onPostNPCCollect",
+	onPlayerKill=  "onPostPlayerKill",
+	onPlayerHarm=  "onPostPlayerHarm",
+	onExplosion=   "onPostExplosion",
+	onEventDirect= "onPostEventDirect",
+	onBlockHit=    "onPostBlockHit",
+	onWarpEnter=   "onPostWarpEnter",
+	onBlockRemove= "onPostBlockRemove",
+	onPOW=         "onPostPOW",
 }
 
 
@@ -146,10 +152,12 @@ function EventManager.callEventInternal(name, args)
 		args[1] = NPC(args[1]-1)
 		args[2] = NPC(args[2]-1)
 	end
-    
-    -- Special case for converting onNPCTransform arguments
-    if (name == "onNPCTransform") then
-		args[1] = NPC(args[1]-1)
+
+	-- Special case for converting onNPCTransform arguments
+	if (name == "onNPCTransform") then
+		if (type(args[1]) == "number") then
+			args[1] = NPC(args[1]-1)
+		end
 	end
 	
 	-- Special case for converting onBlockHit arguments
@@ -157,7 +165,7 @@ function EventManager.callEventInternal(name, args)
 		args[2] = Block(args[2])
 		
 		if (args[4] > 0) then
-			args[4] = Player(args[4])
+			args[4] = Player(args[4]) 
 		else
 			args[4] = nil
 		end
@@ -187,15 +195,15 @@ function EventManager.callEventInternal(name, args)
 	end
 	
 	-- Special case for converting onMessageBox arguments
-	if (name == "onMessageBox") or (name == "onMessageBoxSEEMod") then
+	if (name == "onMessageBox") then
 		args[3] = Player(args[3])
 		if (args[4] ~= nil) then
 			args[4] = NPC(args[4]-1)
 		end
 	end
 	
-	-- Special case for converting onPause/onPlayerKill/onPlayerHarm arguments
-	if (name == "onPause") or (name == "onPlayerKill") or (name == "onPlayerHarm") or (name == "onPauseSEEMod") then
+	-- Special case for converting onPause/onPlayerKill/onPlayerHarm/onSectionChange arguments
+	if (name == "onPause") or (name == "onPlayerKill") or (name == "onPlayerHarm") or (name == "onSectionChange") then
 		args[2] = Player(args[2])
 	end
 	

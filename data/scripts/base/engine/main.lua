@@ -65,7 +65,8 @@ do
 	_G["VER_BETA4_PATCH_3_1"] 	= 	makeVersion(2,	0,	0,	4,	0,	3,	1)
 	_G["VER_BETA4_PATCH_4"] 	= 	makeVersion(2,	0,	0,	4,	0,	4,	0)
 	_G["VER_BETA4_PATCH_4_1"] 	= 	makeVersion(2,	0,	0,	4,	0,	4,	1)
-	_G["VER_SEE_MOD"]           =   makeVersion(3,	0,	0,	0,	0,	0,	0)
+	_G["VER_BETA5"] 			= 	makeVersion(2,	0,	0,	5,	0,	0,	0)
+    _G["VER_SEE_MOD"]           =   makeVersion(3,	0,	0,	0,	0,	0,	0)
 	
 	--								e.g.		2  .0  .0 .b4 .p2  .0  .1    = PAL Hotfix
 	
@@ -241,6 +242,10 @@ function compareLunaVersion(...)
 	return 0
 end
 
+--------------------------
+-- NPC global variables --
+--------------------------
+
 _G.npcGlobalVariables = {}
 
 function addNPCToGlobalTable(id, value)
@@ -267,10 +272,6 @@ local requireLowLevelLibrary = require_utils.makeRequire(
 -- Preload/Loaded cleanup --
 ---------------------
 
---package.preload['ffi'] = nil
---package.loaded['ffi'] = nil
-
-
 -- We want the JIT running, so it's initially loadeded, but disable access to it
 package.preload['jit'] = nil
 package.loaded['jit'] = nil
@@ -288,10 +289,9 @@ local soundIniData = {}
 local soundIniCount = 0
 
 local function testSoundIdx(soundIdx)
-	return type(soundIdx) == "number" and math.floor(soundIdx) == soundIdx and soundIdx >= 1
+	return type(soundIdx) == "number" and math.floor(soundIdx) == soundIdx and soundIdx >= 1 and soundIdx <= 91
 end
-
-do
+do	
 	--Contains ini-read sound data
 	
 	local tableinsert = table.insert
@@ -527,11 +527,11 @@ do
 	requireLowLevelLibrary("ffi_mem")
 	requireLowLevelLibrary("ffi_misc")
 	requireLowLevelLibrary("ffi_graphics")
-    requireLowLevelLibrary("ffi_legacyrng")
 
 	requireLowLevelLibrary("ffi_player")
 	requireLowLevelLibrary("ffi_camera")
 
+	requireLowLevelLibrary("ffi_legacyrng")
 
 	local populateCustomParams -- Function for populating custom parameters
 	if (not isOverworld) then
@@ -543,16 +543,9 @@ do
 		requireLowLevelLibrary("ffi_layer")
 		requireLowLevelLibrary("ffi_section")
 		requireLowLevelLibrary("ffi_level")
+		requireLowLevelLibrary("ffi_events")
 		
 		populateCustomParams = requireLowLevelLibrary("ffi_customparams")
-	end
-	
-	-- TEMPORARY SECTION SIZE PATCH
-	do
-		local patch = {0x0F, 0xBF, 0x51, 0x14, 0x8D, 0x0C, 0xFD, 0x00, 0x00, 0x00, 0x00, 0x0F, 0xBF, 0x44, 0x24, 0x1C, 0x0F, 0xAF, 0xC2, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90}
-		for k,v in ipairs(patch) do
-			mem(0x95796B + (k-1), FIELD_BYTE, v)
-		end
 	end
 end
 
@@ -574,7 +567,7 @@ local legacyMap
 
 -- Callback for after a library loads (call onInitAPI, and if it's legacy record a warning)
 local function loadLibraryCallback(name, filePath, library, environment)
-	if type(library["onInitAPI"]) == "function" then
+	if (type(library) == "table") and (type(library["onInitAPI"]) == "function") then
 		library.onInitAPI()
 	end
 	
@@ -788,7 +781,8 @@ do
 			end
 		end
 		soundIniCount = math.max(soundIniCount, maxId)
-	end
+	end	
+
 	function loadSoundsIni()
 		parseSoundsIni(getSMBXPath().."/")
 			
@@ -1016,6 +1010,7 @@ do
 end
 
 
+
 ---------------------------------------------------------------------------
 -- Main User Code Manager                                                --
 --                                                                       --
@@ -1125,11 +1120,9 @@ function __onInit(episodePath, lvlName)
 			lvlName = lvlName:sub(1,(i-2))
 		end
 		local customFolderPath = episodePath .. lvlName .. "\\"
-        local rootPath = getSMBXPath()
 		
 		basegameContext._G.__episodePath = episodePath
 		basegameContext._G.__customFolderPath = customFolderPath
-        basegameContext._G.__rootPath = rootPath
 	
 		-- Set path for custom resource loading
 		customPackage.path = (
@@ -1208,7 +1201,7 @@ function __onInit(episodePath, lvlName)
 
 		
 		--SEGMENT TO ADD GLOBAL PRELOADED APIS END
-        
+		
 		-- Load core-npcconfig as shared (not exposed to global namespace by
 		-- default, but we want to load anyway)
 		basegameRequire("base\\engine\\npcconfig_core")
@@ -1255,15 +1248,3 @@ function __onInit(episodePath, lvlName)
 	end)}
 	__xpcallCheck(pcallReturns)
 end
-
---[[do
-    customPackage.loaded["socket.ftp"] = require("socket.ftp")
-    customPackage.loaded["socket.smtp"] = require("socket.smtp")
-    customPackage.loaded["socket.url"] = require("socket.url")
-
-    socket.sourcet = {}
-    socket.sinkt = {}
-
-    customPackage.loaded["socket.http"] = require("socket.http")
-    customPackage.loaded["ltn12"] = require("ltn12")
-end]]

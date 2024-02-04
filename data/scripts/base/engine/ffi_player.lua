@@ -1,6 +1,9 @@
 local mem = mem
 local ffi_utils = require("ffi_utils")
 
+-------------------------
+-- LAVA FIELDS SUPPORT --
+-------------------------
 local playerLavaFieldsArray = nil
 do
 	ffi.cdef([[
@@ -17,24 +20,37 @@ do
 	playerLavaFieldsArray = LunaDLL.LunaLuaGetPlayerLavaFieldsArray()
 end
 
+-----------------------------
+-- EXTENDED FIELDS SUPPORT --
+-----------------------------
+
+local extendedPlayerFieldsArray = nil
+do
+	ffi.cdef([[
+		const char* LunaLuaGetPlayerExtendedFieldsStruct();
+	]])
+	local LunaDLL = ffi.load("LunaDll.dll")
+	
+	-- Define structure
+	ffi.cdef(ffi.string(LunaDLL.LunaLuaGetPlayerExtendedFieldsStruct()))
+	
+	ffi.cdef([[
+		ExtendedPlayerFields* LunaLuaGetPlayerExtendedFieldsArray();
+	]])
+	extendedPlayerFieldsArray = LunaDLL.LunaLuaGetPlayerExtendedFieldsArray()
+end
+
 ----------------------
 -- FFI DECLARATIONS --
 ----------------------
 ffi.cdef[[
 void LunaLuaKillPlayer(short playerIndex);
 void LunaLuaHarmPlayer(short playerIndex);
+void LunaLuaQueuePlayerSectionChangedEvent(short playerIndex);
 
 short* LunaLuaGetValidCharacterIDArray();
 unsigned int LunaLuaGetTemplateAddressForCharacter(int id);
 
-typedef struct ExtendedPlayerFields
-{
-    bool noblockcollision;
-    bool nonpcinteraction;
-    bool noplayerinteraction;
-    unsigned int collisionGroup;
-} ExtendedPlayerFields;
-ExtendedPlayerFields* LunaLuaGetPlayerExtendedFieldsArray();
 
 typedef struct _LunaLuaKeyMap {
     short    up; //Up
@@ -49,7 +65,6 @@ typedef struct _LunaLuaKeyMap {
     short    pause; //Pause
 } LunaLuaKeyMap;
 LunaLuaKeyMap* LunaLuaGetRawKeymapArray(void);
-void LunaLuaSetPlayerRenderFlag(bool val);
 ]]
 local LunaDLL = ffi.load("LunaDll.dll")
 
@@ -80,6 +95,13 @@ local function npcIdxToNpcObj(idx)
 		return nil
 	end
 	return NPC(idx-1)
+end
+
+local function negativeBgoIdxToBgoObj(idx)
+	if (idx >= 0) or not Misc._fenceFixEnabled then
+		return nil
+	end
+	return BGO(-idx-1)
 end
 
 local function climbingStateToBool(st)
@@ -123,15 +145,35 @@ local function playerGetKeysTable(pl)
 	return playerKeys[pl.idx]
 end
 
+local setupRawKeys
 local rawPlayerKeys = {}
 local function playerGetRawKeysTable(pl)
-	return rawPlayerKeys[pl.idx]
+	local v = rawPlayerKeys[pl.idx]
+	if v == nil then
+		if pl.idx > 2 then
+			v = rawPlayerKeys[1]
+		end
+	end
+	return v
 end
 
 -- megashroom is loaded later in execution than the FFI classes.
 -- By the time this function gets called, Player._isMega should exist.
 local function playerGetIsMega(pl)
 	return pl:_isMega()
+end
+
+-- starman is the same situation as megashroom
+local function playerGetHasStarman(pl)
+	return pl:_hasStarman()
+end
+
+local function playerGetIsInClearPipe(pl)
+	return pl:_inClearPipe()
+end
+
+local function playerGetIsInLaunchBarrel(pl)
+	return pl:_inLaunchBarrel()
 end
 
 -- starman is the same situation as megashroom
@@ -149,6 +191,73 @@ local function playerSetMegaPowerKeep(pl, v)
 	playerKeepMegaPower[pl.idx] = v
 end
 
+local function playerSetSection(pl, v)
+	local oldv = pl:mem(0x15A, FIELD_WORD)
+	if (v ~= oldv) then -- if the value is different,
+		pl:mem(0x15A, FIELD_WORD, v) -- assign new value
+		LunaDLL.LunaLuaQueuePlayerSectionChangedEvent(pl.idx) -- queue the player for onSectionChanged event to be called
+	end
+end
+
+local function getNoBlockCollision(pl)
+	if extendedPlayerFieldsArray[pl.idx].noblockcollision then
+		return true
+	else
+		return false
+	end
+end
+
+local function setNoBlockCollision(pl, value)
+	if value then
+		value = true
+	else
+		value = false
+	end
+	extendedPlayerFieldsArray[pl.idx].noblockcollision = value
+end
+
+local function getNoNPCInteraction(pl)
+	if extendedPlayerFieldsArray[pl.idx].nonpcinteraction then
+		return true
+	else
+		return false
+	end
+end
+
+local function setNoNPCInteraction(pl, value)
+	if value then
+		value = true
+	else
+		value = false
+	end
+	extendedPlayerFieldsArray[pl.idx].nonpcinteraction = value
+end
+
+local function getNoPlayerInteraction(pl)
+	if extendedPlayerFieldsArray[pl.idx].noplayerinteraction then
+		return true
+	else
+		return false
+	end
+end
+
+local function setNoPlayerInteraction(pl, value)
+	if value then
+		value = true
+	else
+		value = false
+	end
+	extendedPlayerFieldsArray[pl.idx].noplayerinteraction = value
+end
+
+local function getCollisionGroup(pl)
+	return Misc._GetCollisionGroupFromIndex(extendedPlayerFieldsArray[pl.idx].collisionGroup)
+end
+
+local function setCollisionGroup(pl, value)
+	extendedPlayerFieldsArray[pl.idx].collisionGroup = Misc._ModifyCollisionGroup(extendedPlayerFieldsArray[pl.idx].collisionGroup, value)
+end
+
 local function playerSetLavaStatus(pl, v)
     playerLavaFieldsArray[pl.idx].lavaTouchingStatus = v
 end
@@ -161,8 +270,19 @@ end
 -- CONSTANTS          --
 ------------------------
 
--- Alias for POWERUP_TANOOKIE, as defined in C++
+-- Alias for PLAYER_TANOOKIE, as defined in C++
+_G["PLAYER_TANOOKI"] = 5
+
+-- Aliases for the PLAYER constants, as POWERUP seems a more suitable name now
+_G["POWERUP_SMALL"] = 1
+_G["POWERUP_BIG"] = 2
+_G["POWERUP_FIREFLOWER"] = 3
+_G["POWERUP_FIRE"] = 3
+_G["POWERUP_LEAF"] = 4
 _G["POWERUP_TANOOKI"] = 5
+_G["POWERUP_HAMMER"] = 6
+_G["POWERUP_ICEFLOWER"] = 7
+_G["POWERUP_ICE"] = 7
 
 _G["MOUNT_NONE"] = 0
 _G["MOUNT_BOOT"] = 1
@@ -200,6 +320,7 @@ _G["FORCEDSTATE_POWERDOWN_FIRE"] = 227
 _G["FORCEDSTATE_POWERDOWN_ICE"] = 228
 _G["FORCEDSTATE_MEGASHROOM"] = 499
 _G["FORCEDSTATE_TANOOKI_POOF"] = 500
+_G["FORCEDSTATE_BOSSBASS"] = 600
 
 ------------------------
 -- FIELD DECLARATIONS --
@@ -207,14 +328,23 @@ _G["FORCEDSTATE_TANOOKI_POOF"] = 500
 local PlayerFields = {
 		idx                     = {get=playerGetIdx, readonly=true, alwaysValid=true},
 		isValid                 = {get=playerGetIsValid, readonly=true, alwaysValid=true},
+
 		screen                  = {get=playerGetScreenCoords, readonly=true},
 		keys                    = {get=playerGetKeysTable, readonly=true},
 		rawKeys                 = {get=playerGetRawKeysTable, readonly=true},
+		inClearPipe             = {get=playerGetIsInClearPipe, readonly=true},
+		inLaunchBarrel          = {get=playerGetIsInLaunchBarrel, readonly=true},
 		isMega                  = {get=playerGetIsMega, readonly=true},
 		hasStarman              = {get=playerGetHasStarman, readonly=true},
 		keepPowerOnMega         = {get=playerGetMegaPowerKeep, set=playerSetMegaPowerKeep},
 
-		section                 = {0x15A, FIELD_WORD},
+		-- extended
+		noblockcollision        = {get=getNoBlockCollision, set=setNoBlockCollision},
+		nonpcinteraction        = {get=getNoNPCInteraction, set=setNoNPCInteraction},
+		noplayerinteraction     = {get=getNoPlayerInteraction, set=setNoPlayerInteraction},
+		collisionGroup          = {get=getCollisionGroup, set=setCollisionGroup},
+
+		section                 = {0x15A, FIELD_WORD, set=playerSetSection},
 		sectionObj              = {0x15A, FIELD_WORD, decoder=sectionToSectionObj, readonly=true},
 		x                       = {0x0C0, FIELD_DFLOAT},
 		y                       = {0x0C8, FIELD_DFLOAT},
@@ -224,6 +354,7 @@ local PlayerFields = {
 		speedY                  = {0x0E8, FIELD_DFLOAT},
 		climbing                = {0x040, FIELD_WORD, decoder=climbingStateToBool, readonly=true},
 		climbingNPC             = {0x02C, FIELD_DFLOAT, decoder=npcIdxToNpcObj, readonly=true}, -- NOT cleared when player stops climbing
+		climbingBGO             = {0x02C, FIELD_DFLOAT, decoder=negativeBgoIdxToBgoObj, readonly=true},
 		powerup                 = {0x112, FIELD_WORD},
 		character               = {0x0F0, FIELD_WORD},
 		reservePowerup          = {0x158, FIELD_WORD},
@@ -247,7 +378,10 @@ local PlayerFields = {
 		frame                   = {0x114, FIELD_WORD},
 		forcedState             = {0x122, FIELD_WORD},
 		forcedTimer             = {0x124, FIELD_DFLOAT},
-        warpIndex               = {0x05A, FIELD_WORD},
+
+        --------------------
+		-- SEE MOD FIELDS --
+		--------------------
 
         lavaConfig              = {get=playerGetLavaStatus, set=playerSetLavaStatus},
 
@@ -385,7 +519,7 @@ local PlayerFields = {
 		Unknown156              = {0x156, FIELD_WORD},
 		PowerupBoxContents      = {0x158, FIELD_WORD},
 
-		CurrentSection          = {0x15A, FIELD_WORD},
+		CurrentSection          = {0x15A, FIELD_WORD, set=playerSetSection},
 		WarpTimer               = {0x15C, FIELD_WORD}, -- alias
 		WarpCooldownTimer       = {0x15C, FIELD_WORD},
 		TargetWarpIndex         = {0x15E, FIELD_WORD},
@@ -448,7 +582,7 @@ setmetatable(Player, {__call=function(Player, idx)
 		error("Invalid player index")
 	end
 
-	local pl = {_idx=idx, _ptr=ptr}
+	local pl = {_idx=idx, _ptr=ptr, _weightContainers = {}, data = {_basegame = {}}}
 	setmetatable(pl, PlayerMT)
 	PlayerCache[idx] = pl
 	registerKeys(pl)
@@ -583,11 +717,8 @@ registerEvent(keyseventtable, "onDrawEnd", "onDrawEnd", false)
 -- RAW KEYS --
 --------------
 
-local function setupRawKeys(idx)
+setupRawKeys = function(idx)
 	local idx = idx - 1
-	if (idx ~= 0) and (idx ~= 1) then
-		return nil
-	end
 	
 	local rawKeysMT = {
 	__index = function(tbl, key)
@@ -613,6 +744,8 @@ local function setupRawKeys(idx)
 	rawKeysMT.__pairs = keysMT.__pairs
 	
 	rawPlayerKeys[idx+1] = setmetatable({}, rawKeysMT)
+
+	return rawPlayerKeys[idx+1]
 end
 setupRawKeys(1)
 setupRawKeys(2)
@@ -753,7 +886,7 @@ function Player:transform(id, effect)
 		local a = Animation.spawn(10, self.x+self.width*0.5, self.y+self.height*0.5);
 		a.x = a.x - a.width*0.5;
 		a.y = a.y - a.height*0.5;
-		Audio.playSFX(34);
+		SFX.play(34);
 	end
 end
 
@@ -771,11 +904,62 @@ function Player:isInvincible()
 	return ((Defines.cheat_donthurtme) or (self:mem(0x140, FIELD_WORD) ~= 0)) --or (self.isMega) or (self.hasStarman)
 end
 
+function Player:attachWeight(weight)
+	local wc = {value = weight, owner=self}
+	table.insert(self._weightContainers, wc)
+	return wc
+end
+
+function Player:detachWeight(wc)
+	if wc.owner == nil then
+		Misc.warn("Owner of weight is invalid.")
+		return false
+	end
+
+	if wc.owner ~= self then
+		Misc.warn("Trying to detach a weight that belongs to Player " .. wc.owner.idx .. "from Player " .. self.idx)
+		return false
+	end
+
+	for i=self._weightContainers, 1, -1 do
+		if self._weightContainers[i] == wc then
+			table.remove(self._weightContainers, i)
+			return true
+		end
+	end
+
+	return false
+end
+
+function Player:getWeight()
+	local w = 2
+
+	if self.isMega then
+		w = w * 5
+	end
+
+	if self.holdingNPC ~= nil and self.holdingNPC.isValid then
+		w = w + (NPC.config[self.holdingNPC.id].weight or 0)
+	end
+
+	for k,v in ipairs(self._weightContainers) do
+		w = w + value
+	end
+
+	return w
+end
+
 if isOverworld then
 	function Player:_isMega()
 		return false
 	end
 	function Player:_hasStarman()
+		return false
+	end
+	function Player:_inClearPipe()
+		return false
+	end
+	function Player:_inLaunchBarrel()
 		return false
 	end
 end
@@ -785,7 +969,7 @@ end
 --------------------
 
 function Player.count()
-    return mem(GM_PLAYERS_COUNT_ADDR, FIELD_WORD)
+	return mem(GM_PLAYERS_COUNT_ADDR, FIELD_WORD)
 end
 
 function Player.setCount(count)
@@ -870,10 +1054,6 @@ function Player.getTemplates()
 		idx = idx + 1
 	end
 	return ret
-end
-
-function Player._SetVanillaPlayerRenderFlag(val)
-	LunaDLL.LunaLuaSetPlayerRenderFlag(val)
 end
 
 ---------------------------

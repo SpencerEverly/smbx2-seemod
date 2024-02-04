@@ -37,6 +37,7 @@ lib3d.macro = {
 					ALPHA_OPAQUE = 0, 
 					ALPHA_CUTOFF = 0.5, 
 					ALPHA_BLEND = 1,
+					ALPHA_DITHER = 2,
 					
 				--DEBUG
 					DEBUG_OFF = 0,
@@ -53,6 +54,7 @@ lib3d.macro = {
 			  }
 
 lib3d.ambientLight = Color(0.1,0.1,0.16)
+lib3d.fogColor = Color(0.5,0.7,0.8,0.5)
 
 local function comparePrefix(k)
 	if k[2] == 35678 and stringsub(k[1],1,2) == "n_" then
@@ -436,10 +438,22 @@ do --Object creation
 					local duv1 = txs[v[2][fwd]] - txs[v[2][i]]
 					local duv2 = txs[v[2][bwd]] - txs[v[2][i]]
 					
-					local f = 1 / (duv1[1]*duv2[2] - duv2[1]*duv1[2])
+					local div = (duv1[1]*duv2[2] - duv2[1]*duv1[2])
+					local f
+					if div == 0 then
+						f = 0
+					else
+						f = 1/div
+					end
 					
 					local tgt = vector.v3(f * (duv2[2]*e1[1] - duv1[2]*e2[1]), f * (duv2[2]*e1[2] - duv1[2]*e2[2]), f * (duv2[2]*e1[3] - duv1[2]*e2[3])):normalise()
 					
+					if tgt.x == 0 and tgt.y == 0 and tgt.z == 0 then
+						tgt.x = 1
+						tgt.y = 0
+						tgt.z = 0
+					end
+
 					t.tangents[(k-1)*9 + (i-1)*3 + 1] = tgt[1]
 					t.tangents[(k-1)*9 + (i-1)*3 + 2] = tgt[2]
 					t.tangents[(k-1)*9 + (i-1)*3 + 3] = tgt[3]
@@ -470,7 +484,7 @@ do --Object creation
 		
 		local d = objreader.load(path, importsettings)
 		local t = {}
-		parseMesh(t, d.v, d.vt, d.vn, nil, d.f)
+		parseMesh(t, d.v, d.vt, d.vn, d.vc, d.f)
 		return t
 	end
 
@@ -1065,7 +1079,7 @@ do	--Cameras and drawing
 		local t = 1/tan(cam.fov*0.00872664625)
 		
 		pmat[1] = -t
-		pmat[6] = -t*4/3
+		pmat[6] = -t*cam.width/cam.height
 		pmat[11] = (zn+zf)/(zn-zf)
 		pmat[12] = -1
 		pmat[15] = (2*zn*zf)/(zf-zn)
@@ -1253,7 +1267,7 @@ do	--Cameras and drawing
 				local colidx = 1
 				
 				local i = 1
-				while i <= #dirlightlist do
+				while dirlightlist[i] ~= nil do
 					local v = dirlightlist[i]
 					
 					if not v.isValid then
@@ -1293,7 +1307,7 @@ do	--Cameras and drawing
 			do	--Point lights
 				local idx = 1
 				local i = 1
-				while i <= #pntlightlist do
+				while pntlightlist[i] ~= nil do
 					local v = pntlightlist[i]
 					
 					if not v.isValid then
@@ -1522,7 +1536,7 @@ do	--Cameras and drawing
 	local uniformlist = {}
 	local attributelist = {}
 	local verts = {}
-	local drawargs = { uniforms = uniformlist, attributes = attributelist, vertexCoords = verts }
+	local drawargs = { uniforms = uniformlist, attributes = attributelist, vertexCoords = verts, depthTest=true }
 	local debugCache = {}
 	
 	--3D draw function - this is perhaps the most important bit
@@ -1562,7 +1576,7 @@ do	--Cameras and drawing
 		end
 		
 		local i = 1
-		while i <= #objlist do
+		while objlist[i] ~= nil do
 			local o = objlist[i]
 			if not o.isValid then
 				destroyMesh(o)
@@ -1647,7 +1661,18 @@ do	--Cameras and drawing
 								
 								uniformlist[k[1]] = getUniformOrDefault(m, k)
 							end
-											
+							
+							if uniformlist._fog == nil then
+								uniformlist._fog = lib3d.fogColor
+							end
+							
+							--[[
+							local fv = uniformlist._fog.a
+							
+							if isNearCamera then
+								uniformlist._fog.a = 0
+							end
+							]]			
 							for _,k in ipairs(m.attributemap) do
 								attributelist[k] = m.attributes[k]
 							end
@@ -1657,7 +1682,10 @@ do	--Cameras and drawing
 							drawargs.color					= m.uniforms.color
 							
 							Graphics.glDraw	(drawargs)
-											
+										
+							
+							--uniformlist._fog.a = fv
+							
 							for _,k in ipairs(m.uniformmap) do
 								uniformlist[k[1]] = nil
 							end	
@@ -1715,7 +1743,7 @@ do	--Cameras and drawing
 	
 	--Gets the focal length of the camera - objects positioned this far in front of the camera will match the 2D game environment in depth
 	local function getFocalLength(cam)
-		return 400/tan(rad(cam.fov*0.5))
+		return cam.width*0.5/tan(rad(cam.fov*0.5))
 	end
 	
 	local cam_mt = {}
@@ -1725,42 +1753,48 @@ do	--Cameras and drawing
 		if key == "flength" then
 			return getFocalLength(tbl)
 		elseif key == "renderscale" then
-			return tbl.target.width/800
+			return tbl.target.width/tbl.width
 		end
 	end
 	
 	function cam_mt.__newindex(tbl,key,val)
 		if key == "flength" then
-			tbl.fov = 2*deg(atan(400/val))
+			tbl.fov = 2*deg(atan(tbl.width/(val*2)))
 		elseif key == "renderscale" then
-			tbl.target = Graphics.CaptureBuffer(floor(800*val),floor(600*val))
+			tbl.target = Graphics.CaptureBuffer(floor(tbl.width*val),floor(tbl.height*val))
 		end
 	end
 
 	
 	--Create a new camera - objects will be drawn to camera.target when camera:draw is called
 	function lib3d.Camera(args)
+		local framebufferwidth,framebufferheight = Graphics.getMainFramebufferSize()
+		local width = args.width or framebufferwidth
+		local height = args.height or framebufferheight
+
 		local c = 	{ 
-						fov = args.fov or 45, orthosize = args.orthosize or vector.v2(800,600), 
+						fov = args.fov or 45, orthosize = args.orthosize or vector.v2(width,height), 
 						projection = args.projection or projection.PERSP, 
 						farclip = args.farclip or 10000, nearclip = args.nearclip or 100, 
 						transform = Transform(args.position or vector.zero3, args.rotation or vector.quatid, vector.one3), 
+						width = width, height = height, 
 						active = true
 					}
 				
 		local renderscale = args.renderscale or 1
-		c.target = Graphics.CaptureBuffer(floor(800*renderscale),floor(600*renderscale))
+		c.target = Graphics.CaptureBuffer(floor(width*renderscale),floor(height*renderscale))
 		
 		c.getFocalLength = getFocalLength
 		c.draw = doDraw
 		c.clear = clearCamera
+		c.project = lib3d.project
 		
 		setmetatable(c, cam_mt)
 		return c
 	end
 
 	--Automatic main camera - can be disabled by setting it to inactive
-	lib3d.camera = lib3d.Camera{ fov = 45, orthosize = vector(800,600), projection = projection.PERSP, farclip = 10000, nearclip = 100, renderscale = 2 }
+	lib3d.camera = lib3d.Camera{ fov = 45, projection = projection.PERSP, farclip = 10000, nearclip = 100, renderscale = 2 }
 	
 	lib3d.dualCamera = true
 
@@ -1810,19 +1844,38 @@ do	--Cameras and drawing
 			Text.print(s, 790-18*#s, 96)
 		end
 	end
+
+	--Recreate the main camera when necessary, making sure to retain the old settings
+	function lib3d.onFramebufferResize(width,height)
+		local oldCamera = lib3d.camera
+		
+		lib3d.camera = lib3d.Camera{
+			fov = oldCamera.fov, farclip = oldCamera.farclip, nearclip = oldCamera.nearclip,
+			projection = oldCamera.projection, renderscale = oldCamera.renderscale,
+			orthosize = vector(oldCamera.orthosize.x/oldCamera.width*width, oldCamera.orthosize.y/oldCamera.height*height),
+
+			position = oldCamera.transform.position,
+			rotation = oldCamera.transform.rotation,
+			scale = oldCamera.transform.scale,
+		}
+		lib3d.camera.active = oldCamera.active
+	end
 	
 	--Software project point
 	function lib3d.project(cam, v)
+		
+		recalcPMat(cam)
 		local vp = getVPMat(cam)*vector.v4(v)
 		vp[1] = vp[1]/vp[4]
 		vp[2] = vp[2]/vp[4]
 		
-		return vector.v2((vp[1]+1)*400, (vp[2]+1)*300)
+		return vector.v2((vp[1]+1)*cam.width*0.5, (vp[2]+1)*cam.height*0.5)
 	end
 end
 
 function lib3d.onInitAPI()
 	registerEvent(lib3d, "onCameraDraw", "onCameraDraw", false)
+	registerEvent(lib3d, "onFramebufferResize")
 end
 
 return lib3d

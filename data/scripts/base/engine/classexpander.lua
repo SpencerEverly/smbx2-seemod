@@ -8,8 +8,6 @@ local testmodemenu
 local playerManager;
 --local megashroom = require("NPCs/megashroom"); -- Used for invincibility checking
 
-local useOldLevelLoad = true
-
 local EP_LIST_PTR = mem(0x00B250FC, FIELD_DWORD);
 
 local ce = {}
@@ -41,6 +39,8 @@ do
 		[11] = true,
 		[12] = true,
 		[41] = true,
+		[227] = true, --Powering down from fire to big
+		[228] = true, --Powering down from ice to big
 		[499] = true, --Mega mode transition
 		[500] = true,
 	}
@@ -79,6 +79,9 @@ do
 	
 	local megashroom;
 	
+	-- Notes for the eventual rewrite:
+	--- Player:render relies too much of current player state. Would it be possible to use a "Player 0" to apply the state to render to?
+	--- The current iteration does not respect fairy state, since fairy is an NPC. It may be sensible here to support rendering of the fairy, or to allow rendering to be skipped if a fairy.
 	function Player:render(args)
 		if(playerManager == nil) then
 			playerManager = require("playerManager");
@@ -122,11 +125,11 @@ do
 		--Get frame location and offsets
 		if(f or d) then
 			f = f or self:getFrame()
-			d = d or player.direction
+			d = d or self.direction
 			tx1,ty1 = Player.convertFrame(f, d)
 		else
 			tx1,ty1 = self:getFrame(true)
-			d = d or player.direction
+			d = d or self.direction
 		end
 		
 		if(tx1 < 0 or ty1 < 0) then
@@ -468,7 +471,7 @@ function Misc.inEditor()
 end
 
 function Misc.isPaused()
-	return Misc.isPausedByLua() or mem(0x00B250E2, FIELD_BOOL) or (testmodemenu and testmodemenu.active)
+	return Misc.isPausedByLua() or mem(0x00B250E2, FIELD_BOOL) or (testmodemenu and testmodemenu.active) or mem(0x00B2B9E4, FIELD_BOOL)
 end
 
 function Misc.saveSlot(a)
@@ -575,7 +578,7 @@ do
 		
 		return Misc.multiResolveFile(table.unpack(t))
 	end
-    
+
     function Misc.resolveMusicFile(path)
 		local t = {}
 		local idx = 1
@@ -659,7 +662,7 @@ function Misc.coins(n, playCoinSound)
 	if n then
 		mem(offset_coins, FIELD_WORD, math.max(0, mem(offset_coins, FIELD_WORD)+n))
 		if playCoinSound then
-			Audio.playSFX(14);
+			SFX.play(14);
 		end
 
 		if(mem(offset_coins, FIELD_WORD) >= 100) then --get 1up
@@ -669,7 +672,7 @@ function Misc.coins(n, playCoinSound)
 				else
 					mem(offset_coins, FIELD_WORD, mem(offset_coins, FIELD_WORD) - 100);
 					mem(offset_lives, FIELD_FLOAT, math.min(mem(offset_lives, FIELD_FLOAT) + 1, 99));
-					Audio.playSFX(15);
+					SFX.play(15);
 				end
 			end
 		end
@@ -698,118 +701,59 @@ function Misc.score(n)
 	end
 end
 
-if useOldLevelLoad then
-    if not isOverworld then
-        --I want this for overworld too but alas
-        function Level.load(filename, episodename, warpindex)
-            --Filename specified = new level! Else reload current level.
-        
-            --warp index should also be settable if reloading into same level
-            if warpindex ~= nil and warpindex >= 0 then
-                mem(0x00B2C6DA, FIELD_WORD, warpindex)    -- GM_NEXT_LEVEL_WARPIDX
-            end
-        
-            if Misc.inEditor() then
-                if (filename ~= nil and episodename ~= nil) then
-                    Misc.warn("Loading new episode cancelled. While in the editor, no external episodes are loaded. Cross-episode loading has to be tested in the main game.")
-                    return
-                end
-            end
-        
-            if filename ~= nil then
-                local episodeindex = mem(0x00B2C628, FIELD_WORD) --current episode
-        
-                local EP_LIST_COUNT = mem(0x00B250E8, FIELD_WORD)
-                local EP_LIST_PTR = mem(0x00B250FC, FIELD_DWORD)
-                if episodename ~= nil then
-                    local hasFound = false
-                    for indexer = 1, EP_LIST_COUNT do
-                        local name = tostring(mem(EP_LIST_PTR + (indexer - 1) * 0x18 + 0x0, FIELD_STRING))
-                        if name == episodename then
-                            episodeindex = indexer
-                            hasFound = true
-                            break
-                        end
-                    end
-                    if hasFound then
-                        mem(0x00B25720, FIELD_STRING, filename) -- GM_NEXT_LEVEL_FILENAME
-                        mem(0x00B2C628, FIELD_WORD, episodeindex) -- Index of the episode
-                    else
-                        Misc.warn("Episode of name '" ..episodename.."' could not be found. Aborting.")
-                        return
-                    end
-                else
-                    mem(0x00B25720, FIELD_STRING, filename) -- GM_NEXT_LEVEL_FILENAME
-                end
-            end
-            
-            -- Force modes such that we trigger level exit
-            mem(0x00B250B4, FIELD_WORD, 0)  -- GM_IS_EDITOR_TESTING_NON_FULLSCREEN
-            mem(0x00B25134, FIELD_WORD, 0)  -- GM_ISLEVELEDITORMODE
-            mem(0x00B2C89C, FIELD_WORD, 0)  -- GM_CREDITS_MODE
-            mem(0x00B2C620, FIELD_WORD, 0)  -- GM_INTRO_MODE
-            mem(0x00B2C5B4, FIELD_WORD, -1) -- GM_EPISODE_MODE (set to leave level)
-        end
-    end
-else
-    function Level.load(fileName, episodeName, warpIndex, suppressSFX)
-        --File name specified = new level! Else reload current level.
-        local episodeNameFinal = ""
+if(not isOverworld) then
 
-        if suppressSFX == nil then
-            suppressSFX = true
-        end
-
-        --warp index should also be settable if reloading into same level
-        if (warpIndex == nil or warpIndex < 0) then
-            warpIndex = 0
-        end
-
-        if fileName == nil then
-            if not isOverworld then
-                fileName = Misc.episodePath()..Level.filename()
-            else
-                error("Can't reload a level when you're on the map")
-                return
-            end
-        end
-    
-        if Misc.inEditor() then
-            if (episodeName ~= nil) then
-                Misc.warn("Loading new episode cancelled. While in the editor, no external episodes are loaded. Cross-episode loading has to be tested in the main game.")
-                return
-            end
-        end
-    
-        if fileName ~= nil then
-            local episodeindex = mem(0x00B2C628, FIELD_WORD) --current episode
-    
-            local EP_LIST_COUNT = mem(0x00B250E8, FIELD_WORD)
-            local EP_LIST_PTR = mem(0x00B250FC, FIELD_DWORD)
-            if episodeName ~= nil then
-                local hasFound = false
-                for indexer = 1, EP_LIST_COUNT do
-                    local name = tostring(mem(EP_LIST_PTR + (indexer - 1) * 0x18 + 0x0, FIELD_STRING))
-                    if name == episodeName then
-                        episodeNameFinal = episodeName
-                        hasFound = true
-                        break
-                    end
-                end
-                if not hasFound then
-                    Misc.warn("Episode of name '" ..episodeName.."' could not be found. Aborting.")
-                    return
-                end
-            else
-                episodeNameFinal = ""
-            end
-        end
-
-        Misc.loadLevel(fileName, episodeNameFinal, warpIndex, suppressSFX)
-    end
-end
-
-if not isOverworld then	
+	--I want this for overworld too but alas
+	function Level.load(filename, episodename, warpindex)
+		--Filename specified = new level! Else reload current level.
+	
+		--warp index should also be settable if reloading into same level
+		if warpindex ~= nil and warpindex >= 0 then
+			mem(0x00B2C6DA, FIELD_WORD, warpindex)    -- GM_NEXT_LEVEL_WARPIDX
+		end
+	
+		if Misc.inEditor() then
+			if (filename ~= nil and episodename ~= nil) then
+				Misc.warn("Loading new episode cancelled. While in the editor, no external episodes are loaded. Cross-episode loading has to be tested in the main game.")
+				return
+			end
+		end
+	
+		if filename ~= nil then
+			local episodeindex = mem(0x00B2C628, FIELD_WORD) --current episode
+	
+			local EP_LIST_COUNT = mem(0x00B250E8, FIELD_WORD)
+			local EP_LIST_PTR = mem(0x00B250FC, FIELD_DWORD)
+			if episodename ~= nil then
+				local hasFound = false
+				for indexer = 1, EP_LIST_COUNT do
+					local name = tostring(mem(EP_LIST_PTR + (indexer - 1) * 0x18 + 0x0, FIELD_STRING))
+					if name == episodename then
+						episodeindex = indexer
+						hasFound = true
+						break
+					end
+				end
+				if hasFound then
+					mem(0x00B25720, FIELD_STRING, filename) -- GM_NEXT_LEVEL_FILENAME
+					mem(0x00B2C628, FIELD_WORD, episodeindex) -- Index of the episode
+				else
+					Misc.warn("Episode of name '" ..episodename.."' could not be found. Aborting.")
+					return
+				end
+			else
+				mem(0x00B25720, FIELD_STRING, filename) -- GM_NEXT_LEVEL_FILENAME
+			end
+		end
+		
+		-- Force modes such that we trigger level exit
+		mem(0x00B250B4, FIELD_WORD, 0)  -- GM_IS_EDITOR_TESTING_NON_FULLSCREEN
+		mem(0x00B25134, FIELD_WORD, 0)  -- GM_ISLEVELEDITORMODE
+		mem(0x00B2C89C, FIELD_WORD, 0)  -- GM_CREDITS_MODE
+		mem(0x00B2C620, FIELD_WORD, 0)  -- GM_INTRO_MODE
+		mem(0x00B2C5B4, FIELD_WORD, -1) -- GM_EPISODE_MODE (set to leave level)
+	end
+	
 	function Level.folderPath()
 		local n = Level.filename();
 		return Misc.episodePath()..n:sub(1,n:find("%.[^%.]*$")-1).."/";
@@ -1100,6 +1044,7 @@ do --Maths helper functions
 	local max = math.max;
 	local min = math.min;
 	local abs = math.abs;
+	local floor = math.floor;
 
 	function math.lerp(a,b,t)	
 		if type(a) == "Quaternion" and type(b) == "Quaternion" and a.__nrm and b.__nrm then
@@ -1157,6 +1102,33 @@ do --Maths helper functions
 			return 0;
 		elseif a < 0 then
 			return -1;
+		end
+	end
+	
+	function math.fract(a)
+		return a - floor(a)
+	end
+	
+	function math.pingpong(t, a, b)
+		if b == nil then
+			b = a
+			a = 0
+		end
+		b = b-a
+		t = (t-a)%(2*b)
+		
+		if t < b then
+			return t+a
+		else
+			return 2*b - t + a
+		end
+	end
+	
+	function math.wrap(t,a,b)
+		if b == nil then
+			return t%a
+		else
+			return (t-a)%(b-a) + a
 		end
 	end
 

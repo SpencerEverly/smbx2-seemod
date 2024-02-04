@@ -4,7 +4,7 @@ local npcID = NPC_ID
 
 local firebros = {}
 
-firebros.config = npcManager.setNpcSettings{
+npcManager.setNpcSettings{
 	id = npcID,
 	gfxoffsety = 2,
 	gfxwidth = 32,
@@ -17,8 +17,21 @@ firebros.config = npcManager.setNpcSettings{
 	nogravity=0,
 	speed = 1,
 	projectileid = 390,
-	friendlyProjectileid = 13
+	friendlyProjectileid = 13,
+	lowjumpheight = 4,
+	highjumpheight = 6,
+	shotcount = 2,
+	walktime = 60,
+	jumptimemin = 65,
+	jumptimemax = 85,
+	shoottimemin = 135,
+	shoottimemax = 180,
+	shotspeedx = 3.5,
+	shotsound = 18,
+	npcheldfirerate = 0.75
 }
+
+firebros.soundID = 18
 
 npcManager.registerHarmTypes(
 	npcID,
@@ -43,30 +56,21 @@ npcManager.registerHarmTypes(
 	}
 )
 
-firebros.soundID = 18
-
-local function randDir()
-	return rng.irandomEntry{-1,1}
-end
-
-local function randJump()
-	return rng.randomInt(-5,-4)
-end
-
 local function spawnFireballs(v, data, heldPlayer)
 	local id = NPC.config[v.id].projectileID
 	if v.friendly or heldPlayer then
 		id = NPC.config[v.id].friendlyProjectileID
 	end
 	local spawn = NPC.spawn(id,v.x + 0.5 * v.width,v.y + 8,v:mem(0x146,FIELD_WORD), false, true)
-	data.walk = 0
 	spawn.direction = data.lockDirection
-	spawn.speedX = 3 * spawn.direction
+	spawn.speedX = NPC.config[v.id].shotspeedx * spawn.direction
 	spawn.layerName = "Spawned NPCs"
-	SFX.play(firebros.soundID)
-	data.count = 0
-	data.shottimer = 0
-	if heldPlayer and heldPlayer.upKeyPressing then
+    if type(firebros.soundID) ~= "string" then
+        SFX.play(NPC.config[v.id].shotsound)
+    else
+        SFX.play(firebros.soundID)
+    end
+	if heldPlayer and heldPlayer.keys.up then
 		spawn.speedY = -8
 	end
 end
@@ -76,22 +80,43 @@ function firebros.onTickEndNPC(v)
 	
 	local data = v.data._basegame
 	
-	if v:mem(0x12A,FIELD_WORD) <= 0 or v:mem(0x138, FIELD_WORD) > 0 or v:mem(0x136, FIELD_BOOL) then
+	if v.despawnTimer <= 0 or (v.forcedState > 0 and (v.forcedState ~= 208 or v.forcedCounter1 > 0)) or v.isProjectile then
 		data.timer = nil
 		data.forceFrame = 0
 		data.lockDirection = v.direction
+		if data.wasHeld and data.wasHeld > 0 then
+			v:kill(3)
+		end
 		return
 	end
+
+	local cfg = NPC.config[v.id]
 	
+	local walkframes = cfg.frames - 1
 	local held = v:mem(0x12C, FIELD_WORD)
+
+	local skipShooting = false
+	if held < 0 then
+		data.wasHeldByNPC = true
+		skipShooting = true
+	elseif held > 0 then
+		data.wasHeldByNPC = false
+	end
+
+	if data.wasHeldByNPC and v.forcedState == 208 then
+		held = -1
+		data.lockDirection = v.direction
+	end
 	
 	if data.timer == nil then
-		data.timer = 0
-		data.walk = -1
-		data.shottimer = 0
-		data.standtimer = 0
-		data.count = 0
-		data.jumpshot = 0
+		data.timer = cfg.walktime * 0.5
+		data.jumptimer = RNG.randomInt(cfg.jumptimemin, cfg.jumptimemax)
+		data.walk = v.direction
+		data.shottimer = RNG.randomInt(cfg.shoottimemin, cfg.shoottimemax)
+		data.wasHeld = held
+		if held ~= 0 then
+			data.shottimer = 120
+		end
 		data.forceFrame = 0
 		data.lockDirection = v.direction
 	end
@@ -101,17 +126,24 @@ function firebros.onTickEndNPC(v)
 		heldPlayer = Player(held)
 		data.lockDirection = heldPlayer.direction
 	end
+
+	if data.walk == 0 then
+		data.walk = RNG.irandomEntry{-1, 1}
+	end
 	
-	if data.walk ~= 0 then
-		
+	data.jumptimer = data.jumptimer - 1
+	data.wasHeld = held
 	
-		if held > 0 then
-			spawnFireballs(v, data, heldPlayer)
-		end
-	
-		if v.speedY == 0 then
+	if skipShooting then
+		return
+	end
+
+	if held == 0 then
+		if v.collidesBlockBottom then
+			v.speedX = 0
+			
 			if data.timer % 8 == 0 then
-				data.forceFrame = (data.forceFrame + 1) % 2
+				data.forceFrame = (data.forceFrame + 1) % walkframes
 			end
 			if v:mem(0x12E,FIELD_WORD) == 0 then
 				if Player.getNearest(v.x, v.y).x < v.x then
@@ -120,46 +152,59 @@ function firebros.onTickEndNPC(v)
 					data.lockDirection = 1
 				end
 			end
-			v.speedX = data.walk * 1.2 * firebros.config.speed
-			data.timer = data.timer + 1
-		else
-			v.speedX = 0
-		end
-		data.shottimer = data.shottimer + 1
-		if data.timer % 90 == 0 then
-			data.walk = -data.walk
-		end
-		if data.timer % rng.randomInt(1,360) == 0 and v.collidesBlockBottom then
-			v.speedY = randJump()
-			v.speedX = 0
-		end
-		if data.count == 1 and v.speedY > -1 and v.speedX == 0 then
-			spawnFireballs(v, data)
-		end
-		if data.shottimer % rng.randomInt(1,240) == 0 and data.shottimer > 120 then
-			if v.speedY == 0 or data.jumpshoot == 1 then
-				if rng.randomInt(1) == 0 and v.collidesBlockBottom then
-					v.speedY = randJump()
-					data.jumpshot = 1
+			v.speedX = data.walk * 1.2 * NPC.config[v.id].speed
+			if data.shottimer > 20 then
+				data.timer = data.timer + 1
+			end
+
+			if data.jumptimer <= 0 then
+				if data.shottimer > 30 then
+					v.speedY = -math.abs(NPC.config[v.id].lowjumpheight)
+					v.speedX = 0
 				end
+				data.jumptimer = RNG.randomInt(cfg.jumptimemin, cfg.jumptimemax)
 			else
-				spawnFireballs(v, data)
+				data.shottimer = data.shottimer - 1
+			end
+		else
+			if data.jumptimer <= 0 then
+				data.jumptimer = RNG.randomInt(cfg.jumptimemin, cfg.jumptimemax)
+			elseif data.shottimer <= 20 then
+				data.shottimer = data.shottimer - 1
 			end
 		end
 	else
+		if held < 0 then
+			data.shottimer = data.shottimer - 1 * NPC.config[v.id].npcheldfirerate
+		else
+			data.shottimer = data.shottimer - 1
+		end
+		if data.shottimer <= 100 then
+			spawnFireballs(v, data, heldPlayer)
+			data.shottimer = 140
+		end
+		if data.shottimer <= 108 or data.shottimer >= 132 then
+			data.forceFrame = walkframes
+		else
+			data.forceFrame = walkframes - 1
+		end
+	end
+
+	if data.timer % cfg.walktime == 0 then
+		data.walk = -data.walk
+	end
+	if data.shottimer <= 20 then
 		v.speedX = 0
-		data.jumpshot = 0
-		data.forceFrame = 2
-		data.standtimer = data.standtimer + 1
-
-		if data.standtimer > 20 then
-
-			data.forceFrame = 0
-			data.standtimer = 0
-			data.walk = randDir()
-			if rng.randomInt(1) == 0 and v.collidesBlockBottom then
-				v.speedY = randJump()
-			end
+		data.forceFrame = walkframes
+		if data.shottimer % 40 == 0 then
+			spawnFireballs(v, data)
+		end
+		if data.shottimer == -40 * (cfg.shotcount - 1) + 20 and RNG.randomInt(0, 1) == 1 then
+			v.speedY = -math.abs(NPC.config[v.id].highjumpheight)
+		end
+		if data.shottimer < -40 * (cfg.shotcount - 1) - 10 then
+			data.shottimer = RNG.randomInt(cfg.shoottimemin, cfg.shoottimemax)
+			data.jumptimer = data.jumptimer + 60
 		end
 	end
 end
@@ -171,7 +216,7 @@ function firebros.onDrawNPC(v)
 	if data.forceFrame then
 		v.animationTimer = 500
 		v.animationFrame = data.forceFrame
-		if data.lockDirection == 1 then v.animationFrame = v.animationFrame + 3 end
+		if data.lockDirection == 1 then v.animationFrame = v.animationFrame + NPC.config[v.id].frames end
 	end
 end
 

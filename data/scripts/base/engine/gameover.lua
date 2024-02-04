@@ -73,8 +73,16 @@ do
 	requireLowLevelLibrary("ffi_misc")
 end
 
+
+
+_G._gameoverComplete = false
+function Misc.setGameoverCompleted()
+	_G._gameoverComplete = true
+end
+
+--SEE Mod alias
 function Misc.gameOverComplete()
-    _gameoverComplete = true
+    _G._gameoverComplete = true
 end
 
 -- Utility code to generate a normalized relative path
@@ -106,22 +114,45 @@ do
 	end
 end
 
-local t = 0
-
-local function initDefaultGameOver()
-    _G.onDraw = function()
-        t = t + 1
-        
-        Text.print("GAME OVER", (Graphics.getFramebufferSize()[1] / 2) - 90, (Graphics.getFramebufferSize()[2] / 2) - 20)
-        
-        if t >= 256 then
-            Misc.gameOverComplete()
+local function initDefaultLoadScreen()
+	local out = 500
+    local alpha = 1
+    local fadeout = 34
+    local timeleft = 65*5
+	_G.onDraw = function()
+        out = math.max(0, out - 20)
+        timeleft = timeleft - 1
+        if timeleft - 64 < fadeout then
+            alpha = alpha - (1/timeleft)
         end
-    end
+        if alpha > 0 then
+            local img = Graphics.sprites.hardcoded["59"].img
+            local imgw = img.width/2
+            local imgh = img.height
+            local screenw = 800
+            local screenh = 600
+
+            Graphics.drawBox{texture = img,
+                x = screenw/2 - imgw - out,
+                y = screenh/2 - imgh/2,
+                sourceWidth = imgw,
+                color = {1.0, 1.0, 1.0, alpha}}
+            Graphics.drawBox{texture = img,
+                x = screenw/2 + out,
+                y = screenh/2 - imgh/2,
+                sourceWidth = imgw,
+                sourceX = imgw,
+                color = {1.0, 1.0, 1.0, alpha}}
+        end
+
+        if timeleft <= 0 then
+            Misc.setGameoverCompleted()
+        end
+	end
 end
 
 function init()
-	--Graphics.sprites.Register("hardcoded", "hardcoded-30-5")
+	Graphics.sprites.Register("hardcoded", "hardcoded-59")
 	
 	local episodeScriptPath = string_gsub(mem(0x00B2C61C, FIELD_STRING), ";", "<") .. "?.lua"
 	
@@ -141,6 +172,6 @@ function init()
 			end
 		end
 	else
-        initDefaultGameOver()
+		initDefaultLoadScreen()
 	end
 end

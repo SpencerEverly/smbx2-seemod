@@ -2,6 +2,56 @@ local lockdown = {}
 lockdown.defaultLoadEnv = {}
 
 ------------------
+-- Lock down os --
+------------------
+if os ~= nil then
+	local nativeOS = os
+	local newOS = {}
+	newOS.clock = nativeOS.clock
+	newOS.date = nativeOS.date
+	newOS.time = nativeOS.time
+	newOS.difftime = nativeOS.difftime
+	newOS.exit = function() error("Shutdown") end
+
+    local string_match = string.match
+	
+    local osRemove = nativeOS.remove
+    local osRename = nativeOS.rename
+
+    do
+        newOS.remove = (function(filePath)
+            local canWrite
+            filePath, canWrite = makeSafeAbsolutePath(filePath)
+            if canWrite then
+                osRemove(filePath)
+            else
+                error("Removing at '" .. filePath .. "' is not allowed.")
+                return
+            end
+        end)
+        
+        newOS.rename = (function(oldFilePath, newFilePath)  
+            local canWrite1
+            oldFilePath, canWrite1 = makeSafeAbsolutePath(oldFilePath)
+            local canWrite2
+            newFilePath, canWrite2 = makeSafeAbsolutePath(newFilePath)
+            if canWrite1 and canWrite2 then
+                osRename(oldFilePath, newFilePath)
+            elseif not canWrite1 and canWrite2 then
+                error("Renaming at '" .. oldFilePath .. "' is not allowed.")
+                return
+            elseif canWrite1 and not canWrite2 then
+                error("Renaming at '" .. newFilePath .. "' is not allowed.")
+                return
+            end
+        end)
+    end
+	
+	os = newOS
+	_G.os = newOS
+end
+
+------------------
 -- Lock down io --
 ------------------
 do
@@ -39,10 +89,8 @@ do
 		
 		return ffi.string(ptr.path, ptr.len), ptr.canWrite
 	end
-    
-    
 	
-	local validOpenModes = {["r"]=true, ["w"]=true, ["a"]=true, ["r+"]=true, ["w+"]=true, ["a+"]=true}
+	local validOpenModes = {["r"]=true, ["w"]=true, ["a"]=true, ["r+"]=true, ["w+"]=true, ["a+"]=true, ["rb"]=true, ["wb"]=true}
 	newIO.close = nativeIO.close
 	newIO.read = nativeIO.read
 	newIO.flush = nativeIO.flush
@@ -77,57 +125,6 @@ do
 	
 	io = newIO
 	_G.io = newIO
-end
-
-------------------
--- Lock down os --
-------------------
-if os ~= nil then
-    local makeSafeAbsolutePath = io.makeSafeAbsolutePath
-	local nativeOS = os
-	local newOS = {}
-	newOS.clock = nativeOS.clock
-	newOS.date = nativeOS.date
-	newOS.time = nativeOS.time
-	newOS.difftime = nativeOS.difftime
-	newOS.exit = function() error("Shutdown") end
-    
-    local string_match = string.match
-	
-    local osRemove = nativeOS.remove
-    local osRename = nativeOS.rename
-
-    do
-        newOS.remove = (function(filePath)
-            local canWrite
-            filePath, canWrite = makeSafeAbsolutePath(filePath)
-            if canWrite then
-                osRemove(filePath)
-            else
-                error("Removing at '" .. filePath .. "' is not allowed.")
-                return
-            end
-        end)
-        
-        newOS.rename = (function(oldFilePath, newFilePath)  
-            local canWrite1
-            oldFilePath, canWrite1 = makeSafeAbsolutePath(oldFilePath)
-            local canWrite2
-            newFilePath, canWrite2 = makeSafeAbsolutePath(newFilePath)
-            if canWrite1 and canWrite2 then
-                osRename(oldFilePath, newFilePath)
-            elseif not canWrite1 and canWrite2 then
-                error("Renaming at '" .. oldFilePath .. "' is not allowed.")
-                return
-            elseif canWrite1 and not canWrite2 then
-                error("Renaming at '" .. newFilePath .. "' is not allowed.")
-                return
-            end
-        end)
-    end
-    
-	os = newOS
-	_G.os = newOS
 end
 
 -----------------------------------------------------------------------

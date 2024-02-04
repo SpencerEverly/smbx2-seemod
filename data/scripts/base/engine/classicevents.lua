@@ -40,7 +40,7 @@ end
 
 
 local function checkKeyboardEvent(plObject, plIndex, plData, plFieldName, plFieldID)
-    pcall (function() local plObjectValue = plObject[plFieldName] end)
+    local plObjectValue = plObject[plFieldName]
     local plDataValue = plData[plFieldName]
     if(plDataValue == false and plObjectValue == true)then
         EventManager.callEventInternal("onKeyDown", {plFieldID, plIndex})
@@ -54,7 +54,6 @@ end
 
 
 -- FIXME: MusicManager::setCurrentSection((int)player->CurrentSection);
-
 function classicEvents.plObjectErrorWorkaround()
     local players = Player.get()
     for plIndex, plData in ipairs(playerData) do
@@ -63,6 +62,7 @@ function classicEvents.plObjectErrorWorkaround()
             local keymapPropertyName = playerKeymapProperties[keymapEnumValue]
             checkKeyboardEvent(plObject, plIndex, plData, keymapPropertyName, keymapEnumValue)
         end
+        
         if(plObject:mem(0x60, FIELD_WORD) == -1 and plData.playerJumping == false)then
             EventManager.callEventInternal("onJump", {plIndex})
         elseif(plObject:mem(0x60, FIELD_WORD) == 0 and plData.playerJumping == true)then

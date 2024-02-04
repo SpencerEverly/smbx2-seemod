@@ -55,6 +55,8 @@ typedef struct _FFI_GL_Draw_Cmd
     unsigned int mUnifCount;
     FFI_GL_Draw_Var* mUnifs;
     double mPriority;
+    uint8_t mNumClipPlane;
+    double mClipPlane[6][4];
 } FFI_GL_Draw_Cmd;
 
 typedef struct _FFI_ShaderVariableInfo
@@ -216,14 +218,13 @@ void* LunaLuaAlloc(size_t size);
 bool __fastcall FFI_GraphicsIsSoftwareGL();
 void __fastcall FFI_GraphicsGetFrameStats(FrameStatStruct* frameStats);
 const GLConstants* __fastcall FFI_GraphicsGetConstants();
-void FFI_GraphicsSetMainFramebufferSize(int width, int height);
 
-typedef struct
-{
+// Framebuffer size
+typedef struct {
     int w;
     int h;
 } FBSize;
-
+void FFI_GraphicsSetMainFramebufferSize(int width, int height);
 FBSize FFI_GraphicsGetMainFramebufferSize();
 ]]
 local LunaDLL = ffi.load("LunaDll.dll")
@@ -302,6 +303,9 @@ end
 do
 	local FFI_voidptr = ffi_typeof("void*")
 	local FFI_nullptr = ffi_cast(FFI_voidptr, 0)
+	local FFI_1ptr = ffi_cast(FFI_voidptr, 1)
+	local FFI_2ptr = ffi_cast(FFI_voidptr, 2)
+	local FFI_3ptr = ffi_cast(FFI_voidptr, 3)
 	local FFI_floatptr = ffi_typeof("float*")
 	local gldraw_cmd_tmp = ffi_new("FFI_GL_Draw_Cmd")--FFI_GL_Draw_Cmd()
 	local attrs_tmp = ffi_new("FFI_GL_Draw_Var[256]")
@@ -513,22 +517,28 @@ do
 						end
 					elseif(glTypeOfVariable.glType == "image") then
 						if (glTypeOfVariableInArg == "LuaImageResource") then
-							flatternedResult = {varValue._ref, FFI_nullptr}
+							flatternedResult = {FFI_1ptr, varValue._ref}
 						elseif (glTypeOfVariableInArg == "CaptureBuffer") then
-							flatternedResult = {FFI_nullptr, varValue._ref}
+							flatternedResult = {FFI_2ptr, varValue._ref}
+						elseif (glTypeOfVariableInArg == "DepthBuffer") then
+							flatternedResult = {FFI_3ptr, varValue._ref._ref}
 						elseif (glTypeOfVariableInArg == "table") and (type(varValue[1]) == "LuaImageResource") then
 							flatternedResult = {}
 							for _,v in ipairs(varValue) do
 								local isLuaImageResource = (type(v) == "LuaImageResource")
 								local isCaptureBuffer = (type(v) == "CaptureBuffer")
+								local isDepthBuffer = (type(v) == "DepthBuffer")
 								local isNil = (type(v) == "nil")
 								
 								if (isLuaImageResource) then
-									table_insert(flatternedResult, v._ref)
-									table_insert(flatternedResult, FFI_nullptr)
+									table_insert(flatternedResult, FFI_1ptr)
+									table_insert(flatternedResult, varValue._ref)
 								elseif (isCaptureBuffer) then
-									table_insert(flatternedResult, FFI_nullptr)
+									table_insert(flatternedResult, FFI_2ptr)
 									table_insert(flatternedResult, v._ref)
+								elseif (isDepthBuffer) then
+									table_insert(flatternedResult, FFI_3ptr)
+									table_insert(flatternedResult, v._ref._ref)
 								elseif (isNil) then
 									table_insert(flatternedResult, FFI_nullptr)
 									table_insert(flatternedResult, FFI_nullptr)
@@ -583,6 +593,7 @@ do
 		local sceneCoords = nil_or(args['sceneCoords'], false)
 		local depthTest = nil_or(args['depthTest'], false)
 		local linearFiltered = nil_or(args['linearFiltered'], false)
+		local clipPlanes = args['clipPlanes']
 		args = nil
 		
 		local arr_len = nil
@@ -685,6 +696,17 @@ do
 			gldraw_cmd_tmp.mUnifs = nil
 		end
 		gldraw_cmd_tmp.mPriority = priority
+		if (clipPlanes and (#clipPlanes <= 6)) then
+			gldraw_cmd_tmp.mNumClipPlane = #clipPlanes
+			for idx = 0,gldraw_cmd_tmp.mNumClipPlane-1 do
+				gldraw_cmd_tmp.mClipPlane[idx][0] = clipPlanes[idx+1][1]
+				gldraw_cmd_tmp.mClipPlane[idx][1] = clipPlanes[idx+1][2]
+				gldraw_cmd_tmp.mClipPlane[idx][2] = clipPlanes[idx+1][3]
+				gldraw_cmd_tmp.mClipPlane[idx][3] = clipPlanes[idx+1][4]
+			end
+		else
+			gldraw_cmd_tmp.mNumClipPlane = 0
+		end
 		LunaDLL.FFI_GLDraw(gldraw_cmd_tmp)
 	end
 end
@@ -1413,6 +1435,21 @@ do
 		shaderCompileFromSource(obj, loadShaderFile(vertexFile), loadShaderFile(fragmentFile), macrolist, 4, vertexFile or "standard.vert", fragmentFile or "standard.frag")
 	end
 	
+	
+	--Global shorthands for creating shaders
+	local shaderFromSource = function(vertexSource, fragmentSource, macrolist, _depth, _vertpath, _fragpath)
+		local s = Shader()
+		shaderCompileFromSource(s, vertexSource, fragmentSource, macrolist, _depth, _vertpath, _fragpath)
+		return s
+	end
+	
+	local shaderFromFile = function(vertexFile, fragmentFile, macrolist)
+		local s = Shader()
+		shaderCompileFromFile(s, vertexFile, fragmentFile, macrolist)
+		return s
+	end
+	
+	
 	-- Getters for uniform/attribute info
 	local shaderGetUniformInfo = function(obj)
 		if (not obj._cobj._isCompiled) then
@@ -1452,6 +1489,12 @@ do
 					_isCompiled=false
 					},
 			}, shaderMT)
+		end,
+		
+		__index = function(obj, key)
+			if key == 'fromSource' then return shaderFromSource
+			elseif key == 'fromFile' then return shaderFromFile
+			else return nil end
 		end,
 	});
 end
@@ -1929,9 +1972,16 @@ function CaptureBufferFuncs:clear(priority)
 	LunaDLL.FFI_CaptureBufferClear(ref, priority)
 end
 
+local DepthBufferFuncs = {__type="DepthBuffer"}
+local DepthBufferMT = {__index=DepthBufferFuncs, __type="DepthBuffer"}
+function CaptureBufferFuncs:GetDepthBuffer()
+	return setmetatable({_ref=self}, DepthBufferMT)
+end
+
 function Graphics.CaptureBuffer(w, h, nonskippable)
-	w = nil_or(w, 800)
-	h = nil_or(h, 600)
+	local def_w, def_h = Graphics.getMainFramebufferSize()
+	w = nil_or(w, def_w)
+	h = nil_or(h, def_h)
 	nonskippable = nil_or(nonskippable, false)
 	
 	-- Create Capture Buffer Object
@@ -1945,25 +1995,22 @@ function Graphics.CaptureBuffer(w, h, nonskippable)
 	return setmetatable({_ref=ref, width = w, height = h}, CaptureBufferMT)
 end
 
-function Graphics.redirectCameraFB(captureBuffer, priority1, priority2)
-    local ref = nil
-    if (type(captureBuffer) == "CaptureBuffer") then
-        ref = captureBuffer._ref
-    else
-        error("Invalid type for capture buffer.")
-    end
-    
-    if (type(priority1) ~= "number") then
-        error("The 1st priority must be a number.")
-        return
-    end
-    
-    if (type(priority2) ~= "number") then
-        error("The 2nd priority must be a number.")
-        return
-    end
-    
-    LunaDLL.FFI_RedirectCameraFB(ref, priority1, priority2)
+function Graphics.redirectCameraFB(fb, startPriority, endPriority)
+	if (type(fb) ~= "CaptureBuffer") then
+		error("Invalid type for fb.")
+	end
+
+	if (type(startPriority) ~= "number") then
+		error("Invalid type for startPriority")
+	end
+
+	if (type(endPriority) ~= "number") then
+		error("Invalid type for endPriority")
+	elseif (endPriority <= startPriority) then
+		error("endPriority should be larger than startPriority")
+	end
+
+	LunaDLL.FFI_RedirectCameraFB(fb._ref, startPriority, endPriority)
 end
 
 -----------------------
@@ -2000,7 +2047,7 @@ end
 
 do
 	--Please update this as more args are added to glDraw
-	local glDrawArgs = {"target", "priority", "texture", "color", "vertexCoords", "textureCoords", "vertexColors", "shader", "attributes", "uniforms", "primitive", "sceneCoords", "depthTest", "linearFiltered" }
+	local glDrawArgs = {"target", "priority", "texture", "color", "vertexCoords", "textureCoords", "vertexColors", "shader", "attributes", "uniforms", "primitive", "sceneCoords", "depthTest", "linearFiltered", "clipPlanes" }
 	
 	
 	local function cloneDrawTable(args, rtrn)
@@ -2322,28 +2369,61 @@ do
 	Graphics.GL_MAX_ELEMENT_INDEX = tonumber(constants.iMAX_ELEMENT_INDEX)
 end
 
+do
+	-- Init cached fb size
+	local fbsize = LunaDLL.FFI_GraphicsGetMainFramebufferSize()
+
+	-- WARNING: Experimental.
+	-- As of this writing, lots of things don't adapt to this being set.
+	-- Some things in basegame that must change before this is no longer considered experimental
+	-- include, but are not limited to:
+	--     [ ] Default camera behaviour needs to be updated
+	--     [ ] paralx.lua background rendering needs to be updated
+	--     [ ] HUD rendering code needs to be updated
+	--     [ ] Screen-wide effects need to be updated
+	--     [ ] Virtually all instances of Graphics.CaptureBuffer(800, 600) in basegame code need
+	--         to be replaced with Graphics.CaptureBuffer() since the default size is always the
+	--         main framebuffer size
+	--     [ ] Plenty of other corner cases
+	--
+	-- If you use this prematurely, don't be surprised if any workarounds you implement may break
+	-- in the future.
+	function Graphics.setMainFramebufferSize(width, height)
+		LunaDLL.FFI_GraphicsSetMainFramebufferSize(width, height)
+		fbsize.w = width
+		fbsize.h = height
+
+		-- Call onFramebufferResize event (if EventManager is valid, which it isn't on the loading screen)
+		if EventManager ~= nil then
+			EventManager.callEvent("onFramebufferResize", width, height)
+		end
+	end
+
+	-- I guess you can use this if you want to future-proof for the above experimental thing
+	function Graphics.getMainFramebufferSize()
+		return fbsize.w, fbsize.h
+	end
+    
+    --SEE Mod aliases for framebuffer sizes
+    function Graphics.setFramebufferSize(width,height)
+        return Graphics.setMainFramebufferSize(width, height)
+    end
+    function Graphics.getFramebufferSize()
+        local data = {}
+        data.w,data.h = Graphics.getMainFramebufferSize()
+        return {
+            data.w,
+            data.h,
+        }
+    end
+end
+
 ---------
 -- NYI --
 ---------
 
 function Graphics.loadAnimatedImage()
 	error("NYI")
-end
-
------------------------
--- Framebuffer Stuff --
------------------------
-
-function Graphics.setFramebufferSize(width,height)
-    return LunaDLL.FFI_GraphicsSetMainFramebufferSize(width,height)
-end
-
-function Graphics.getFramebufferSize()
-    local data = LunaDLL.FFI_GraphicsGetMainFramebufferSize()
-    return {
-        data.w,
-        data.h,
-    }
 end
 
 ----------------------------

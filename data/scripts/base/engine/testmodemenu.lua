@@ -43,7 +43,7 @@ local function blink()
 end
 
 local colorfilter = Shader()
-local filterBuffer = Graphics.CaptureBuffer(800,600)
+local filterBuffer = Graphics.CaptureBuffer()
 
 local controlConfigOpen = false
 local controlConfigCount = 0
@@ -135,7 +135,7 @@ end
 local continueItem = {
 	draw="Continue",
 	activate=function()
-		Audio.playSFX(30)
+		SFX.play(30)
 		resetPosition()
 		LunaDLL.LunaLuaTestModeContinue()
 		testModeMenu.active = false
@@ -543,7 +543,7 @@ function testModeMenu.onStartTestModeMenu(newAllowContinue, skipEnded)
 	selectedLine = 1
 	returnPressedState = false
 	
-	Audio.playSFX(30)
+	SFX.play(30)
 end
 
 local playerManager
@@ -856,7 +856,7 @@ function testModeMenu.onTestModeMenu()
 		local yPos = testModeMenu.calculateCameraDimensions(300 - h*0.5, 2)
 		
 		Graphics.drawBox{x = xPos, y = yPos - 20, width = w, height = h, color={0,0,0,0.5}, priority = 10}
-		Graphics.drawImageWP(Graphics.sprites.hardcoded["57-0"].img, 400 - 128, 300 - 64 - 40, 10)
+		Graphics.drawImageWP(Graphics.sprites.hardcoded["57-0"].img, camera.width*0.5 - 128, 300 - 64 - 40, 10)
 		
 		textPrintCentered("Calibrate Controller", testModeMenu.calculateCameraDimensions(400, 1), yPos + 10)
 		
@@ -871,18 +871,18 @@ function testModeMenu.onTestModeMenu()
 		
 		if escPressedState then
 			controlConfigOpen = false
-			Audio.playSFX(30)
+			SFX.play(30)
 		end
 	elseif skipActive then
-		Graphics.drawBox{x = 0, y = 0, width = Graphics.getFramebufferSize()[1], height = 32, color={0,0,0,0.5}, priority = 10}
+		Graphics.drawBox{x = 0, y = 0, width = testModeMenu.getScreenSize()[1], height = 32, color={0,0,0,0.5}, priority = 10}
 		textPrintCentered("Any Key - Advance      Pause - Back", testModeMenu.calculateCameraDimensions(400, 1), testModeMenu.calculateCameraDimensions(18, 2))
 		if player.rawKeys.pause == KEYS_PRESSED then
-			Audio.playSFX(30)
+			SFX.play(30)
 			skipActive = false
 		else
 			for _,v in pairs(player.rawKeys) do
 				if v == KEYS_PRESSED then
-					Audio.playSFX(71)
+					SFX.play(71)
 					LunaDLL.LunaLuaTestModeSkip()
 					break
 				end
@@ -948,7 +948,7 @@ function testModeMenu.onTestModeMenu()
 			selectedSetting = nil
 			skipActive = false
 			showRespawnLoc = false
-			Audio.playSFX(30)
+			SFX.play(30)
 			resetPosition()
 			LunaDLL.LunaLuaTestModeContinue()
 			testModeMenu.active = false
@@ -957,20 +957,20 @@ function testModeMenu.onTestModeMenu()
 				local item = menus[selectedMenu][selectedLine]
 				if (item) and (item.activate) then
 					item:activate()
-					Audio.playSFX(71)
+					SFX.play(71)
 				end
 			elseif (player.rawKeys.up == KEYS_PRESSED) then
 				selectedLine = selectedLine - 1
 				if (selectedLine < 1) then
 					selectedLine = maxLine
 				end
-				Audio.playSFX(71)
+				SFX.play(71)
 			elseif (player.rawKeys.down == KEYS_PRESSED) then
 				selectedLine = selectedLine + 1
 				if (selectedLine > maxLine) then
 					selectedLine = 1
 				end
-				Audio.playSFX(71)
+				SFX.play(71)
 			elseif player.rawKeys.right == KEYS_PRESSED then
 				if (selectedMenu < menuCount) then
 					selectedMenu = math.min(selectedMenu + 1, menuCount)
@@ -978,7 +978,7 @@ function testModeMenu.onTestModeMenu()
 					if (selectedLine > maxLine) then
 						selectedLine = maxLine
 					end
-					Audio.playSFX(71)
+					SFX.play(71)
 				end
 			elseif player.rawKeys.left == KEYS_PRESSED then
 				if (selectedMenu > 1) then
@@ -987,7 +987,7 @@ function testModeMenu.onTestModeMenu()
 					if (selectedLine > maxLine) then
 						selectedLine = maxLine
 					end
-					Audio.playSFX(71)
+					SFX.play(71)
 				end
 			end
 			
@@ -1005,15 +1005,15 @@ function testModeMenu.onTestModeMenu()
 			
 			if not lockSelect and ((player.rawKeys.jump == KEYS_PRESSED) or (player.rawKeys.altJump == KEYS_PRESSED) or (returnPressed)) then
 				selectedSetting = nil
-				Audio.playSFX(71)
+				SFX.play(71)
 			elseif player.rawKeys.right == KEYS_PRESSED then
 				selectedSetting.set(menus[selectedMenu].settings, selectedSetting.get(menus[selectedMenu].settings)+1)
 				dirtySettings = true
-				Audio.playSFX(71)
+				SFX.play(71)
 			elseif player.rawKeys.left == KEYS_PRESSED then
 				selectedSetting.set(menus[selectedMenu].settings, selectedSetting.get(menus[selectedMenu].settings)-1)
 				dirtySettings = true
-				Audio.playSFX(71)
+				SFX.play(71)
 			end
 		end
 			
@@ -1084,7 +1084,7 @@ function testModeMenu.onControllerButtonPress(btn, pnum, controller)
 				controlConfigCount = controlConfigCount + 1
 			else
 				controlConfigOpen = false
-				Audio.playSFX(20)
+				SFX.play(20)
 				writeButtonConfigs()
 				lockSelect = true
 			end
@@ -1169,9 +1169,6 @@ end
 function testModeMenu.onCameraDraw(idx)
 	if idx == 1 then
 		if GameData.__testMenu ~= nil and GameData.__testMenu.colorfilter ~= nil and GameData.__testMenu.colorfilter > 0 then
-            if filterBuffer.width ~= Graphics.getFramebufferSize()[1] or filterBuffer.height ~= Graphics.getFramebufferSize()[2] then
-                filterBuffer = Graphics.CaptureBuffer(Graphics.getFramebufferSize()[1],Graphics.getFramebufferSize()[2])
-            end
 			if not colorfilter._isCompiled then
 				colorfilter:compileFromFile(nil, "shaders/colormatrix.frag")
 			end
@@ -1179,6 +1176,10 @@ function testModeMenu.onCameraDraw(idx)
 			Graphics.drawScreen{texture = filterBuffer, shader = colorfilter, uniforms = { matrix = colorFilters[GameData.__testMenu.colorfilter+1].matrix }, priority = 10 }
 		end
 	end
+end
+
+function testModeMenu.onFramebufferResize(width, height)
+	filterBuffer = Graphics.CaptureBuffer(width, height)
 end
 
 registerEvent(testModeMenu, "onStart", "onStart", true)
@@ -1189,4 +1190,6 @@ registerEvent(testModeMenu, "onStartTestModeMenu", "onStartTestModeMenu", false)
 registerEvent(testModeMenu, "onTestModeMenu", "onTestModeMenu", false)
 registerEvent(testModeMenu, "onKeyboardPressDirect", "onKeyboardPressDirect", false)
 registerEvent(testModeMenu, "onControllerButtonPress", "onControllerButtonPress", false)
+registerEvent(testModeMenu, "onFramebufferResize", "onFramebufferResize", true)
+
 return testModeMenu

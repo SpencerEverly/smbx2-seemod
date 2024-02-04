@@ -84,11 +84,9 @@ function mutantVine.registerVine(id, animationSequence)
 	end
 end
 
+-- Kept for compatibility. Use the ediblebyvine block.txt config instead.
 function mutantVine.registerEdibleBlock(id)
-	table.insert(Block.EDIBLEBYVINE, id)
-	Block.EDIBLEBYVINE_MAP[id] = true
-	-- update the cached copy in case this was called at runtime for some reason
-	edibleIDMap = Block.EDIBLEBYVINE_MAP
+	Block.config[id].ediblebyvine = true
 end
 
 function mutantVine.onStart()
@@ -270,59 +268,35 @@ end
 -- Return: 
 --	directions = a table of direction instructions. Nil if a Terminus was hit. Empty if no direction change
 -------------------------------------------------
-local function getDirections(x1,y1,x2,y2)
+local function getDirections(x1,y1,x2,y2, lastOverlap)
 	local directions = {}
 	local swapThorned,swapBlockIgnore
 	for _,v in ipairs(BGOGetIntersecting(x1,y1,x2,y2)) do
-        if newBGOSystem == nil then --Use the original BGO system if newBGOSystem was not found
-            if not v.isHidden then
-                if v.id == redirector.TERMINUS then
-                    return nil
-                elseif v.id == redirector.UP then
-                    v.isHidden = true
-                    directions[#directions+1] = DIR_UP
-                elseif v.id == redirector.DOWN then
-                    v.isHidden = true
-                    directions[#directions+1] = DIR_DOWN
-                elseif v.id == redirector.LEFT then
-                    v.isHidden = true
-                    directions[#directions+1] = DIR_LEFT
-                elseif v.id == redirector.RIGHT then
-                    v.isHidden = true
-                    directions[#directions+1] = DIR_RIGHT
-                elseif v.id == redirector.TOGGLE then
-                    swapThorned = true
-                    v.isHidden = true
-                elseif v.id == redirector.SOLIDTOGGLE then
-                    swapBlockIgnore = true
-                    v.isHidden = true
-                end
-            end
-        else --Opacity settings exist for newBGOSystem, so use those instead
-            if v.id == redirector.TERMINUS then
-                return nil
-            elseif v.id == redirector.UP then
-                directions[#directions+1] = DIR_UP
-                v.opacity = 0
-            elseif v.id == redirector.DOWN then
-                directions[#directions+1] = DIR_DOWN
-                v.opacity = 0
-            elseif v.id == redirector.LEFT then
-                directions[#directions+1] = DIR_LEFT
-                v.opacity = 0
-            elseif v.id == redirector.RIGHT then
-                directions[#directions+1] = DIR_RIGHT
-                v.opacity = 0
-            elseif v.id == redirector.TOGGLE then
-                swapThorned = true
-                v.opacity = 0
-            elseif v.id == redirector.SOLIDTOGGLE then
-                swapBlockIgnore = true
-                v.opacity = 0
-            end
-        end
+		if (not v.isHidden) and v ~= lastOverlap then
+			if v.id == redirector.TERMINUS then
+				return nil
+			elseif v.id == redirector.UP then
+				-- v.isHidden = true
+				directions[#directions+1] = DIR_UP
+			elseif v.id == redirector.DOWN then
+				-- v.isHidden = true
+				directions[#directions+1] = DIR_DOWN
+			elseif v.id == redirector.LEFT then
+				-- v.isHidden = true
+				directions[#directions+1] = DIR_LEFT
+			elseif v.id == redirector.RIGHT then
+				-- v.isHidden = true
+				directions[#directions+1] = DIR_RIGHT
+			elseif v.id == redirector.TOGGLE then
+				swapThorned = true
+				-- v.isHidden = true
+			elseif v.id == redirector.SOLIDTOGGLE then
+				swapBlockIgnore = true
+				-- v.isHidden = true
+			end
+		end
 	end
-	return directions, swapThorned, swapBlockIgnore
+	return directions, swapThorned, swapBlockIgnore, lastOverlap
 end
 
 -------------------------------------------------
@@ -441,7 +415,7 @@ function mutantVine.onTickVineHead(npc)
 		
 		-- If overlapping an edible block, then eat it
 		if NPC.config[npc.id].eatsblocks then
-			for _,v in ipairs(Block.getIntersecting(npc.x+4,npc.y+4,npc.x+npc.width-4,npc.y+npc.height-4)) do
+			for _,v in Block.iterateIntersecting(npc.x+4,npc.y+4,npc.x+npc.width-4,npc.y+npc.height-4) do
 				if edibleIDMap[v.id] then
 					v:remove(false)
 				end
@@ -456,7 +430,9 @@ function mutantVine.onTickVineHead(npc)
 		end
 		
 		-- process the BGOs in the current position to determine what the vine head will do
-		local directions,swapThorned,swapBlockIgnore = getDirections(npc.x+4,npc.y+4,npc.x+npc.width-4,npc.y+npc.height-4)
+		local directions,swapThorned,swapBlockIgnore, lo = getDirections(npc.x+4,npc.y+4,npc.x+npc.width-4,npc.y+npc.height-4, data.lastOverlap)
+
+		data.lastOverlap = lo
 		
 		if swapThorned then
 			data.spawnThorned = not data.spawnThorned
@@ -471,7 +447,7 @@ function mutantVine.onTickVineHead(npc)
 			-- check for a vine in this position
 			local hitVine
 			for _,v in ipairs(NPC.getIntersecting(npc.x,npc.y,npc.x+npc.width,npc.y+npc.height)) do
-				if vineSettings[v.id] and (v.layerName == npc.layerName or npc.layerName == "Spawned NPCs") then
+				if vineSettings[v.id] and not v.isHidden and (v.layerName == npc.layerName or npc.layerName == "Spawned NPCs") then
 					hitVine = true
 					vine = v
 					break
@@ -555,7 +531,7 @@ function mutantVine.onTickVineHead(npc)
 		
 		-- check the destination for obstructions
 		if not data.ignoreBlocks then
-			for _,v in ipairs(Block.getIntersecting(data.destX+4,data.destY+4,data.destX+npc.width-4,data.destY+npc.height-4)) do
+			for _,v in Block.iterateIntersecting(data.destX+4,data.destY+4,data.destX+npc.width-4,data.destY+npc.height-4) do
 				local blockType = getBlockType(v.id)
 				if not (NPC.config[npc.id].eatsblocks and edibleIDMap[v.id]) and blockType == TYPE_SOLID and not v.isHidden then
 					if data.direction == DIR_DOWN then

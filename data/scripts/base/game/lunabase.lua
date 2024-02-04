@@ -4,10 +4,10 @@ require("base/game/pluginManager");
 require("animDefaults");
 local ed = require("expandedDefines");
 require("HUDOverride");
-require("base/audiomaster");
-require("base/game/newcheats");
 require("playerManager");
 require("base/xmem");
+require("base/xprint");
+require("base/audiomaster");
 
 --Register Graphics.sprites (done here to ensure they're available early)
 do
@@ -25,14 +25,28 @@ do
 	Graphics.sprites.Register("hardcoded", "hardcoded-53-0")	--White noise
 	Graphics.sprites.Register("hardcoded", "hardcoded-53-1")	--Perlin noise
 	Graphics.sprites.Register("hardcoded", "hardcoded-53-2")	--Caustics
+	Graphics.sprites.Register("hardcoded", "hardcoded-53-3")	--Specks of film grain
 	Graphics.sprites.Register("hardcoded", "hardcoded-55")		--Default achievement icon
 	Graphics.sprites.Register("hardcoded", "hardcoded-56")		--Large menu arrow
 	Graphics.sprites.Register("hardcoded", "hardcoded-57-0")	--Controller config base
 	Graphics.sprites.Register("hardcoded", "hardcoded-57-1")	--Controller config buttons
+	Graphics.sprites.Register("hardcoded", "hardcoded-58-1")	--Lakitu shop
+	Graphics.sprites.Register("hardcoded", "hardcoded-58-2")	--Lakitu shop
+	Graphics.sprites.Register("hardcoded", "hardcoded-58-3")	--Lakitu shop
+	Graphics.sprites.Register("hardcoded", "hardcoded-58-4")	--Lakitu shop
+	Graphics.sprites.Register("hardcoded", "hardcoded-58-5")	--Lakitu shop
+	Graphics.sprites.Register("hardcoded", "hardcoded-58-6")	--Lakitu shop
+	Graphics.sprites.Register("hardcoded", "hardcoded-58-7")	--Lakitu shop
+	Graphics.sprites.Register("hardcoded", "hardcoded-58-8")	--Lakitu shop
+	Graphics.sprites.Register("hardcoded", "hardcoded-58-9")	--Lakitu shop
+	Graphics.sprites.Register("hardcoded", "hardcoded-58-10")	--Lakitu shop
+	Graphics.sprites.Register("hardcoded", "hardcoded-58-11")	--Lakitu shop
 end
 
 --Early load APIs for non-overworld
 if(not isOverworld) then
+	require("base/game/powblock");
+	require("base/game/endstates");
 	require("base/game/bgoconfig");
 	require("base/game/betterbgo");
 	require("base/game/bettereffects");
@@ -41,6 +55,7 @@ if(not isOverworld) then
 end
 
 require("progress");
+require("base/game/newcheats");
 require("base/game/marioChallenge");
 require("base/game/repl");
 require("base/editorevents");
@@ -50,7 +65,7 @@ if (not isOverworld) then
 	local block_APIs = {
 		"extensions/configextensions",            --for blocks without AI
 		--"newblocks",
-		--"breakingdirt",              --694, what's going on enjl
+		--"breakingdirt",              --694, what's going on Emral
 		--"clearpipe",                   --701-723,
 		--"suits",                       --724-731/746-749
 		--"synced",				   	   --1271-1278
@@ -63,6 +78,7 @@ if (not isOverworld) then
 		"extensions/vanillabosses",               --HP support
 		"extensions/configextensions",            --isheavy and stuff
 		"extensions/flyingnpcplus",               --more options
+		"extensions/grabbednpcplus",              --more options
 		"extensions/waternpcplus",                --more options
 		"extensions/shellnpcplus",                --more options
 		--"swooper",                     --271 --yeah!!!
@@ -211,7 +227,7 @@ if (not isOverworld) then
 	require("tweaks/keyhole");
 	require("redirector");
 	require("base/game/tweaks");
-	require("paralX2");
+	_G.Background = require("paralX2");
 	require("orbits");
 	require("base/game/sizable");
 

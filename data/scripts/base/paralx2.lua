@@ -24,7 +24,7 @@ paralx2.align = {LEFT = 0, RIGHT = 1, BOTTOM = 1, TOP = 0, CENTRE = 0.5, MID = 0
 
 local enums = table.join(paralx2.depth, paralx2.align)
 
-_G["BG_MAX_ID"] = 65
+_G["BG_MAX_ID"] = 74
 local bgObjs = {}
 
 local sectionBGs = {}
@@ -390,9 +390,42 @@ end
 function paralx2.Background(section, bounds, fillColor, ...)
 
 	local lyrs
+	
+	local extraLayer = nil
+	if type(section) ~= "number" then
+		extraLayer = fillColor
+		fillColor = bounds
+		bounds = section
+		section = -1
+	end
+	
 	if type(fillColor) ~= "Color" then
-		lyrs = {fillColor,...}
-		fillColor = Color.black
+	
+		if type(bounds) == "Color" then
+			if extraLayer then
+				lyrs = {fillColor,extraLayer,...}
+			else
+				lyrs = {fillColor,...}
+			end
+			fillColor = bounds
+			bounds = nil
+		elseif bounds ~= nil and (bounds.left == nil or bounds.right == nil or bounds.top == nil or bounds.bottom == nil) then
+			if extraLayer then
+				lyrs = {bounds, fillColor, extraLayer, ...}
+			else
+				lyrs = {bounds, fillColor, ...}
+			end
+			fillColor = Color.black
+			bounds = nil
+		else
+			if extraLayer then
+				lyrs = {fillColor,extraLayer,...}
+			else
+				lyrs = {fillColor,...}
+			end
+			fillColor = Color.black
+		end
+	
 	else
 		lyrs = {...}
 	end
@@ -532,7 +565,7 @@ local function DrawLayer(l, camera, section, bounds)
 		d = 1/(d*d)
 	--Compute depth based on fit requirements otherwise (d = 0 (Infinite depth) if no fit)
 	else
-		d = ComputeFitDepth(l,w,h,c.width,c.height,bounds,sb)
+		d = ComputeFitDepth(l,w,h,800,600,bounds,sb)
 	end
 	
 	--Early termination for layers that are positioned behind the camera
@@ -559,8 +592,8 @@ local function DrawLayer(l, camera, section, bounds)
 	local xoffset = l.x
 	local yoffset = l.y
 
-	local vcw = c.width
-	local vch = c.height
+	local vcw = 800
+	local vch = 600
 	
 	local voffset = c.renderY
 	local hoffset = c.renderX
@@ -839,7 +872,7 @@ function paralx2.get(section)
 	else
 		return nil
 	end
-end
+end 
 
 function paralx2.set(section, bg)
 	sectionBGs[section] = bg
@@ -851,7 +884,7 @@ local function DrawBG(v, camera, section, camwidth, camheight)
 	else
 		Graphics.drawBox{color = v.fillColor, priority = -101, x = v.bounds.left, y = v.bounds.top, w = v.bounds.right-v.bounds.left, h = v.bounds.bottom - v.bounds.top, sceneCoords = true}
 	end
-	sort(v.layers, function(a,b) return CompareDepth(a,b,camera.width,camera.height,v.bounds,section) end)
+	sort(v.layers, function(a,b) return CompareDepth(a,b,800,600,v.bounds,section) end)
 	for _,w in ipairs(v.layers) do
 		if(not w.hidden) then
 			DrawLayer(w, camera, section, v.bounds);
@@ -876,13 +909,13 @@ function paralx2.onCameraDraw(camidx)
 		end
 		local bg = sectionBGs[p.section].bg
 		if not bg.hidden then
-			DrawBG(bg, c, section, c.width--[[c.width]], c.height--[[c.height]])
+			DrawBG(bg, c, section, 800--[[c.width]], 600--[[c.height]])
 		end
 	end
 	for _,v in ipairs(bgs) do
 		for _,s in ipairs({p.section, -1}) do
 			if v.section == s and not v.hidden then
-				DrawBG(v, c, section, c.width--[[c.width]], c.height--[[c.height]])
+				DrawBG(v, c, section, 800--[[c.width]], 600--[[c.height]])
 			end
 		end
 	end
