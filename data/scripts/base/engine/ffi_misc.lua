@@ -76,13 +76,13 @@ end
 
 do
 	ffi.cdef([[
-		unsigned char* LunaLuaGetKeyStateArray();
+		unsigned char* LunaLuaGetKeyStateArray(int keyboardID);
 	]])
 	local LunaDLL = ffi.load("LunaDll.dll")
 	local keyArray = {}
     local toTenNumber = 1
     for j = 1,254 do
-        while toTenNumber < 11 do
+        while toTenNumber < 10 do
             keyArray[toTenNumber] = LunaDLL.LunaLuaGetKeyStateArray(toTenNumber)
             toTenNumber = toTenNumber + 1
             if toTenNumber > 10 then
