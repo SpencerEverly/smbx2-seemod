@@ -72,7 +72,7 @@ end
 function introMan.onDraw()
     --key presses
     for i = 1, #keysPresses do
-        if Misc.GetKeyState(keysPresses[i]) then --jump
+        if Misc.GetKeyState(keysPresses[i], 1) then --jump
             introMan.isKeyPressing[i] = true
         else
             introMan.isKeyPressing[i] = false

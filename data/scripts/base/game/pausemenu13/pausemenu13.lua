@@ -174,7 +174,7 @@ function pausemenu13.pauseUnpauseGame()
 end
 
 function pausemenu13.onKeyboardPressDirect(key, repeated)
-    if (Misc.GetKeyState(VK_RETURN) and key == VK_P) and not repeated and Misc.inEditor() then
+    if (Misc.GetKeyState(VK_RETURN, 1) and key == VK_P) and not repeated and Misc.inEditor() then
         pausemenu13.pauseUnpauseGame()
     end
 end

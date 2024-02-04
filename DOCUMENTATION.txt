@@ -28,41 +28,63 @@ VER_SEE_MOD - This is the SMBX version that's being used. Use `if SMBX_VERSION =
 
 ----Audio----
 
-Audio.MusicReset() - Starts the current music from the beginning.
-Audio.MusicGetTempo() - Returns the tempo of the currently played music.
-Audio.MusicGetPitch() - Returns the pitch of the currently played music.
-Audio.MusicGetSpeed() - Returns the speed of the currently played music.
-Audio.MusicSetTempo(tempo) - Changes the tempo of the song to the tempo specified.
-Audio.MusicSetPitch(pitch) - Changes the pitch of the song to the pitch specified.
-Audio.MusicSetSpeed(speed) - Changes the speed of the song to the speed specified. OGGs are now supported as of 4/23/2023.
+Audio.MusicReset()* - Starts the current music from the beginning.
+Audio.MusicGetTempo()* - Returns the tempo of the currently played music.
+Audio.MusicGetPitch()* - Returns the pitch of the currently played music.
+Audio.MusicGetSpeed()* - Returns the speed of the currently played music.
+Audio.MusicSetTempo(tempo)* - Changes the tempo of the song to the tempo specified.
+Audio.MusicSetPitch(pitch)* - Changes the pitch of the song to the pitch specified.
+Audio.MusicSetSpeed(speed)* - Changes the speed of the song to the speed specified. OGGs are now supported as of 4/23/2023.
+
+Audio.SfxClearFromCache(chunk/soundPath) - Clears a specific sound from the sound cache. Use this when you're switching SFXs to another one.
+Audio.SfxIsInCache(chunk/soundPath) - Checks to see if this sound or chunk is in the cache. True if so, false if not.
+Audio.SfxGetFilenameFromChunk(chunk) - Returns the original filename from when the chunk was created.
 
 ----Misc----
 
-Misc.setWindowTitle("string") - Sets the window title of the SMBX game into any title.
-Misc.setWindowIcon("string/to/file.extension") - Loads an image as an icon in the episode folder and replaces it with the window icon. loadImageResolved is recommended.
+Misc.setWindowTitle("string")* - Sets the window title of the SMBX game into any title.
+Misc.setWindowIcon("string/to/file.extension")* - Loads an image as an icon in the episode folder and replaces it with the window icon. loadImageResolved is recommended.
+
 Misc.setWindowPosition(x, y) - Sets the main game window position to any position on the screen.
 Misc.runWhenUnfocused(bool) - Whenever to focus or unfocus the window when not focused on the game, setting bool as true or false.
 Misc.centerWindow() - Centers the window to the center of the screen after execution.
-Misc.setFullscreen(bool) - Whenever to set the game into fullscreen mode or not, setting bool as true or false.
-Misc.isFullscreen() - Checks to see if it's in fullscreen or not. "true" if it is, "false" if not.
+
+Misc.setFullscreen(bool)* - Whenever to set the game into fullscreen mode or not, setting bool as true or false.
+Misc.isFullscreen()* - Checks to see if it's in fullscreen or not. "true" if it is, "false" if not.
+
 Misc.getWindowXPosition() - This will get the X position of the window in it's current state.
 Misc.getWindowYPosition() - This will get the Y position of the window in it's current state.
+
 Misc.getCenterWindowXPosition() - This will get the X position of the window when it's centered.
 Misc.getCenterWindowYPosition() - This will get the Y position of the window when it's centered.
-Misc.isGIFRecording() - Checks to see if GIF recording is enabled or not.
+
+Misc.isGIFRecording()* - Checks to see if GIF recording is enabled or not.
 Misc.isWindowFocused() - Returns true when the window is focused. Useful for pausing certain sounds when the window isn't focused.
+
 Misc.getWidthScreenResolution() - Gets the current monitor width based on where the window is.
 Misc.getHeightScreenResolution() - Gets the current monitor height based on where the window is.
+
 Misc.isSetToRunWhenUnfocused() - Checks to see if the "run when unfocused" option is on. Returns true if so, else it's false.
+
 Misc.setNewTestModeLevelData(Level.filename()) - Sets new level data to load to when calling restart or an error occurs during level testing. Useful for custom map testing, or when you want your episode fully playable when only using levels (Misc.episodePath() is automatically done, so you'll just need the level filename and that's it).
+
+Misc.resolveMusicFile(musicFile) - resolveSoundFile, but with music end argument support.
 
 ----LegacyRNG----
 
-LegacyRNG.generateNumber() - Generates a legacy RNG number based off the SMBX RNG system.
-LegacyRNG.getLastGeneratedNumber() - Generates the last legacy RNG number that was generated previously, based off the SMBX RNG system.
+LegacyRNG.generateNumber()* - Generates a legacy RNG number based off the SMBX RNG system.
+LegacyRNG.getLastGeneratedNumber()* - Generates the last legacy RNG number that was generated previously, based off the SMBX RNG system.
 
 ----Graphics----
 
-Graphics.redirectCameraFB(captureBuffer, startPriority, endPriority) - A priority range sensitive capture buffer.
-Graphics.setFramebufferSize(width, height) - Sets the framebuffer size to any size you want. Useful for setting up a resolution system (Call camera.width/height for any size you set it to afterward!)
-Graphics.getFramebufferSize() - Gets the current framebuffer size in a table value.
+Graphics.redirectCameraFB(captureBuffer, startPriority, endPriority)* - A priority range sensitive capture buffer.
+Graphics.setFramebufferSize(width, height)* - Sets the framebuffer size to any size you want. Useful for setting up a resolution system (Call camera.width/height for any size you set it to afterward!)
+Graphics.getFramebufferSize()* - Gets the current framebuffer size in a table value.
+
+----Player----
+
+Player.lavaConfig - This sets the setting on what happens when the player falls into lava. 1 for killing, 2 for hurting, or 3 for nothing to happen.
+
+--------
+
+*: The function with an asterick means that it was added to SMBX2 and is a part of basegame.

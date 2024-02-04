@@ -65,16 +65,30 @@ end
 
 do
 	ffi.cdef([[
-		unsigned char* LunaLuaGetKeyStateArray();
+		unsigned char* LunaLuaGetKeyStateArray(int keyboardID);
 	]])
 	local LunaDLL = ffi.load("LunaDll.dll")
-	local keyArray = LunaDLL.LunaLuaGetKeyStateArray()
+    local keyArray = {}
+    local toTenNumber = 1
+    for j = 1,254 do
+        while toTenNumber < 11 do
+            keyArray[toTenNumber] = LunaDLL.LunaLuaGetKeyStateArray(toTenNumber)
+            toTenNumber = toTenNumber + 1
+            if toTenNumber > 10 then
+                break
+            end
+        end
+    end
 	
-	function Misc.GetKeyState(keycode)
-		if (type(keycode) ~= "number") or (keycode < 0) or (keycode > 255) then
+	function Misc.GetKeyState(keyCode, keyboardID)
+		if (type(keyCode) ~= "number") or (keyCode < 0) or (keyCode > 255) then
 			error("Invalid keycode")
 		end
-		return keyArray[keycode] ~= 0
+        if keyArray[keyboardID][keyCode] ~= nil then
+            return keyArray[keyboardID][keyCode] ~= 0
+        else
+            return 0
+        end
 	end
 end
 
