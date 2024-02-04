@@ -478,6 +478,80 @@ do
 	end
 end
 
+-------------
+-- Defines --
+-------------
+
+do
+	ffi.cdef([[
+		void LunaLua_Defines__player_grabSideEnabled__set(bool value);
+		bool LunaLua_Defines__player_grabSideEnabled__get();
+		void LunaLua_Defines__player_grabTopEnabled__set(bool value);
+		bool LunaLua_Defines__player_grabTopEnabled__get();
+		void LunaLua_Defines__player_grabShellEnabled__set(bool value);
+		bool LunaLua_Defines__player_grabShellEnabled__get();
+		void LunaLua_Defines__player_link_shieldEnabled__set(bool value);
+		bool LunaLua_Defines__player_link_shieldEnabled__get();
+		void LunaLua_Defines__player_link_fairyVineEnabled__set(bool value);
+		bool LunaLua_Defines__player_link_fairyVineEnabled__get();
+		void LunaLua_Defines__pswitch_music__set(bool value);
+		bool LunaLua_Defines__pswitch_music__get();
+		void LunaLua_Defines__effect_Zoomer_killEffectEnabled__set(bool value);
+		bool LunaLua_Defines__effect_Zoomer_killEffectEnabled__get();
+
+		void LunaLua_Defines__effect_NpcToCoin__set(uint8_t value);
+		uint8_t LunaLua_Defines__effect_NpcToCoin__get();
+		void LunaLua_Defines__sound_NpcToCoin__set(uint8_t value);
+		uint8_t LunaLua_Defines__sound_NpcToCoin__get();
+		void LunaLua_Defines__npcToCoinValue__set(uint8_t value);
+		uint8_t LunaLua_Defines__npcToCoinValue__get();
+		void LunaLua_Defines__npcToCoinValueReset__set(uint8_t value);
+		uint8_t LunaLua_Defines__npcToCoinValueReset__get();
+		void LunaLua_Defines__smb3RouletteScoreValueStar__set(uint32_t value);
+		uint32_t LunaLua_Defines__smb3RouletteScoreValueStar__get();
+		void LunaLua_Defines__smb3RouletteScoreValueMushroom__set(uint32_t value);
+		uint32_t LunaLua_Defines__smb3RouletteScoreValueMushroom__get();
+		void LunaLua_Defines__smb3RouletteScoreValueFlower__set(uint32_t value);
+		uint32_t LunaLua_Defines__smb3RouletteScoreValueFlower__get();
+		void LunaLua_Defines__coinValue__set(uint8_t value);
+		uint8_t LunaLua_Defines__coinValue__get();
+		void LunaLua_Defines__coin5Value__set(uint8_t value);
+		uint8_t LunaLua_Defines__coin5Value__get();
+		void LunaLua_Defines__coin20Value__set(uint8_t value);
+		uint8_t LunaLua_Defines__coin20Value__get();
+		void LunaLua_Defines__block_hit_link_rupeeID1__set(uint16_t value);
+		uint16_t LunaLua_Defines__block_hit_link_rupeeID1__get();
+		void LunaLua_Defines__block_hit_link_rupeeID2__set(uint16_t value);
+		uint16_t LunaLua_Defines__block_hit_link_rupeeID2__get();
+		void LunaLua_Defines__block_hit_link_rupeeID3__set(uint16_t value);
+		uint16_t LunaLua_Defines__block_hit_link_rupeeID3__get();
+		void LunaLua_Defines__kill_drop_link_rupeeID1__set(uint16_t value);
+		uint16_t LunaLua_Defines__kill_drop_link_rupeeID1__get();
+		void LunaLua_Defines__kill_drop_link_rupeeID2__set(uint16_t value);
+		uint16_t LunaLua_Defines__kill_drop_link_rupeeID2__get();
+		void LunaLua_Defines__kill_drop_link_rupeeID3__set(uint16_t value);
+		uint16_t LunaLua_Defines__kill_drop_link_rupeeID3__get();
+
+		bool LunaLua_Defines_mem_set(int address, double value);
+	]])
+	local LunaDLL = ffi.load("LunaDll.dll")
+
+	-- these functions are overwritten as nil when defines is loaded!
+
+	-- return the get/set functions for the patch with the given name
+	function Misc._getDefine(name)
+		local get = LunaDLL["LunaLua_Defines__" .. name .. "__get"]
+		local set = LunaDLL["LunaLua_Defines__" .. name .. "__set"]
+		-- wrap these as plain lua functions, just in case
+		local mGet = function()      return get() end
+		local mSet = function(value) set(value)   end
+		return mGet, mSet
+	end
+	function Misc._definesMemSet(addr, value)
+		return LunaDLL.LunaLua_Defines_mem_set(addr, value)
+	end
+end
+
 -----------------------------
 -- Extra gameplay settings --
 -----------------------------
