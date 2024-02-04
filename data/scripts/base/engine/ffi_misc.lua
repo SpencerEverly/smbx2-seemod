@@ -83,7 +83,7 @@ do
     local toTenNumber = 1
     for j = 1,254 do
         while toTenNumber < 10 do
-            keyArray[toTenNumber] = LunaDLL.LunaLuaGetKeyStateArray(toTenNumber)
+            keyArray[toTenNumber] = LunaDLL.LunaLuaGetKeyStateArray(toTenNumber - 1)
             toTenNumber = toTenNumber + 1
             if toTenNumber > 10 then
                 break
@@ -91,14 +91,14 @@ do
         end
     end
 	
-	function Misc.GetKeyState(keycode, keyboardID)
+	function Misc.GetKeyState(keyCode, keyboardID)
         if keyboardID == nil then
             keyboardID = 1
         end
-		if (type(keycode) ~= "number") or (keycode < 0) or (keycode > 255) then
+		if (type(keyCode) ~= "number") or (keyCode < 0) or (keyCode > 255) then
 			error("Invalid keycode")
 		end
-		return keyArray[keyboardID][keyCode] ~= 0
+        return keyArray[keyboardID][keyCode] ~= 0
 	end
 end
 
