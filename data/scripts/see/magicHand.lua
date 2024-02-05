@@ -348,8 +348,8 @@ end
 
 --The function that calculates magicHand.gridCoordinates.
 local function MouseMove()
-    local mouseX = Misc.getCursorPosition()[1]
-    local mouseY = Misc.getCursorPosition()[2]
+    local mouseX = Misc.getCursorPosition(true)[1]
+    local mouseY = Misc.getCursorPosition(true)[2]
 
     magicHand.gridCoordinates.x = math.floor(mouseX / magicHand.mainGridSize + 0.5) * magicHand.mainGridSize + camera.x
     magicHand.gridCoordinates.y = math.floor(mouseY / magicHand.mainGridSize + 0.5) * magicHand.mainGridSize + camera.y
@@ -363,7 +363,7 @@ local function hoveringOverArea(x1, y1, width1, height1, x2, y2, width2, height2
 end
 
 local function drawBoxChoice(id, x, y, width, height, color, func, menuID)
-    if not hoveringOverArea(x, y, width, height, Misc.getCursorPosition()[1], Misc.getCursorPosition()[2], 2, 2) then
+    if not hoveringOverArea(x, y, width, height, Misc.getCursorPosition(true)[1], Misc.getCursorPosition(true)[2], 2, 2) then
         opacityWhenOnAButton = 0.75
     elseif not holdingLeftClick then
         opacityWhenOnAButton = 0.85
@@ -876,7 +876,7 @@ function magicHand.onMouseButtonEvent(button, state)
             holdingLeftClick = true
             if delayMouseClick == 0 then
                 for i = 1,#menuChoices do
-                    if hoveringOverArea(menuChoices[i].x, menuChoices[i].y, menuChoices[i].width, menuChoices[i].height, Misc.getCursorPosition()[1], Misc.getCursorPosition()[2], 2, 2) then
+                    if hoveringOverArea(menuChoices[i].x, menuChoices[i].y, menuChoices[i].width, menuChoices[i].height, Misc.getCursorPosition(true)[1], Misc.getCursorPosition(true)[2], 2, 2) then
                         if menuChoices[i].runFunc ~= nil and menuChoices[i].menuID == magicHand.currentMenuID then
                             Routine.run(menuChoices[i].runFunc)
                             delayMouseClick = magicHand.mouseDelay
@@ -900,8 +900,8 @@ function magicHand.onDraw()
         end
 
         --used to get the scene space coordinates for the cursor position
-        magicHand.screenCoordinates.x = (Misc.getCursorPosition()[1] + camera.x)
-        magicHand.screenCoordinates.y = (Misc.getCursorPosition()[2] + camera.y)
+        magicHand.screenCoordinates.x = (Misc.getCursorPosition(true)[1] + camera.x)
+        magicHand.screenCoordinates.y = (Misc.getCursorPosition(true)[2] + camera.y)
 
         --used to get the coordinates based on the grid count
         MouseMove()
@@ -1043,8 +1043,8 @@ function magicHand.onDraw()
             Text.print("GRIDX: "..tostring(magicHand.gridCoordinates.x), 100, 100)
             Text.print("GRIDY: "..tostring(magicHand.gridCoordinates.y), 100, 120)
 
-            Text.print("MOUSEX: "..tostring(Misc.getCursorPosition()[1]), 100, 160)
-            Text.print("MOUSEY: "..tostring(Misc.getCursorPosition()[2]), 100, 180)
+            Text.print("MOUSEX: "..tostring(Misc.getCursorPosition(true)[1]), 100, 160)
+            Text.print("MOUSEY: "..tostring(Misc.getCursorPosition(true)[2]), 100, 180)
         end
     end
 end
