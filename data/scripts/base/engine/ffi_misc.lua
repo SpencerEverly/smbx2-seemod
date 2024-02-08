@@ -533,6 +533,8 @@ do
 		uint16_t LunaLua_Defines__kill_drop_link_rupeeID2__get();
 		void LunaLua_Defines__kill_drop_link_rupeeID3__set(uint16_t value);
 		uint16_t LunaLua_Defines__kill_drop_link_rupeeID3__get();
+        void LunaLua_Defines__player_fallToDeathValue__set(uint8_t value);
+        uint16_t LunaLua_Defines__player_fallToDeathValue__get();
 
 		bool LunaLua_Defines_mem_set(int address, double value);
 	]])
