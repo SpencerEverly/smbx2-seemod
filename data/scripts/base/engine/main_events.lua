@@ -38,8 +38,8 @@ Misc.LUNALUA_EVENTS = {
 	"onCollide", "onIntersect", -- Defined for block collisions
     -- SEE MOD events below
     "onControllerButtonEvent", "onLetterboxToggle", "onGIFRecord", "onScreenshotTake",
-    "onSFXPlay", "onUnfocusWindow", "onFocusWindow",
-    "onPauseSEEMod", "onMessageBoxSEEMod", 
+    "onSFXPlay", "onUnfocusWindow", "onFocusWindow", "onMushroomBugFix",
+    "onPauseSEEMod", "onMessageBoxSEEMod",
 }
 
 local postCancellableMap = {

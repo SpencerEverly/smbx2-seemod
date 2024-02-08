@@ -65,6 +65,20 @@ typedef struct _LunaLuaKeyMap {
     short    pause; //Pause
 } LunaLuaKeyMap;
 LunaLuaKeyMap* LunaLuaGetRawKeymapArray(void);
+
+void LunaLuaTogglePlayerKeyOverhaul(bool value);
+bool LunaLuaIsPlayerKeyOverhaulOn();
+
+void LunaLuaChangePlayerKeysKeyboard(int type, int playerIdx, int virtKey);
+void LunaLuaChangePlayerKeysController(int type, int playerIdx, int controllerIdx);
+
+void LunaLuaChangePlayerKeyboard(int playerIdx, int keyboardIdx);
+void LunaLuaChangePlayerController(int playerIdx, int controllerIdx);
+
+void LunaLuaSetPlayerPressing(int type, int playerIdx, bool value);
+bool LunaLuaIsPlayerPressing(int type, int playerIdx);
+
+void LunaLuaResetAllPlayerInputs();
 ]]
 local LunaDLL = ffi.load("LunaDll.dll")
 
@@ -266,6 +280,38 @@ local function playerGetLavaStatus(pl)
     return playerLavaFieldsArray[pl.idx].lavaTouchingStatus
 end
 
+local function playerGetSpecialKeyPressing(pl)
+    return LunaDLL.LunaLuaIsPlayerPressing(11, pl.idx)
+end
+
+local function playerSetSpecialKeyPressing(pl, val)
+    LunaLuaSetPlayerPressing(11, pl.idx, val);
+end
+
+local function playerGetLeftTriggerKeyPressing(pl)
+    return LunaDLL.LunaLuaIsPlayerPressing(12, pl.idx)
+end
+
+local function playerSetLeftTriggerKeyPressing(pl, val)
+    LunaLuaSetPlayerPressing(12, pl.idx, val);
+end
+
+local function playerGetRightTriggerKeyPressing(pl)
+    return LunaDLL.LunaLuaIsPlayerPressing(13, pl.idx)
+end
+
+local function playerSetRightTriggerKeyPressing(pl, val)
+    LunaLuaSetPlayerPressing(13, pl.idx, val);
+end
+
+local function playerGetPressingKey(typeOfKey, playerIdx)
+    return LunaDLL.LunaLuaIsPlayerPressing(typeOfKey, playerIdx)
+end
+
+local function playerSetPressingKey(typeOfKey, playerIdx, value)
+    return LunaDLL.LunaLuaSetPlayerPressing(typeOfKey, playerIdx, value)
+end
+
 ------------------------
 -- CONSTANTS          --
 ------------------------
@@ -384,6 +430,10 @@ local PlayerFields = {
 		--------------------
 
         lavaConfig              = {get=playerGetLavaStatus, set=playerSetLavaStatus},
+
+        specialKeyPressing      = {get=playerGetSpecialKeyPressing, set=playerSetSpecialKeyPressing},
+        leftTriggerKeyPressing  = {get=playerGetLeftTriggerKeyPressing, set=playerSetLeftTriggerKeyPressing},
+        rightTriggerKeyPressing = {get=playerGetRightTriggerKeyPressing, set=playerSetRightTriggerKeyPressing},
 
 		----------------------------------
 		-- LEGACY AUTO-GENERATED FIELDS --
@@ -599,16 +649,23 @@ local keysList = {
 	"left",
 	"right",
 	"jump",
+    "run",
+    "dropItem",
+    "pause",
 	"altJump",
-	"run",
-	"altRun",
-	"dropItem",
-	"pause"
+	"altRun", --10
+	"special",
+	"leftTrigger",
+    "rightTrigger", --13
 }
 
 local keysMap = {}
-for _,v in ipairs(keysList) do
-	keysMap[v] = PlayerFields[v .. "KeyPressing"][1]
+for k,v in ipairs(keysList) do
+    if k <= 10 then
+        keysMap[v] = PlayerFields[v .. "KeyPressing"][1]
+    elseif k > 10 then
+        keysMap[v] = k
+    end
 end
 
 local KEYS_UP = false
@@ -638,7 +695,11 @@ function keysMT.__newindex(tbl, key, val)
 	else
 		val = false
 	end
-	tbl._parent:mem(keysMap[key], FIELD_BOOL, val)
+    if (key ~= "special" and key ~= "leftTrigger" and key ~= "rightTrigger") then
+        tbl._parent:mem(keysMap[key], FIELD_BOOL, val)
+    else
+        playerSetPressingKey(keysMap[key], tbl._parent.idx, val)
+    end
 end
 
 do
@@ -670,7 +731,11 @@ function registerKeys(obj)
 
 	local nowMT = {}
 	function nowMT.__index(tbl, key)
-		return obj:mem(keysMap[key], FIELD_BOOL)
+        if (key ~= "special" and key ~= "leftTrigger" and key ~= "rightTrigger") then
+            return obj:mem(keysMap[key], FIELD_BOOL)
+        else
+            return playerGetPressingKey(keysMap[key], obj.idx)
+        end
 	end
 	setmetatable(keys._now, nowMT)
 
@@ -692,6 +757,14 @@ if isOverworld then
 		end
 	end
 	keyseventtable.onDraw = updateOverworldKeys
+end
+
+local extraRawKeys = {}
+for i = 0,3 do
+    extraRawKeys[i] = {}
+    extraRawKeys[i]["special"] = 0
+    extraRawKeys[i]["leftTrigger"] = 0
+    extraRawKeys[i]["rightTrigger"] = 0
 end
 
 local function updateKeys()
@@ -717,6 +790,64 @@ registerEvent(keyseventtable, "onDrawEnd", "onDrawEnd", false)
 -- RAW KEYS --
 --------------
 
+local extraRawKeysEvent = {}
+registerEvent(extraRawKeysEvent, "onDraw", "onDraw", false)
+registerEvent(extraRawKeysEvent, "onDrawEnd", "onDrawEnd", false)
+
+local function updateExtraPlayerRawInputDraw(p, is2ndPlayer)
+    for i = 0,3 do
+        for k,key in ipairs(extraRawKeys[i]) do
+            if not is2ndPlayer then
+                if player.keys[key] == KEYS_UP then
+                    extraRawKeys[i][key] = 0
+                elseif player.keys[key] == KEYS_DOWN then
+                    extraRawKeys[i][key] = -1
+                end
+            elseif is2ndPlayer then
+                if player2.keys[key] == KEYS_UP then
+                    extraRawKeys[i][key] = 0
+                elseif player2.keys[key] == KEYS_DOWN then
+                    extraRawKeys[i][key] = -1
+                end
+            end
+        end
+    end
+end
+
+local function updateExtraPlayerRawInputDrawEnd(p, is2ndPlayer)
+    for i = 0,3 do
+        for k,key in ipairs(extraRawKeys[i]) do
+            if not is2ndPlayer then
+                if player.keys[key] == KEYS_PRESSED then
+                    extraRawKeys[i][key] = 0
+                elseif player.keys[key] == KEYS_UNPRESSED then
+                    extraRawKeys[i][key] = -1
+                end
+            elseif is2ndPlayer then
+                if player2.keys[key] == KEYS_PRESSED then
+                    extraRawKeys[i][key] = 0
+                elseif player2.keys[key] == KEYS_UNPRESSED then
+                    extraRawKeys[i][key] = -1
+                end
+            end
+        end
+    end
+end
+
+function extraRawKeysEvent.onDraw()
+    updateExtraPlayerRawInputDraw(player, false)
+    if Player.count() > 1 then
+        updateExtraPlayerRawInputDraw(player2, true)
+    end
+end
+
+function extraRawKeysEvent.onDrawEnd()
+    updateExtraPlayerRawInputDrawEnd(player, false)
+    if Player.count() > 1 then
+        updateExtraPlayerRawInputDrawEnd(player2, true)
+    end
+end
+
 setupRawKeys = function(idx)
 	local idx = idx - 1
 	
@@ -725,8 +856,15 @@ setupRawKeys = function(idx)
 		if keysMap[key] == nil then
 			return nil
 		end
-		local now = rawKeymap[idx][key] ~= 0
-		local last = rawKeymap[idx+2][key] ~= 0
+        local now
+		local last
+        if (key ~= "special" and key ~= "leftTrigger" and key ~= "rightTrigger") then
+            now = rawKeymap[idx][key] ~= 0
+            last = rawKeymap[idx+2][key] ~= 0
+        else
+            now = extraRawKeys[idx][key] ~= 0
+            last = extraRawKeys[idx+2][key] ~= 0
+        end
 		if (not last) and (not now) then
 			return KEYS_UP
 		elseif last and (not now) then
@@ -1054,6 +1192,22 @@ function Player.getTemplates()
 		idx = idx + 1
 	end
 	return ret
+end
+
+function Player.isKeyOverhaulOn()
+    return LunaDLL.LunaLuaIsPlayerKeyOverhaulOn()
+end
+
+function Player.toggleKeyOverhaul(value)
+    LunaDLL.LunaLuaTogglePlayerKeyOverhaul(value)
+end
+
+function Player.resetAllPlayerInputs()
+    LunaDLL.LunaLuaResetAllPlayerInputs()
+end
+
+function Player.changeKeyboardKey(keyType, playerIdx, virtKey)
+    LunaDLL.LunaLuaChangePlayerKeysKeyboard(keyType, playerIdx, virtKey)
 end
 
 ---------------------------

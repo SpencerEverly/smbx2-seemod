@@ -81,24 +81,26 @@ do
 	local LunaDLL = ffi.load("LunaDll.dll")
 	local keyArray = {}
     local toTenNumber = 1
-    for j = 1,254 do
-        while toTenNumber < 10 do
-            keyArray[toTenNumber] = LunaDLL.LunaLuaGetKeyStateArray(toTenNumber - 1)
-            toTenNumber = toTenNumber + 1
-            if toTenNumber > 10 then
-                break
-            end
+    while toTenNumber < 11 do
+        keyArray[toTenNumber] = LunaDLL.LunaLuaGetKeyStateArray(toTenNumber - 1)
+        toTenNumber = toTenNumber + 1
+        if toTenNumber > 10 then
+            break
         end
     end
 	
-	function Misc.GetKeyState(keyCode, keyboardID)
+	function Misc.GetKeyState(keyCode, keyboardID, nonBoolean)
         if keyboardID == nil then
             keyboardID = 1
         end
 		if (type(keyCode) ~= "number") or (keyCode < 0) or (keyCode > 255) then
 			error("Invalid keycode")
 		end
-        return keyArray[keyboardID][keyCode] ~= 0
+        if nonBoolean == nil or not nonBoolean then
+            return keyArray[keyboardID][keyCode] ~= 0
+        elseif nonBoolean then
+            return keyArray[keyboardID][keyCode]
+        end
 	end
 end
 
@@ -624,6 +626,8 @@ do
 		uint16_t LunaLua_Defines__kill_drop_link_rupeeID2__get();
 		void LunaLua_Defines__kill_drop_link_rupeeID3__set(uint16_t value);
 		uint16_t LunaLua_Defines__kill_drop_link_rupeeID3__get();
+        void LunaLua_Defines__player_farthest_fall_to_death__set(uint16_t value);
+        uint16_t LunaLua_Defines__player_farthest_fall_to_death__get();
 
 		bool LunaLua_Defines_mem_set(int address, double value);
 	]])
@@ -812,23 +816,12 @@ do
 	--Spencer Everly was here lol
 	ffi.cdef([[
 		typedef struct _LunaImageRef LunaImageRef;
-        
-        void LunaLuaSetWindowPosition(int x, int y);
+
         void LunaLuaToggleWindowFocus(bool enable);
-        void LunaLuaCenterWindow();
         void LunaLuaSetFullscreen(bool enable);
-        double LunaLuaGetXWindowPosition();
-        double LunaLuaGetYWindowPosition();
-        double LunaLuaGetXWindowPositionCenter();
-        double LunaLuaGetYWindowPositionCenter();
-        void LunaLuaSetWindowSize(int width, int height);
-        int LunaLuaGetWindowWidth();
-        int LunaLuaGetWindowHeight();
         bool LunaLuaIsFullscreen();
         bool LunaLuaIsRecordingGIF();
         bool LunaLuaIsFocused();
-        double LunaLuaGetScreenResolutionWidth();
-        double LunaLuaGetScreenResolutionHeight();
         bool LunaLuaIsSetToRunWhenUnfocused();
         
         void LunaLuaTestModeDisable(void);
@@ -847,6 +840,7 @@ do
 	]])
 	local LunaDLL = ffi.load("LunaDll.dll")
 
+    --Aliases for the new Monitor functions
     function Misc.setWindowPosition(x, y)
         if x == nil then
             return
@@ -854,8 +848,33 @@ do
         if y == nil then
             return
         end
-        LunaDLL.LunaLuaSetWindowPosition(x, y)
+        Monitor.setWindowPosition(x,y)
     end
+    function Misc.centerWindow(monitorIdx)
+        if monitorIdx == nil then
+            monitorIdx = 1
+        end
+        Monitor.centerWindow(monitorIdx)
+    end
+    function Misc.getWindowXPosition()
+        return Monitor.x()
+    end
+    function Misc.getWindowYPosition()
+        return Monitor.y()
+    end
+    function Misc.getCenterWindowXPosition()
+        return Monitor.centerX()
+    end
+    function Misc.getCenterWindowYPosition()
+        return Monitor.centerY()
+    end
+    function Misc.getWidthScreenResolution()
+        return Monitor.screenWidth()
+    end
+    function Misc.getHeightScreenResolution()
+        return Monitor.screenHeight()
+    end
+
     function Misc.runWhenUnfocused(enable)
         if enable == nil then
             Misc.warn("Value has not been set.")
@@ -867,9 +886,6 @@ do
             enable = false
         end
         LunaDLL.LunaLuaToggleWindowFocus(enable)
-    end
-    function Misc.centerWindow()
-        LunaDLL.LunaLuaCenterWindow()
     end
     function Misc.setFullscreen(enable)
         if enable == nil then
@@ -883,18 +899,7 @@ do
         end
         LunaDLL.LunaLuaSetFullscreen(enable)
     end
-    function Misc.getWindowXPosition()
-        return LunaDLL.LunaLuaGetXWindowPosition()
-    end
-    function Misc.getWindowYPosition()
-        return LunaDLL.LunaLuaGetYWindowPosition()
-    end
-    function Misc.getCenterWindowXPosition()
-        return LunaDLL.LunaLuaGetXWindowPositionCenter()
-    end
-    function Misc.getCenterWindowYPosition()
-        return LunaDLL.LunaLuaGetYWindowPositionCenter()
-    end
+    
     function Misc.isFullscreen()
         return LunaDLL.LunaLuaIsFullscreen()
     end
@@ -904,16 +909,10 @@ do
     function Misc.isWindowFocused()
         return LunaDLL.LunaLuaIsFocused()
     end
-    function Misc.getWidthScreenResolution()
-        return LunaDLL.LunaLuaGetScreenResolutionWidth()
-    end
-    function Misc.getHeightScreenResolution()
-        return LunaDLL.LunaLuaGetScreenResolutionHeight()
-    end
     function Misc.isSetToRunWhenUnfocused()
         return LunaDLL.LunaLuaIsSetToRunWhenUnfocused()
     end
-    
+
     function Misc.setNewTestModeLevelData(newLevel)
         if not Misc.inEditor() then
             return
@@ -926,7 +925,7 @@ do
         
 		LunaDLL.LunaLuaTestModeEditLevel(Misc.episodePath()..newLevel)
 	end
-    
+
     function Misc.inSuperMarioAllStarsPlusPlus()
 		LunaDLL.LunaLuaInSMASPlusPlus()
 	end

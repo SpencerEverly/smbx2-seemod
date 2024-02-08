@@ -532,6 +532,7 @@ do
 	requireLowLevelLibrary("ffi_camera")
 
 	requireLowLevelLibrary("ffi_legacyrng")
+    requireLowLevelLibrary("ffi_mouse")
 
 	local populateCustomParams -- Function for populating custom parameters
 	if (not isOverworld) then
