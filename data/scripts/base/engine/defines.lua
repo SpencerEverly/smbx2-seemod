@@ -69,7 +69,7 @@ makeLunaDefine("coin20Value", FIELD_BYTE, 20, 0, 99)
 -- If the level is freezed. (Only you can move!)
 makeDefine("levelFreeze", 0x00B2C8B4, FIELD_BOOL, false, nil, nil)
 --How far all players go downward from leaving the screen until death.
-makeLunaDefine("player_fallToDeathValue", FIELD_BYTE, 64, 0, nil)
+makeLunaDefine("bottomEdgeOffset", FIELD_DWORD, 64, 0, nil)
 -- Cheats
 makeDefine("cheat_shadowmario", 0x00B2C8AA, FIELD_BOOL, nil, nil, nil)
 makeDefine("cheat_ahippinandahoppin", 0x00B2C8AC, FIELD_BOOL, nil, nil, nil)

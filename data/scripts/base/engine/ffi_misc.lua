@@ -533,8 +533,9 @@ do
 		uint16_t LunaLua_Defines__kill_drop_link_rupeeID2__get();
 		void LunaLua_Defines__kill_drop_link_rupeeID3__set(uint16_t value);
 		uint16_t LunaLua_Defines__kill_drop_link_rupeeID3__get();
-        void LunaLua_Defines__player_fallToDeathValue__set(uint8_t value);
-        uint16_t LunaLua_Defines__player_fallToDeathValue__get();
+        
+        void LunaLua_Defines__bottomEdgeOffset__set(uint32_t value);
+		uint32_t LunaLua_Defines__bottomEdgeOffset__get();
 
 		bool LunaLua_Defines_mem_set(int address, double value);
 	]])
@@ -628,7 +629,7 @@ do
 		uint16_t LunaLua_Defines__kill_drop_link_rupeeID2__get();
 		void LunaLua_Defines__kill_drop_link_rupeeID3__set(uint16_t value);
 		uint16_t LunaLua_Defines__kill_drop_link_rupeeID3__get();
-        void LunaLua_Defines__player_fallToDeathValue__set(uint16_t value);
+        void LunaLua_Defines__player_fallToDeathValue__set(uint8_t value);
         uint16_t LunaLua_Defines__player_fallToDeathValue__get();
 
 		bool LunaLua_Defines_mem_set(int address, double value);
@@ -839,6 +840,8 @@ do
         
         void LunaLuaSetDisabledPlayerCheatMovement(bool enable);
         bool LunaLuaGetDisabledPlayerCheatMovement();
+        
+        void LunaLuaSetConsole(bool enable);
 	]])
 	local LunaDLL = ffi.load("LunaDll.dll")
 
@@ -973,5 +976,9 @@ do
     
     function Misc.SEEModFeaturesGetBool()
         return LunaDLL.LunaLuaGetSEEModFeatureBool()
+    end
+    
+    function Misc.toggleConsole(enable)
+        LunaDLL.LunaLuaSetConsole(enable)
     end
 end

@@ -10,7 +10,7 @@ if(GameData.__activatedCheats == nil) then
 	GameData.__activatedCheats = {};
 end
 
-newcheats.cheatsList = {};
+local cheatsList = {};
 
 local groupList = {};
 
@@ -27,7 +27,6 @@ end
 
 --Set to false to disable activating cheats via the cheat buffer
 newcheats.enabled = true;
-newcheats.activateCheatsWhenPaused = false;
 
 function newcheats.onInitAPI()
 	registerEvent(newcheats, "onInputUpdate", "onInputUpdate", true);
@@ -45,14 +44,14 @@ end
 
 local function updateGroups()
 	for _,k in ipairs(groupList) do
-		local v = newcheats.cheatsList[k];
+		local v = cheatsList[k];
 		
 		if(v.cheats ~= nil) then
 			local c = 0;
 			for _,w in ipairs(v.cheats) do
-				local x = newcheats.cheatsList[w];
+				local x = cheatsList[w];
 				if(type(x) == "string") then
-					x = newcheats.cheatsList[x];
+					x = cheatsList[x];
 				end
 				if(x.active) then
 					c = c+1;
@@ -80,7 +79,7 @@ function newcheats.onInputUpdate()
 	
 	local cheatBuffer = Misc.cheatBuffer();
 	if newcheats.enabled and #cheatBuffer > 0 then
-		for k,v in pairs(newcheats.cheatsList) do
+		for k,v in pairs(cheatsList) do
 			if string.find(cheatBuffer, k) then
 				Misc.cheatBuffer("")
 				newcheats.trigger(v)
@@ -92,24 +91,20 @@ end
 
 function newcheats.onKeyboardPress()
 	if(#cheatBuffer_raw() > 1) then
-        if Misc.isPaused() and not newcheats.activateCheatsWhenPaused then
-            cheatbuffer = (cheatbuffer or "")..cheatBuffer_raw():sub(2);
-        elseif newcheats.activateCheatsWhenPaused then
-            cheatbuffer = (cheatbuffer or "")..cheatBuffer_raw():sub(2);
-        end
+		cheatbuffer = (cheatbuffer or "")..cheatBuffer_raw():sub(2);
 		cheatBuffer_raw("");
 	end
 end
 
 function newcheats.get(name)
-	if(newcheats.cheatsList[name]) then
-		if(type(newcheats.cheatsList[name]) == "string") then
-			return newcheats.get(newcheats.cheatsList[name]);
+	if(cheatsList[name]) then
+		if(type(cheatsList[name]) == "string") then
+			return newcheats.get(cheatsList[name]);
 		else
-			return newcheats.cheatsList[name];
+			return cheatsList[name];
 		end
 	elseif(type(name) == "number") then
-		for _,v in pairs(newcheats.cheatsList) do
+		for _,v in pairs(cheatsList) do
 			if(v.id == name) then
 				return v;
 			end
@@ -121,7 +116,7 @@ function newcheats.get(name)
 end
 
 function newcheats.reset()
-	for _,v in pairs(newcheats.cheatsList) do
+	for _,v in pairs(cheatsList) do
 		if(v.active) then
 			newcheats.trigger(v);
 		end
@@ -131,8 +126,8 @@ end
 --Trigger a cheat
 function newcheats.trigger(cheat, silent)
 	if(type(cheat) == "string") then
-		if(newcheats.cheatsList[cheat]) then
-			return newcheats.trigger(newcheats.cheatsList[cheat], silent);
+		if(cheatsList[cheat]) then
+			return newcheats.trigger(cheatsList[cheat], silent);
 		else
 			return;
 		end
@@ -141,7 +136,7 @@ function newcheats.trigger(cheat, silent)
 	else
 		if(cheat.exclusions) then
 			for _,v in ipairs(cheat.exclusions) do --exclusions are a list of cheats that are mutually exclusive to this one
-				if(newcheats.cheatsList[v] and newcheats.cheatsList[v].active) then
+				if(cheatsList[v] and cheatsList[v].active) then
 					newcheats.trigger(v, silent); --deactivate exclusive cheats
 				end
 			end
@@ -212,8 +207,8 @@ local function makecheatmt(id)
 	local cheat_mt = {};
 	function cheat_mt.__index(tbl,key)
 		if(key == "aliases") then
-			local n = table.find(newcheats.cheatsList, tbl)
-			return table.findall(newcheats.cheatsList, n) or {};
+			local n = table.find(cheatsList, tbl)
+			return table.findall(cheatsList, n) or {};
 		elseif(key == "id") then
 			return id;
 		elseif(key == "trigger") then
@@ -235,41 +230,41 @@ end
 
 --Register a new cheat
 function newcheats.register(name, args)
-	newcheats.cheatsList[name] = args;
-	newcheats.cheatsList[name].active = false;
-	newcheats.cheatsList[name].cheats = nil;
-	if(newcheats.cheatsList[name].isCheat == nil) then
-		newcheats.cheatsList[name].isCheat = true;
+	cheatsList[name] = args;
+	cheatsList[name].active = false;
+	cheatsList[name].cheats = nil;
+	if(cheatsList[name].isCheat == nil) then
+		cheatsList[name].isCheat = true;
 	end
 	
-	if(newcheats.cheatsList[name].aliases) then
-		for _,v in ipairs(newcheats.cheatsList[name].aliases) do
-			newcheats.cheatsList[v] = name;
+	if(cheatsList[name].aliases) then
+		for _,v in ipairs(cheatsList[name].aliases) do
+			cheatsList[v] = name;
 		end
 	end
-	newcheats.cheatsList[name].aliases = nil;
+	cheatsList[name].aliases = nil;
 	
-	for k,v in pairs(newcheats.cheatsList) do
+	for k,v in pairs(cheatsList) do
 		if(v.id == name) then
 			error("Cheat already exists with the id '"..name.."', under the code '"..k.."'.", 2);
 		end
 	end
 	
-	setmetatable(newcheats.cheatsList[name], makecheatmt(name));
-	return newcheats.cheatsList[name];
+	setmetatable(cheatsList[name], makecheatmt(name));
+	return cheatsList[name];
 end
 
 function newcheats.registerGroup(name, args)
 	local c = args.cheats;
 	newcheats.register(name, args);
 	
-	newcheats.cheatsList[name].cheats = c;
+	cheatsList[name].cheats = c;
 	
-	newcheats.cheatsList[name].onToggle = function(val)
-		for _,v in ipairs(newcheats.cheatsList[name].cheats) do
-			local w = newcheats.cheatsList[v];
+	cheatsList[name].onToggle = function(val)
+		for _,v in ipairs(cheatsList[name].cheats) do
+			local w = cheatsList[v];
 			if(type(w) == "string") then
-				w = newcheats.cheatsList[w];
+				w = cheatsList[w];
 			end
 			if(w and w.active ~= val) then
 				w:trigger();
@@ -278,7 +273,7 @@ function newcheats.registerGroup(name, args)
 	end
 	table.insert(groupList, name);
 	
-	return newcheats.cheatsList[name];
+	return cheatsList[name];
 end
 
 local function removeGroup(name)
@@ -290,62 +285,62 @@ end
 
 --Deregister a cheat, optionally keeping its aliases (also used to remove an alias)
 function newcheats.deregister(name, keepAliases)
-	if(newcheats.cheatsList[name]) then
+	if(cheatsList[name]) then
 		removeGroup(name);
 		
-		if(type(newcheats.cheatsList[name]) == "string") then
+		if(type(cheatsList[name]) == "string") then
 			if(keepAliases) then
-				newcheats.cheatsList[name] = nil; --if we want to keep aliases, then we just delete this alias
+				cheatsList[name] = nil; --if we want to keep aliases, then we just delete this alias
 			else
-				newcheats.deregister(newcheats.cheatsList[name]); --if we don't want to keep aliases, then we deregister the main cheat
+				newcheats.deregister(cheatsList[name]); --if we don't want to keep aliases, then we deregister the main cheat
 			end
 		else
 			--if we're getting rid of the cheat, we should deactivate it if necessary
-			if(newcheats.cheatsList[name].active) then
+			if(cheatsList[name].active) then
 				newcheats.trigger(name);
 			end
 			
 			local newMain;
 			--manage aliases
-			for k,v in pairs(newcheats.cheatsList) do
+			for k,v in pairs(cheatsList) do
 				if(v == name) then	--is an alias
 					if(keepAliases) then
 						if(newMain) then
-							newcheats.cheatsList[k] = newMain;	--point the alias at the new main cheat, if it exists
+							cheatsList[k] = newMain;	--point the alias at the new main cheat, if it exists
 						else
-							newcheats.cheatsList[k] = newcheats.cheatsList[name];	--convert an alias into the main cheat if we haven't already
+							cheatsList[k] = cheatsList[name];	--convert an alias into the main cheat if we haven't already
 							newMain = k;	
 
 							--update group cheats to new alias if we're deleting the main one, or update references to this cheat in group list
 							for l,m in ipairs(groupList) do
 								if(m == name) then
 									groupList[l] = newMain;
-								elseif(newcheats.cheatsList[m].cheats ~= nil) then
-									for n,o in ipairs(newcheats.cheatsList[m].cheats) do
+								elseif(cheatsList[m].cheats ~= nil) then
+									for n,o in ipairs(cheatsList[m].cheats) do
 										if(o == name) then
-											newcheats.cheatsList[m].cheats[n] = newMain;
+											cheatsList[m].cheats[n] = newMain;
 										end
 									end
 								end
 							end
 						end
 					else
-						newcheats.cheatsList[k] = nil;    --if we're not keeping aliases, just delete them
+						cheatsList[k] = nil;    --if we're not keeping aliases, just delete them
 					end
 				end
 			end
-			newcheats.cheatsList[name] = nil; --finally, deregister the cheat we passed as an argument
+			cheatsList[name] = nil; --finally, deregister the cheat we passed as an argument
 		end
 	end
 end
 
 --Add a new alias to an existing cheat
 function newcheats.addAlias(name, alias)
-	if(newcheats.cheatsList[name]) then
-		if(type(newcheats.cheatsList[name]) == "string") then
-			newcheats.addAlias(newcheats.cheatsList[name], alias);	--we're adding an alias to an alias, so add it to the main cheat instead
+	if(cheatsList[name]) then
+		if(type(cheatsList[name]) == "string") then
+			newcheats.addAlias(cheatsList[name], alias);	--we're adding an alias to an alias, so add it to the main cheat instead
 		else
-			newcheats.cheatsList[alias] = name;	--add a new alias
+			cheatsList[alias] = name;	--add a new alias
 		end
 	else
 		error("No cheat '"..name.."' found.",2);
@@ -381,7 +376,7 @@ end
 --Get a list of all the cheat names
 function newcheats.listCheats()
 	local t = {}
-	for k,_ in pairs(newcheats.cheatsList) do
+	for k,_ in pairs(cheatsList) do
 		table.insert(t, k);
 	end
 	return t;
